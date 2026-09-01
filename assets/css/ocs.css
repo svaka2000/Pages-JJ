@@ -91,21 +91,22 @@
   --ocs-focus-ring: 0 0 0 2px var(--ocs-surface-base), 0 0 0 4px var(--ocs-accent);
 }
 
-.user-theme-active {
-  --ocs-accent: var(--pref-accent-color, var(--ocs-brand));
-  --ocs-accent-border: var(--pref-accent-color, var(--ocs-brand-border));
-  --ocs-accent-bg: color-mix(in srgb, var(--pref-accent-color, #EA706E) 8%, var(--pref-bg-color, #121212));
-  --ocs-surface-base: var(--pref-bg-color, #121212);
-  --ocs-surface-raised: color-mix(in srgb, var(--pref-bg-color, #121212) 94%, var(--pref-text-color, #FFFFFF) 6%);
-  --ocs-surface-elevated: color-mix(in srgb, var(--pref-bg-color, #121212) 88%, var(--pref-text-color, #FFFFFF) 12%);
-  --ocs-text: var(--pref-text-color, #FFFFFF);
-  --ocs-text-secondary: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 88%, transparent);
-  --ocs-text-muted: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 64%, var(--pref-bg-color, #121212));
-  --ocs-border: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 22%, var(--pref-bg-color, #121212));
-  --ocs-border-strong: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 34%, var(--pref-bg-color, #121212));
-  --ocs-border-subtle: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 12%, var(--pref-bg-color, #121212));
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  .user-theme-active {
+    --ocs-accent: var(--pref-accent-color, var(--ocs-brand));
+    --ocs-accent-border: var(--pref-accent-color, var(--ocs-brand-border));
+    --ocs-accent-bg: color-mix(in srgb, var(--pref-accent-color, #EA706E) 8%, var(--pref-bg-color, #121212));
+    --ocs-surface-base: var(--pref-bg-color, #121212);
+    --ocs-surface-raised: color-mix(in srgb, var(--pref-bg-color, #121212) 94%, var(--pref-text-color, #FFFFFF) 6%);
+    --ocs-surface-elevated: color-mix(in srgb, var(--pref-bg-color, #121212) 88%, var(--pref-text-color, #FFFFFF) 12%);
+    --ocs-text: var(--pref-text-color, #FFFFFF);
+    --ocs-text-secondary: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 88%, transparent);
+    --ocs-text-muted: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 64%, var(--pref-bg-color, #121212));
+    --ocs-border: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 22%, var(--pref-bg-color, #121212));
+    --ocs-border-strong: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 34%, var(--pref-bg-color, #121212));
+    --ocs-border-subtle: color-mix(in srgb, var(--pref-text-color, #FFFFFF) 12%, var(--pref-bg-color, #121212));
+  }
 }
-
 .ocs-light {
   --ocs-surface-base: #FFFFFF;
   --ocs-surface-raised: #F3F3F8;
@@ -1741,11 +1742,7 @@
 }
 
 @supports (anchor-name: --a) {
-  [popovertarget] {
-    anchor-name: --ocs-menu-anchor;
-  }
   .ocs-menu:popover-open {
-    position-anchor: --ocs-menu-anchor;
     inset: auto;
     top: anchor(bottom);
     left: anchor(left);

@@ -216,9 +216,23 @@
     }
   }
 
+  // CSS anchor positioning resolves a shared anchor-name to the LAST element in
+  // tree order that carries it, so one global name puts every menu under the last
+  // trigger. Give each trigger/menu pair its own name instead.
+  function linkAnchor(menu) {
+    if (!menu.id) return;
+    if (!(CSS && CSS.supports && CSS.supports('anchor-name', '--a'))) return;
+    var name = '--ocs-anchor-' + menu.id.replace(/[^A-Za-z0-9_-]/g, '-');
+    var triggers = document.querySelectorAll('[popovertarget="' + CSS.escape(menu.id) + '"]');
+    if (!triggers.length) return;
+    triggers.forEach(function (t) { t.style.setProperty('anchor-name', name); });
+    menu.style.setProperty('position-anchor', name);
+  }
+
   function initMenus(root) {
     root.querySelectorAll('.ocs-menu[role="menu"]').forEach(function (menu) {
       if (!once(menu, 'Menu')) return;
+      linkAnchor(menu);
 
       var typed = '';
       var typedAt = 0;

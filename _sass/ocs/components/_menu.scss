@@ -106,11 +106,13 @@
 }
 
 // Anchor the menu under its trigger where the engine supports it.
+// Anchor names must be UNIQUE per trigger/menu pair. A single shared name makes
+// every menu on the page resolve to the LAST trigger in tree order -- measured at
+// 385px away from its own trigger with two menus present. ocs.js assigns
+// anchor-name / position-anchor per pair; this block only carries the geometry.
 @supports (anchor-name: --a) {
-  [popovertarget] { anchor-name: --ocs-menu-anchor; }
 
   .ocs-menu:popover-open {
-    position-anchor: --ocs-menu-anchor;
     inset: auto;
     top: anchor(bottom);
     left: anchor(left);
