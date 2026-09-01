@@ -298,6 +298,15 @@
         else if (e.key === 'Home')      { e.preventDefault(); focusAt(0); }
         else if (e.key === 'End')       { e.preventDefault(); focusAt(list.length - 1); }
         else if (e.key === 'Tab')       { closeMenu(menu); }
+        // The popover API light-dismisses on Escape, but the fallback path has no
+        // UA behaviour to rely on, and the ARIA menu pattern wants focus back on
+        // the trigger either way. Do not preventDefault, so native dismissal still
+        // runs where it exists; closeMenu() is a no-op if the UA got there first.
+        else if (e.key === 'Escape') {
+          closeMenu(menu);
+          var opener = document.querySelector('[popovertarget="' + CSS.escape(menu.id) + '"]');
+          if (opener) opener.focus();
+        }
         else if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
           // Type-ahead: keystrokes within 700ms accumulate into a prefix.
           var now = Date.now();
