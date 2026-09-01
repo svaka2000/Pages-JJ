@@ -39,6 +39,22 @@
     gap: 2px;
   }
 
+  // Browsers without the popover API ignore the attribute entirely, so nothing
+  // hides the menu and it sits in the page permanently visible (measured 43px
+  // tall with the trigger untouched). Hide it and let ocs.js drive
+  // [data-ocs-open] instead, which closeMenu() already sets.
+  @supports not selector(:popover-open) {
+    & { display: none; }
+
+    &[data-ocs-open] {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: absolute;
+      z-index: fn.z(dropdown);
+    }
+  }
+
   &__item {
     display: flex;
     align-items: center;

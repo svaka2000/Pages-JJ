@@ -1676,6 +1676,18 @@
   flex-direction: column;
   gap: 2px;
 }
+@supports not selector(:popover-open) {
+  .ocs-menu {
+    display: none;
+  }
+  .ocs-menu[data-ocs-open] {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: absolute;
+    z-index: 100;
+  }
+}
 .ocs-menu__item {
   display: flex;
   align-items: center;

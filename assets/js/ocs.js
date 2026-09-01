@@ -229,10 +229,36 @@
     menu.style.setProperty('position-anchor', name);
   }
 
+  // Without the popover API the popovertarget attribute is inert, so the trigger
+  // does nothing at all. Wire a click fallback that toggles [data-ocs-open],
+  // which the stylesheet uses when :popover-open is unavailable.
+  function legacyToggle(menu) {
+    if (typeof menu.showPopover === 'function') return;
+    document.querySelectorAll('[popovertarget="' + CSS.escape(menu.id) + '"]').forEach(function (t) {
+      if (!once(t, 'MenuTrigger')) return;
+      t.setAttribute('aria-haspopup', 'menu');
+      t.setAttribute('aria-expanded', 'false');
+      t.addEventListener('click', function (e) {
+        e.preventDefault();
+        var open = menu.hasAttribute('data-ocs-open');
+        if (open) {
+          closeMenu(menu);
+        } else {
+          menu.setAttribute('data-ocs-open', '');
+          menu.style.display = '';
+          var first = menu.querySelector('[role="menuitem"]:not(:disabled)');
+          if (first) first.focus();
+        }
+        t.setAttribute('aria-expanded', String(!open));
+      });
+    });
+  }
+
   function initMenus(root) {
     root.querySelectorAll('.ocs-menu[role="menu"]').forEach(function (menu) {
       if (!once(menu, 'Menu')) return;
       linkAnchor(menu);
+      legacyToggle(menu);
 
       var typed = '';
       var typedAt = 0;
