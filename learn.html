@@ -2743,6 +2743,10 @@ ol.steps li.on .tk {
   border: 1px solid var(--ocs-border);
   flex: none;
 }
+.trow .sw--none {
+  border-style: dashed;
+  background: none;
+}
 .trow .nm {
   font-family: "Menlo", "Monaco", "Consolas", "Roboto Mono", "Ubuntu Mono", "Liberation Mono", "Courier New", monospace;
   font-size: 0.76rem;
@@ -3909,20 +3913,45 @@ function run(){
 }
 
 /* ---------- token drawer ---------- */
+/* rgb(18, 18, 18) -> #121212. Alpha is kept as-is: rgba() is what the token
+   says, and rounding it to a hex would be a lie. */
+function toHex(c){
+  const m=c.match(/^rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?\)$/);
+  if(!m) return c;
+  if(m[4]!==undefined && +m[4]<1) return c;
+  return '#'+[m[1],m[2],m[3]].map(n=>(+n).toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+
 function renderTokens(filter=''){
   const f=filter.toLowerCase();
   const hits=TOKENS.filter(t=>t.n.toLowerCase().includes(f)||t.g.toLowerCase().includes(f)||t.v.toLowerCase().includes(f));
   let html='',last='';
   for(const t of hits){
     if(t.g!==last){html+=`<div class="tgrp">${t.g}</div>`;last=t.g;}
-    const sw=t.c?`<span class="sw" style="background:var(${t.n})"></span>`
-                :`<span class="sw" style="background:var(--sunk)"></span>`;
+    // An alias like --ocs-accent: var(--ocs-brand) is a colour even though the
+    // build could not fold it to a hex, so paint a swatch for those too.
+    const colour = t.c || /^var\(/.test(t.v);
+    const sw = colour ? `<span class="sw" style="background:var(${t.n})"></span>`
+                      : `<span class="sw sw--none"></span>`;
     html+=`<button class="trow" data-t="${t.n}" title="Insert var(${t.n})">
       ${sw}<span class="nm">${t.n.replace('--ocs-','')}</span><span class="vl">${t.v}</span></button>`;
   }
   $('#tlist').innerHTML=html||'<div class="empty">No tokens match that.</div>';
-  $$('#tlist .trow').forEach(b=>b.onclick=()=>{
-    insertAtCursor(`var(${b.dataset.t})`);toast(`Inserted ${b.dataset.t}`);});
+
+  /* The value baked into TOKENS is the dark-theme one, but this drawer sits
+     inside .ocs-light, so var(--ocs-text) here is near-black, not #FFFFFF.
+     Showing the build-time hex next to a live swatch would put a black chip
+     beside the label "#FFFFFF". Read what the token actually resolves to in
+     this context instead, so the chip and the label always agree - which is
+     also the point quest 3 makes about theming. */
+  $$('#tlist .trow').forEach(b=>{
+    const sw=b.querySelector('.sw');
+    if(sw && !sw.classList.contains('sw--none')){
+      const bg=getComputedStyle(sw).backgroundColor;
+      if(bg && bg!=='rgba(0, 0, 0, 0)') b.querySelector('.vl').textContent=toHex(bg);
+    }
+    b.onclick=()=>{ insertAtCursor(`var(${b.dataset.t})`); toast(`Inserted ${b.dataset.t}`); };
+  });
 }
 function openDrawer(o){$('#drawer').classList.toggle('open',o);$('#scrim').classList.toggle('on',o);
   if(o)setTimeout(()=>$('#tsearch').focus(),120);}
