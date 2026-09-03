@@ -1,0 +1,1380 @@
+<!-- generated demo - see PR #35 -->
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class chat &mdash; OCS Design System</title>
+<link rel="stylesheet" href="/Pages-JJ/assets/css/ocs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+body{margin:0;padding:32px 20px 64px;background:var(--ocs-surface-base);font-family:var(--ocs-font-sans);
+     color:var(--ocs-text)}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+h1{margin:0;font-size:1.75rem;letter-spacing:-.02em}
+.note{margin:0;color:var(--ocs-text-muted);font-size:.875rem;line-height:1.6;max-width:60ch}
+.note code{font-family:var(--ocs-font-mono);font-size:.8125rem;color:var(--ocs-text-secondary)}
+a.back{color:var(--ocs-accent);font-size:.875rem;text-decoration:none}
+a.back:hover{text-decoration:underline}
+</style>
+<script>
+// Seed a little history so the log is not empty on a first visit. These live
+// in this browser only; the demo backend is intentionally unreachable.
+const K='ocs-chat-preview:csa-announcements', W='ocs-chat-preview:csa-week-3';
+if(!localStorage.getItem(K)){
+  const n=Date.now(), at=m=>new Date(n-m*60000).toISOString();
+  localStorage.setItem(K, JSON.stringify([
+   {sender:'Alex Morgan',  message:'Reminder: Project 2 is due this Friday at 11:59 PM.', date:at(40)},
+   {sender:'Alex Morgan',  message:'Make sure to push your code and include a short write-up in the README.', date:at(39)},
+   {sender:'Jordan Smith', message:'Office hours today are in the lab from 3-4 PM.', date:at(27)},
+   {sender:'Taylor Rivera',message:'Study guide for the midterm: https://opencodingsociety.com/', date:at(14)},
+   {sender:'Morgan Chen',  message:'Do not forget to submit the survey about next week\u2019s guest speaker.', date:at(4)}
+  ]));
+  localStorage.setItem(W, JSON.stringify([
+   {sender:'Morgan Chen', message:'Is the array lab due before or after the quiz?', date:at(20)},
+   {sender:'You',         message:'After \u2014 quiz is Tuesday, lab is Thursday.', date:at(18)}
+  ]));
+}
+</script>
+<div class="wrap">
+ <a class="back" href="/Pages-JJ/">&larr; All demos</a>
+ <h1>Class chat</h1>
+ <p class="note">These are the real widgets from <code>_includes/announcement_chat.html</code> and <code>_includes/week_chat.html</code>, running their own JavaScript. The backend is not reachable from here, so they take their signed-out path and keep messages in this browser. Type something and press Send.</p>
+ <!-- Class Announcement Chat: always-open WebSocket chat for the whole course. -->
+<!-- One group per course, e.g. "csa-announcements", "csp-announcements". -->
+<!-- Reuses the same STOMP/SockJS backend as _includes/lesson_chat.html and -->
+<!-- _includes/group_dashboard.html (Open-Coding-Society/spring's /api/groups + -->
+<!-- /ws-chat). The group is created automatically on first use if it doesn't -->
+<!-- exist yet, so no manual DB seeding is required. -->
+<!-- -->
+<!-- Signed-out visitors still get the full UI: the chat drops into a local -->
+<!-- "preview" mode backed by localStorage, matching _includes/week_chat.html, -->
+<!-- so the feature is visible and testable without a login. -->
+
+<section id="announcementChat" class="ocs-chat" data-course="csa" aria-labelledby="announcementChatTitle">
+  <div class="ocs-chat__header">
+    <div class="ocs-chat__heading">
+      <span class="ocs-chat__icon" aria-hidden="true"><i class="fas fa-bullhorn"></i></span>
+      <div class="ocs-chat__heading-text">
+        <h2 class="ocs-chat__title" id="announcementChatTitle">CSA Announcements</h2>
+        <p class="ocs-chat__subtitle">Class-wide chat for this course — announcements, questions, anything that isn't week-specific.</p>
+      </div>
+    </div>
+    <span class="ocs-chat__status" id="announcementChatStatusPill">
+      <span class="ocs-chat__status-dot" aria-hidden="true"></span>
+      <span class="ocs-chat__status-label" id="announcementChatStatus">loading…</span>
+    </span>
+  </div>
+
+  <div class="ocs-chat__body">
+    <p class="ocs-chat__banner ocs-chat__banner--warning" id="announcementChatNote" hidden>
+      <i class="fas fa-flask" aria-hidden="true"></i><span id="announcementChatNoteText"></span>
+    </p>
+    <div class="ocs-chat__banner ocs-chat__banner--accent" id="announcementChatPublishBanner" hidden>
+      <div class="ocs-chat__banner-text">
+        <i class="fas fa-box-archive" aria-hidden="true"></i>
+        <span id="announcementChatPublishBannerText"></span>
+      </div>
+      <button type="button" class="ocs-btn ocs-btn--sm" id="announcementChatPublishBtn">
+        <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i><span>Publish to class chat</span>
+      </button>
+    </div>
+    <div class="ocs-chat__log" id="announcementChatMessages" role="log" aria-live="polite">
+      <div class="ocs-chat__empty" id="announcementChatEmpty">
+        <i class="fas fa-bullhorn" aria-hidden="true"></i>
+        <p class="ocs-chat__empty-title">No announcements yet</p>
+        <span class="ocs-chat__empty-hint">Class-wide messages will appear here.</span>
+      </div>
+    </div>
+    <form class="ocs-chat__composer" id="announcementChatForm" autocomplete="off">
+      <input class="ocs-input" id="announcementChatInput" type="text" placeholder="Message the class…" maxlength="2000" disabled>
+      <button class="ocs-btn ocs-btn--primary" id="announcementChatSend" type="submit" disabled>
+        <i class="fas fa-paper-plane" aria-hidden="true"></i><span>Send</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<script type="module">
+  import { javaURI, pythonURI, fetchOptions } from '/Pages-JJ/assets/js/api/config.js';
+
+  const COURSE = "csa";
+  const GROUP_NAME = `${COURSE}-announcements`;
+  const CHAT_SOCKET_PORT = 8589;
+  const PREVIEW_KEY = `ocs-chat-preview:${GROUP_NAME}`;
+  const PREVIEW_LIMIT = 100;
+  const PUBLISHED_KEY = `ocs-chat-published:${GROUP_NAME}`;
+  const PUBLISHED_LIMIT = 500;
+  const URL_RE = /https?:\/\/[^\s<>()]+/g;
+  const linkPreviewCache = new Map();
+
+  const SOCKJS_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js';
+  const STOMP_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js';
+
+  // Shared with the per-week chats: load the chat libraries once per page,
+  // and only when a chat actually needs a live connection.
+  function loadScriptOnce(src) {
+    window.__ocsChatScripts = window.__ocsChatScripts || {};
+    if (!window.__ocsChatScripts[src]) {
+      window.__ocsChatScripts[src] = new Promise((resolve, reject) => {
+        const el = document.createElement('script');
+        el.src = src;
+        el.onload = resolve;
+        el.onerror = () => reject(new Error(`failed to load ${src}`));
+        document.head.appendChild(el);
+      });
+    }
+    return window.__ocsChatScripts[src];
+  }
+
+  async function loadChatLibraries() {
+    await loadScriptOnce(SOCKJS_SRC);
+    await loadScriptOnce(STOMP_SRC);
+  }
+
+  function buildChatSocketEndpoint() {
+    const uri = new URL(javaURI);
+    if (uri.hostname === 'localhost' || uri.hostname === '127.0.0.1') {
+      return `${uri.protocol}//${uri.hostname}:${CHAT_SOCKET_PORT}/ws-chat`;
+    }
+    return javaURI + '/ws-chat';
+  }
+
+  const state = {
+    backboneGroupId: null,
+    stompClient: null,
+    subscription: null,
+    connected: false,
+    initialized: false,
+    mode: 'live', // 'live' once connected to the backend, 'preview' when local-only
+    currentUserDisplayName: 'You',
+    seenKeys: new Set(),
+    // Cursors used to group the log by day and by consecutive sender
+    lastDayKey: null,
+    lastSender: null,
+    lastTime: 0,
+  };
+
+  const statusEl = document.getElementById('announcementChatStatus');
+  const statusPillEl = document.getElementById('announcementChatStatusPill');
+  const noteEl = document.getElementById('announcementChatNote');
+  const noteTextEl = document.getElementById('announcementChatNoteText');
+  const messagesEl = document.getElementById('announcementChatMessages');
+  const inputEl = document.getElementById('announcementChatInput');
+  const sendBtn = document.getElementById('announcementChatSend');
+  const formEl = document.getElementById('announcementChatForm');
+  const publishBannerEl = document.getElementById('announcementChatPublishBanner');
+  const publishBannerTextEl = document.getElementById('announcementChatPublishBannerText');
+  const publishBtn = document.getElementById('announcementChatPublishBtn');
+
+  function setStatus(text, tone) {
+    statusEl.textContent = text;
+    statusPillEl.classList.remove('ocs-chat__status--live', 'ocs-chat__status--preview', 'ocs-chat__status--error');
+    if (tone) statusPillEl.classList.add(tone);
+  }
+
+  function showNote(text) {
+    noteTextEl.textContent = text;
+    noteEl.hidden = false;
+  }
+
+  function setComposerEnabled(enabled) {
+    inputEl.disabled = !enabled;
+    sendBtn.disabled = !enabled;
+  }
+
+  function parseDate(isoString) {
+    if (!isoString) return null;
+    const date = new Date(isoString);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+
+  function dayKey(date) {
+    return String(startOfDay(date));
+  }
+
+  // "Today" / "Yesterday" / "Mon, Aug 24" — the separator between day groups.
+  function dayLabel(date) {
+    const diff = Math.round((startOfDay(new Date()) - startOfDay(date)) / 86400000);
+    if (diff === 0) return 'Today';
+    if (diff === 1) return 'Yesterday';
+    return date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
+  function formatTime(date) {
+    return date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  }
+
+  function initialsFor(name) {
+    const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '?';
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  // Stable per-sender tint so the same person keeps the same avatar color.
+  function tintFor(name) {
+    const text = String(name || '');
+    let hash = 0;
+    for (let i = 0; i < text.length; i += 1) hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+    return `ocs-chat__avatar--tint-${(hash % 5) + 1}`;
+  }
+
+  function clearEmpty() {
+    const empty = document.getElementById('announcementChatEmpty');
+    if (empty) empty.remove();
+  }
+
+  function appendMessage({ sender, message, date }) {
+    clearEmpty();
+
+    const isSelf = sender === state.currentUserDisplayName;
+    const who = isSelf ? 'You' : (sender || 'Unknown');
+    const when = parseDate(date);
+
+    // Keep the log pinned to the bottom only if the reader is already there,
+    // so scrolling back through history isn't yanked away by a new message.
+    const wasAtBottom = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 40;
+
+    let continued;
+    if (when) {
+      const key = dayKey(when);
+      if (key !== state.lastDayKey) {
+        const separator = document.createElement('div');
+        separator.className = 'ocs-chat__day';
+        separator.setAttribute('role', 'separator');
+        separator.textContent = dayLabel(when);
+        messagesEl.appendChild(separator);
+        state.lastDayKey = key;
+        state.lastSender = null;
+      }
+      continued = who === state.lastSender && (when.getTime() - state.lastTime) < 5 * 60 * 1000;
+      state.lastTime = when.getTime();
+    } else {
+      continued = who === state.lastSender;
+    }
+
+    const row = document.createElement('div');
+    row.className = ['ocs-chat__msg', isSelf ? 'ocs-chat__msg--self' : '', continued ? 'ocs-chat__msg--continued' : '']
+      .filter(Boolean).join(' ');
+
+    const avatar = document.createElement('span');
+    avatar.className = ['ocs-chat__avatar', isSelf ? '' : tintFor(who)].filter(Boolean).join(' ');
+    avatar.textContent = initialsFor(isSelf ? (state.currentUserDisplayName || 'You') : who);
+    avatar.setAttribute('aria-hidden', 'true');
+
+    const main = document.createElement('div');
+    main.className = 'ocs-chat__main';
+
+    const meta = document.createElement('div');
+    meta.className = 'ocs-chat__meta';
+    const senderEl = document.createElement('span');
+    senderEl.className = 'ocs-chat__sender';
+    senderEl.textContent = who;
+    meta.appendChild(senderEl);
+    if (when) {
+      const timeEl = document.createElement('span');
+      timeEl.className = 'ocs-chat__time';
+      timeEl.textContent = formatTime(when);
+      meta.appendChild(timeEl);
+    }
+
+    const body = document.createElement('span');
+    body.className = 'ocs-chat__text';
+    renderMessageBody(body, message);
+
+    main.append(meta, body);
+    row.append(avatar, main);
+    messagesEl.appendChild(row);
+
+    state.lastSender = who;
+    if (wasAtBottom) messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    const previewUrl = firstUrlIn(message);
+    if (previewUrl) attachLinkPreview(previewUrl, main);
+  }
+
+  /* ── Link rendering + Slack-style unfurl ──────────────────────────────
+     URLs in a message become real links, and the first one gets a preview
+     card (title/description/thumbnail) fetched server-side via
+     /api/link-preview — the browser can't read another site's Open Graph
+     tags itself (CORS), so this always goes through the backend. */
+
+  function firstUrlIn(text) {
+    const match = String(text || '').match(URL_RE);
+    return match ? match[0] : null;
+  }
+
+  function renderMessageBody(container, text) {
+    const value = String(text || '');
+    const urls = value.match(URL_RE) || [];
+    const parts = value.split(URL_RE);
+    parts.forEach((part, i) => {
+      if (part) container.appendChild(document.createTextNode(part));
+      if (urls[i]) {
+        const a = document.createElement('a');
+        a.href = urls[i];
+        a.textContent = urls[i];
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        container.appendChild(a);
+      }
+    });
+  }
+
+  async function attachLinkPreview(url, afterEl) {
+    try {
+      let preview = linkPreviewCache.get(url);
+      if (!preview) {
+        const res = await fetch(`${javaURI}/api/link-preview?url=${encodeURIComponent(url)}`, fetchOptions);
+        if (!res.ok) return;
+        preview = await res.json();
+        linkPreviewCache.set(url, preview);
+      }
+      if (!preview || !preview.title || !afterEl.isConnected) return;
+
+      const card = document.createElement('a');
+      card.className = 'ocs-chat__unfurl';
+      card.href = preview.url || url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+
+      const thumb = document.createElement('div');
+      thumb.className = 'ocs-chat__unfurl-thumb';
+      if (preview.image) {
+        const img = document.createElement('img');
+        img.src = preview.image;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.onerror = () => { img.remove(); thumb.innerHTML = '<i class="fas fa-link" aria-hidden="true"></i>'; };
+        thumb.appendChild(img);
+      } else {
+        thumb.innerHTML = '<i class="fas fa-link" aria-hidden="true"></i>';
+      }
+
+      const previewBody = document.createElement('div');
+      previewBody.className = 'ocs-chat__unfurl-body';
+      const siteEl = document.createElement('span');
+      siteEl.className = 'ocs-chat__unfurl-site';
+      siteEl.textContent = preview.siteName || new URL(preview.url || url).hostname;
+      const titleEl = document.createElement('span');
+      titleEl.className = 'ocs-chat__unfurl-title';
+      titleEl.textContent = preview.title;
+      previewBody.append(siteEl, titleEl);
+      if (preview.description) {
+        const descEl = document.createElement('span');
+        descEl.className = 'ocs-chat__unfurl-desc';
+        descEl.textContent = preview.description;
+        previewBody.appendChild(descEl);
+      }
+
+      card.append(thumb, previewBody);
+      afterEl.appendChild(card);
+    } catch (err) {
+      console.warn('Announcement chat: link preview failed', err);
+    }
+  }
+
+  function appendSystem(text) {
+    clearEmpty();
+    const el = document.createElement('p');
+    el.className = 'ocs-chat__system';
+    el.textContent = text;
+    messagesEl.appendChild(el);
+    state.lastSender = null;
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function eventKey(event) {
+    return [event?.sender || '', event?.date || '', event?.message || ''].join('|');
+  }
+
+  /* ── Local preview mode ─────────────────────────────────────────────
+     Used when nobody is signed in (or the backbone is unreachable) so the
+     announcements panel stays visible and usable. Messages are kept in
+     localStorage for this browser only. */
+
+  function readPreviewMessages() {
+    try {
+      const raw = window.localStorage.getItem(PREVIEW_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+      console.warn('Announcement chat: preview history unavailable', err);
+      return [];
+    }
+  }
+
+  function writePreviewMessage(entry) {
+    try {
+      const messages = readPreviewMessages();
+      messages.push(entry);
+      window.localStorage.setItem(PREVIEW_KEY, JSON.stringify(messages.slice(-PREVIEW_LIMIT)));
+    } catch (err) {
+      console.warn('Announcement chat: could not save preview message', err);
+    }
+  }
+
+  /* ── Publishing a local backup into the live chat ─────────────────────
+     Opt-in only: signed-in users who still have preview-mode messages
+     saved from before this chat was connected to the backend (e.g. from
+     the window when this widget ran localStorage-only) can push them into
+     the real, shared chat. Never runs automatically. */
+
+  function archivePublishedMessages(sentEntries) {
+    try {
+      const raw = window.localStorage.getItem(PUBLISHED_KEY);
+      const existing = raw ? JSON.parse(raw) : [];
+      const archive = Array.isArray(existing) ? existing : [];
+      window.localStorage.setItem(PUBLISHED_KEY, JSON.stringify([...archive, ...sentEntries].slice(-PUBLISHED_LIMIT)));
+    } catch (err) {
+      console.warn('Announcement chat: could not archive published messages', err);
+    }
+  }
+
+  function removeFromPreview(sentEntries) {
+    const sentKeys = new Set(sentEntries.map(eventKey));
+    const remaining = readPreviewMessages().filter((msg) => !sentKeys.has(eventKey(msg)));
+    try {
+      if (remaining.length) window.localStorage.setItem(PREVIEW_KEY, JSON.stringify(remaining));
+      else window.localStorage.removeItem(PREVIEW_KEY);
+    } catch (err) {
+      console.warn('Announcement chat: could not update local backup after publish', err);
+    }
+  }
+
+  // Publishing goes over REST, not the STOMP send path sendMessage() uses:
+  // /api/groups/** is enforced server-side by Spring Security (auth required),
+  // where the STOMP /app/groups.chat path currently has no server-side auth
+  // at all. REST still broadcasts live to everyone connected — it flows
+  // through the same GroupChatRealtimeService.publishMessage() either way.
+  async function sendLiveMessage(sender, text, date) {
+    if (!state.backboneGroupId) return false;
+    try {
+      const res = await fetch(`${javaURI}/api/groups/chat/${state.backboneGroupId}/messages`, {
+        ...fetchOptions,
+        method: 'POST',
+        body: JSON.stringify({ name: sender, message: text, date, image: null }),
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Announcement chat: publish send failed', err);
+      return false;
+    }
+  }
+
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function updatePublishBanner() {
+    const pending = readPreviewMessages();
+    const eligible = state.mode === 'live' && pending.length > 0;
+    publishBannerEl.hidden = !eligible;
+    if (eligible) {
+      publishBannerTextEl.textContent =
+        `Found ${pending.length} message${pending.length === 1 ? '' : 's'} saved locally from before this chat was connected.`;
+    }
+  }
+
+  async function publishLocalBackup() {
+    const pending = readPreviewMessages();
+    if (!pending.length || state.mode !== 'live') return;
+
+    const ok = window.confirm(
+      `Publish ${pending.length} message${pending.length === 1 ? '' : 's'} from your local backup to the live class chat, `
+      + `as ${state.currentUserDisplayName}, with their original timestamps? Everyone in the class will see them. This can't be undone.`
+    );
+    if (!ok) return;
+
+    publishBtn.disabled = true;
+    const sent = [];
+    for (const entry of pending) {
+      if (!(await sendLiveMessage(state.currentUserDisplayName, entry.message, entry.date))) break;
+      sent.push(entry);
+      await delay(120);
+    }
+
+    if (sent.length) {
+      archivePublishedMessages(sent);
+      removeFromPreview(sent);
+    }
+
+    // Don't call updatePublishBanner() here — it would re-hide the banner the
+    // instant a full batch succeeds (no pending messages left), hiding this
+    // confirmation with it. It's shown again on next load only if something
+    // is still pending.
+    const failedCount = pending.length - sent.length;
+    publishBannerEl.hidden = false;
+    publishBannerTextEl.textContent = failedCount > 0
+      ? `Published ${sent.length} of ${pending.length} — ${failedCount} failed. Try again to resend the rest.`
+      : `Published ${sent.length} message${sent.length === 1 ? '' : 's'}.`;
+    publishBtn.disabled = false;
+    publishBtn.hidden = failedCount === 0;
+  }
+
+  publishBtn.addEventListener('click', publishLocalBackup);
+
+  function enterPreviewMode(reason) {
+    state.mode = 'preview';
+    state.currentUserDisplayName = 'You';
+    setStatus('preview', 'ocs-chat__status--preview');
+    showNote(`${reason} This is a local preview — messages stay in this browser and are not sent to the class.`);
+
+    readPreviewMessages().forEach((msg) => {
+      const key = eventKey(msg);
+      if (state.seenKeys.has(key)) return;
+      state.seenKeys.add(key);
+      appendMessage(msg);
+    });
+
+    setComposerEnabled(true);
+  }
+
+  async function resolveCurrentUser() {
+    try {
+      const res = await fetch(`${pythonURI}/api/id`, fetchOptions);
+      if (!res.ok) { console.warn('Announcement chat: /api/id HTTP', res.status); return false; }
+      const user = await res.json();
+      const name = user?.name || user?.uid || user?.github;
+      if (!name) return false;
+      state.currentUserDisplayName = name;
+      return true;
+    } catch (err) {
+      console.warn('Announcement chat: user lookup failed', err);
+      return false;
+    }
+  }
+
+  async function createGroup() {
+    const res = await fetch(`${javaURI}/api/groups`, {
+      ...fetchOptions,
+      method: 'POST',
+      body: JSON.stringify({ name: GROUP_NAME, period: '', course: COURSE, memberIds: [] }),
+    });
+    if (res.status === 201) {
+      const body = await res.json();
+      return Number(body?.id) || null;
+    }
+    // 409 = someone else created it a moment ago; fall through to re-search.
+    return null;
+  }
+
+  async function resolveBackboneGroup() {
+    const cacheKey = `__announcementChatGroupId_${COURSE}`;
+    if (window[cacheKey]) { state.backboneGroupId = window[cacheKey]; return true; }
+
+    const url = `${javaURI}/api/groups/search?name=${encodeURIComponent(GROUP_NAME)}`;
+    let res;
+    try { res = await fetch(url, fetchOptions); }
+    catch (err) { console.warn('Announcement chat: group lookup network error', err); return false; }
+    if (!res.ok) { console.warn('Announcement chat: group lookup HTTP', res.status); return false; }
+
+    let body;
+    try { body = await res.json(); }
+    catch (err) { console.warn('Announcement chat: group lookup non-JSON response', err); return false; }
+
+    let match = Array.isArray(body) ? body.find((g) => (g?.name || '') === GROUP_NAME) : body;
+
+    if (!match) {
+      const createdId = await createGroup();
+      if (createdId) {
+        state.backboneGroupId = createdId;
+        window[cacheKey] = createdId;
+        return true;
+      }
+      // Someone else beat us to creating it — re-search once.
+      try {
+        const retryRes = await fetch(url, fetchOptions);
+        if (retryRes.ok) {
+          const retryBody = await retryRes.json();
+          match = Array.isArray(retryBody) ? retryBody.find((g) => (g?.name || '') === GROUP_NAME) : retryBody;
+        }
+      } catch (err) { /* ignore, handled below */ }
+    }
+
+    const id = Number(match?.id);
+    if (!id) { console.warn('Announcement chat: could not resolve or create group', GROUP_NAME); return false; }
+    state.backboneGroupId = id;
+    window[cacheKey] = id;
+    return true;
+  }
+
+  async function loadHistory() {
+    if (!state.backboneGroupId) return;
+    try {
+      const res = await fetch(`${javaURI}/api/groups/chat/${state.backboneGroupId}/messages`, fetchOptions);
+      if (!res.ok) { console.warn('Announcement chat: history HTTP', res.status); return; }
+      const messages = await res.json();
+      (messages || []).forEach((msg) => {
+        const key = eventKey({ sender: msg.name, date: msg.date, message: msg.message });
+        if (state.seenKeys.has(key)) return;
+        state.seenKeys.add(key);
+        appendMessage({ sender: msg.name, message: msg.message, date: msg.date });
+      });
+    } catch (err) {
+      console.warn('Announcement chat: history load failed', err);
+    }
+  }
+
+  function handleIncoming(event) {
+    if (!event || event.context !== 'sendMessageServer') return;
+    const key = eventKey(event);
+    if (state.seenKeys.has(key)) return;
+    state.seenKeys.add(key);
+    appendMessage({ sender: event.sender, message: event.message, date: event.date });
+  }
+
+  function connect() {
+    return new Promise((resolve) => {
+      if (state.connected) return resolve(true);
+      if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') { return resolve(false); }
+      setStatus('connecting…');
+      const socket = new SockJS(buildChatSocketEndpoint());
+      const client = Stomp.over(socket);
+      client.debug = null;
+      state.stompClient = client;
+
+      client.connect({}, () => {
+        state.connected = true;
+        setStatus('connected', 'ocs-chat__status--live');
+        state.subscription = client.subscribe(`/topic/group/${state.backboneGroupId}`, (frame) => {
+          try { handleIncoming(JSON.parse(frame.body)); }
+          catch (err) { console.warn('Announcement chat: bad frame', err); }
+        });
+        resolve(true);
+      }, (err) => {
+        console.warn('Announcement chat: connection failed', err);
+        state.connected = false;
+        resolve(false);
+      });
+
+      socket.onclose = () => {
+        if (!state.connected) return;
+        state.connected = false;
+        setStatus('disconnected', 'ocs-chat__status--error');
+        setComposerEnabled(false);
+      };
+    });
+  }
+
+  function sendMessage(text) {
+    const date = new Date().toISOString();
+
+    if (state.mode === 'preview') {
+      const entry = { sender: state.currentUserDisplayName || 'You', message: text, date };
+      state.seenKeys.add(eventKey(entry));
+      writePreviewMessage(entry);
+      appendMessage(entry);
+      return true;
+    }
+
+    if (!state.connected || !state.stompClient || !state.backboneGroupId) return false;
+    const payload = {
+      context: 'sendMessage',
+      groupId: state.backboneGroupId,
+      sender: state.currentUserDisplayName || 'anonymous',
+      message: text,
+      image: null,
+      date,
+    };
+    try { state.stompClient.send('/app/groups.chat', {}, JSON.stringify(payload)); return true; }
+    catch (err) { console.error('Announcement chat: send failed', err); return false; }
+  }
+
+  async function init() {
+    if (state.initialized) return;
+    state.initialized = true;
+    setStatus('loading…');
+
+    const signedIn = await resolveCurrentUser();
+    if (!signedIn) {
+      enterPreviewMode('You are not signed in.');
+      return;
+    }
+
+    const ok = await resolveBackboneGroup();
+    if (!ok) {
+      enterPreviewMode('The class chat service is unreachable.');
+      return;
+    }
+
+    await loadHistory();
+
+    try { await loadChatLibraries(); }
+    catch (err) { console.warn('Announcement chat: library load failed', err); }
+
+    const connected = await connect();
+    if (connected) {
+      state.mode = 'live';
+      setComposerEnabled(true);
+      updatePublishBanner();
+    } else {
+      appendSystem('Live updates are unavailable right now.');
+      enterPreviewMode('The class chat service is unreachable.');
+    }
+  }
+
+  formEl.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = inputEl.value.trim();
+    if (!text) return;
+    if (sendMessage(text)) inputEl.value = '';
+  });
+
+  window.addEventListener('beforeunload', () => {
+    try {
+      if (state.subscription) state.subscription.unsubscribe();
+      if (state.stompClient && state.connected) state.stompClient.disconnect();
+    } catch (_) { /* ignore */ }
+  });
+
+  init();
+</script>
+
+ <!-- Week Chat: collapsible WebSocket chat scoped to a single sprint week. -->
+<!-- One group per (course, week), e.g. "csa-week-0", "csa-week-1". -->
+<!-- Include from sprint-week-card.html, which has `index` (week number) and -->
+<!-- `unitKey` (e.g. "Sprint1") in scope. Reuses the same STOMP/SockJS backend -->
+<!-- as _includes/lesson_chat.html and _includes/announcement_chat.html. The -->
+<!-- group is created automatically on first use if it doesn't exist yet. -->
+<!-- -->
+<!-- Signed-out visitors still get the full UI: the chat drops into a local -->
+<!-- "preview" mode backed by localStorage so the feature can be seen and -->
+<!-- exercised on every week card without a login. Preview messages never -->
+<!-- leave the browser and are clearly labelled as such. -->
+
+
+<details class="ocs-chat ocs-chat--compact ocs-chat--collapsible" data-week-key="w3">
+  <summary class="ocs-chat__summary">
+    <span class="ocs-chat__summary-icon"><i class="fas fa-comments"></i></span>
+    <span class="ocs-chat__summary-title">Week 3 Chat</span>
+    <span class="ocs-chat__status" id="weekChatStatusPill-w3">
+      <span class="ocs-chat__status-dot" aria-hidden="true"></span>
+      <span class="ocs-chat__status-label" id="weekChatStatus-w3">click to open</span>
+    </span>
+    <span class="ocs-chat__summary-caret"><i class="fas fa-chevron-down"></i></span>
+  </summary>
+  <div class="ocs-chat__body">
+    <p class="ocs-chat__banner ocs-chat__banner--warning" id="weekChatNote-w3" hidden>
+      <i class="fas fa-flask"></i><span id="weekChatNoteText-w3"></span>
+    </p>
+    <div class="ocs-chat__banner ocs-chat__banner--accent" id="weekChatPublishBanner-w3" hidden>
+      <div class="ocs-chat__banner-text">
+        <i class="fas fa-box-archive" aria-hidden="true"></i>
+        <span id="weekChatPublishBannerText-w3"></span>
+      </div>
+      <button type="button" class="ocs-btn ocs-btn--sm" id="weekChatPublishBtn-w3">
+        <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i><span>Publish</span>
+      </button>
+    </div>
+    <div class="ocs-chat__log" id="weekChatMessages-w3" aria-live="polite">
+      <p class="ocs-chat__empty" id="weekChatEmpty-w3">No messages yet.</p>
+    </div>
+    <form class="ocs-chat__composer" id="weekChatForm-w3" autocomplete="off">
+      <input class="ocs-input" id="weekChatInput-w3" type="text" placeholder="Ask a question about Week 3…" maxlength="2000" disabled>
+      <button class="ocs-btn ocs-btn--primary" id="weekChatSend-w3" type="submit" disabled>
+        <i class="fas fa-paper-plane"></i><span>Send</span>
+      </button>
+    </form>
+  </div>
+</details>
+
+<script type="module">
+  import { javaURI, pythonURI, fetchOptions } from '/Pages-JJ/assets/js/api/config.js';
+
+  const COURSE = "csa";
+  const WEEK_INDEX = 3;
+  const WC_ID = "w3";
+  const GROUP_NAME = `${COURSE}-week-${WEEK_INDEX}`;
+  const CHAT_SOCKET_PORT = 8589;
+  const PREVIEW_KEY = `ocs-chat-preview:${GROUP_NAME}`;
+  const PREVIEW_LIMIT = 100;
+  const PUBLISHED_KEY = `ocs-chat-published:${GROUP_NAME}`;
+  const PUBLISHED_LIMIT = 500;
+  const URL_RE = /https?:\/\/[^\s<>()]+/g;
+  const linkPreviewCache = new Map();
+
+  const SOCKJS_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js';
+  const STOMP_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js';
+
+  // Every week card includes this file, so load the chat libraries once per
+  // page and only when someone actually opens a chat.
+  function loadScriptOnce(src) {
+    window.__ocsChatScripts = window.__ocsChatScripts || {};
+    if (!window.__ocsChatScripts[src]) {
+      window.__ocsChatScripts[src] = new Promise((resolve, reject) => {
+        const el = document.createElement('script');
+        el.src = src;
+        el.onload = resolve;
+        el.onerror = () => reject(new Error(`failed to load ${src}`));
+        document.head.appendChild(el);
+      });
+    }
+    return window.__ocsChatScripts[src];
+  }
+
+  async function loadChatLibraries() {
+    await loadScriptOnce(SOCKJS_SRC);
+    await loadScriptOnce(STOMP_SRC);
+  }
+
+  function buildChatSocketEndpoint() {
+    const uri = new URL(javaURI);
+    if (uri.hostname === 'localhost' || uri.hostname === '127.0.0.1') {
+      return `${uri.protocol}//${uri.hostname}:${CHAT_SOCKET_PORT}/ws-chat`;
+    }
+    return javaURI + '/ws-chat';
+  }
+
+  const state = {
+    backboneGroupId: null,
+    stompClient: null,
+    subscription: null,
+    connected: false,
+    initialized: false,
+    mode: 'live', // 'live' once connected to the backend, 'preview' when local-only
+    currentUserDisplayName: 'You',
+    seenKeys: new Set(),
+  };
+
+  const detailsEl = document.querySelector(`details.ocs-chat[data-week-key="${WC_ID}"]`);
+  const statusEl = document.getElementById(`weekChatStatus-${WC_ID}`);
+  const statusPillEl = document.getElementById(`weekChatStatusPill-${WC_ID}`);
+  const noteEl = document.getElementById(`weekChatNote-${WC_ID}`);
+  const noteTextEl = document.getElementById(`weekChatNoteText-${WC_ID}`);
+  const messagesEl = document.getElementById(`weekChatMessages-${WC_ID}`);
+  const inputEl = document.getElementById(`weekChatInput-${WC_ID}`);
+  const sendBtn = document.getElementById(`weekChatSend-${WC_ID}`);
+  const formEl = document.getElementById(`weekChatForm-${WC_ID}`);
+  const publishBannerEl = document.getElementById(`weekChatPublishBanner-${WC_ID}`);
+  const publishBannerTextEl = document.getElementById(`weekChatPublishBannerText-${WC_ID}`);
+  const publishBtn = document.getElementById(`weekChatPublishBtn-${WC_ID}`);
+
+  function setStatus(text, tone) {
+    statusEl.textContent = text;
+    statusPillEl.classList.remove('ocs-chat__status--live', 'ocs-chat__status--preview', 'ocs-chat__status--error');
+    if (tone) statusPillEl.classList.add(tone);
+  }
+
+  function showNote(text) {
+    noteTextEl.textContent = text;
+    noteEl.hidden = false;
+  }
+
+  function setComposerEnabled(enabled) {
+    inputEl.disabled = !enabled;
+    sendBtn.disabled = !enabled;
+  }
+
+  function formatTimestamp(isoString) {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  }
+
+  function clearEmpty() {
+    const empty = document.getElementById(`weekChatEmpty-${WC_ID}`);
+    if (empty) empty.remove();
+  }
+
+  function appendMessage({ sender, message, date }) {
+    clearEmpty();
+    const who = sender === state.currentUserDisplayName ? 'You' : (sender || 'Unknown');
+    const when = formatTimestamp(date);
+
+  function initialsFor(name) {
+    const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '?';
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  // Stable per-sender tint, so the same person keeps the same avatar colour
+  // here and in the announcement chat.
+  function tintFor(name) {
+    const text = String(name || '');
+    let hash = 0;
+    for (let i = 0; i < text.length; i += 1) hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+    return `ocs-chat__avatar--tint-${(hash % 5) + 1}`;
+  }
+
+    const line = document.createElement('div');
+    const isSelf = who === 'You';
+    line.className = isSelf ? 'ocs-chat__msg ocs-chat__msg--self' : 'ocs-chat__msg';
+
+    // Same shape as the announcement chat: an avatar in the gutter and a
+    // column beside it. One message shape means one set of styles.
+    const avatar = document.createElement('span');
+    avatar.className = ['ocs-chat__avatar', isSelf ? '' : tintFor(who)].filter(Boolean).join(' ');
+    avatar.textContent = initialsFor(who);
+    avatar.setAttribute('aria-hidden', 'true');
+
+    const main = document.createElement('div');
+    main.className = 'ocs-chat__main';
+
+    const meta = document.createElement('div');
+    meta.className = 'ocs-chat__meta';
+    const senderEl = document.createElement('span');
+    senderEl.className = 'ocs-chat__sender';
+    senderEl.textContent = who;
+    meta.appendChild(senderEl);
+    if (when) {
+      const timeEl = document.createElement('span');
+      timeEl.className = 'ocs-chat__time';
+      timeEl.textContent = when;
+      meta.appendChild(timeEl);
+    }
+
+    const body = document.createElement('span');
+    body.className = 'ocs-chat__text';
+    renderMessageBody(body, message);
+
+    main.append(meta, body);
+    line.append(avatar, main);
+    messagesEl.appendChild(line);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    const previewUrl = firstUrlIn(message);
+    if (previewUrl) attachLinkPreview(previewUrl, main);
+  }
+
+  /* ── Link rendering + Slack-style unfurl ──────────────────────────────
+     URLs in a message become real links, and the first one gets a preview
+     card (title/description/thumbnail) fetched server-side via
+     /api/link-preview — the browser can't read another site's Open Graph
+     tags itself (CORS), so this always goes through the backend. */
+
+  function firstUrlIn(text) {
+    const match = String(text || '').match(URL_RE);
+    return match ? match[0] : null;
+  }
+
+  function renderMessageBody(container, text) {
+    const value = String(text || '');
+    const urls = value.match(URL_RE) || [];
+    const parts = value.split(URL_RE);
+    parts.forEach((part, i) => {
+      if (part) container.appendChild(document.createTextNode(part));
+      if (urls[i]) {
+        const a = document.createElement('a');
+        a.href = urls[i];
+        a.textContent = urls[i];
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        container.appendChild(a);
+      }
+    });
+  }
+
+  async function attachLinkPreview(url, afterEl) {
+    try {
+      let preview = linkPreviewCache.get(url);
+      if (!preview) {
+        const res = await fetch(`${javaURI}/api/link-preview?url=${encodeURIComponent(url)}`, fetchOptions);
+        if (!res.ok) return;
+        preview = await res.json();
+        linkPreviewCache.set(url, preview);
+      }
+      if (!preview || !preview.title || !afterEl.isConnected) return;
+
+      const card = document.createElement('a');
+      card.className = 'ocs-chat__unfurl';
+      card.href = preview.url || url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+
+      const thumb = document.createElement('div');
+      thumb.className = 'ocs-chat__unfurl-thumb';
+      if (preview.image) {
+        const img = document.createElement('img');
+        img.src = preview.image;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.onerror = () => { img.remove(); thumb.innerHTML = '<i class="fas fa-link" aria-hidden="true"></i>'; };
+        thumb.appendChild(img);
+      } else {
+        thumb.innerHTML = '<i class="fas fa-link" aria-hidden="true"></i>';
+      }
+
+      const previewBody = document.createElement('div');
+      previewBody.className = 'ocs-chat__unfurl-body';
+      const siteEl = document.createElement('span');
+      siteEl.className = 'ocs-chat__unfurl-site';
+      siteEl.textContent = preview.siteName || new URL(preview.url || url).hostname;
+      const titleEl = document.createElement('span');
+      titleEl.className = 'ocs-chat__unfurl-title';
+      titleEl.textContent = preview.title;
+      previewBody.append(siteEl, titleEl);
+      if (preview.description) {
+        const descEl = document.createElement('span');
+        descEl.className = 'ocs-chat__unfurl-desc';
+        descEl.textContent = preview.description;
+        previewBody.appendChild(descEl);
+      }
+
+      card.append(thumb, previewBody);
+      afterEl.appendChild(card);
+    } catch (err) {
+      console.warn('Week chat: link preview failed', err);
+    }
+  }
+
+  function appendSystem(text) {
+    clearEmpty();
+    const el = document.createElement('p');
+    el.className = 'ocs-chat__system';
+    el.textContent = text;
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function eventKey(event) {
+    return [event?.sender || '', event?.date || '', event?.message || ''].join('|');
+  }
+
+  /* ── Local preview mode ─────────────────────────────────────────────
+     Used when nobody is signed in (or the backbone is unreachable) so the
+     week chat is still visible and usable on every card. Messages are kept
+     in localStorage for this browser only. */
+
+  function readPreviewMessages() {
+    try {
+      const raw = window.localStorage.getItem(PREVIEW_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+      console.warn('Week chat: preview history unavailable', err);
+      return [];
+    }
+  }
+
+  function writePreviewMessage(entry) {
+    try {
+      const messages = readPreviewMessages();
+      messages.push(entry);
+      window.localStorage.setItem(PREVIEW_KEY, JSON.stringify(messages.slice(-PREVIEW_LIMIT)));
+    } catch (err) {
+      console.warn('Week chat: could not save preview message', err);
+    }
+  }
+
+  /* ── Publishing a local backup into the live chat ─────────────────────
+     Opt-in only: signed-in users who still have preview-mode messages
+     saved from before this chat was connected to the backend (e.g. from
+     the window when this widget ran localStorage-only) can push them into
+     the real, shared chat. Never runs automatically. */
+
+  function archivePublishedMessages(sentEntries) {
+    try {
+      const raw = window.localStorage.getItem(PUBLISHED_KEY);
+      const existing = raw ? JSON.parse(raw) : [];
+      const archive = Array.isArray(existing) ? existing : [];
+      window.localStorage.setItem(PUBLISHED_KEY, JSON.stringify([...archive, ...sentEntries].slice(-PUBLISHED_LIMIT)));
+    } catch (err) {
+      console.warn('Week chat: could not archive published messages', err);
+    }
+  }
+
+  function removeFromPreview(sentEntries) {
+    const sentKeys = new Set(sentEntries.map(eventKey));
+    const remaining = readPreviewMessages().filter((msg) => !sentKeys.has(eventKey(msg)));
+    try {
+      if (remaining.length) window.localStorage.setItem(PREVIEW_KEY, JSON.stringify(remaining));
+      else window.localStorage.removeItem(PREVIEW_KEY);
+    } catch (err) {
+      console.warn('Week chat: could not update local backup after publish', err);
+    }
+  }
+
+  // Publishing goes over REST, not the STOMP send path sendMessage() uses:
+  // /api/groups/** is enforced server-side by Spring Security (auth required),
+  // where the STOMP /app/groups.chat path currently has no server-side auth
+  // at all. REST still broadcasts live to everyone connected — it flows
+  // through the same GroupChatRealtimeService.publishMessage() either way.
+  async function sendLiveMessage(sender, text, date) {
+    if (!state.backboneGroupId) return false;
+    try {
+      const res = await fetch(`${javaURI}/api/groups/chat/${state.backboneGroupId}/messages`, {
+        ...fetchOptions,
+        method: 'POST',
+        body: JSON.stringify({ name: sender, message: text, date, image: null }),
+      });
+      return res.ok;
+    } catch (err) {
+      console.error('Week chat: publish send failed', err);
+      return false;
+    }
+  }
+
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function updatePublishBanner() {
+    const pending = readPreviewMessages();
+    const eligible = state.mode === 'live' && pending.length > 0;
+    publishBannerEl.hidden = !eligible;
+    if (eligible) {
+      publishBannerTextEl.textContent =
+        `Found ${pending.length} message${pending.length === 1 ? '' : 's'} saved locally from before this chat was connected.`;
+    }
+  }
+
+  async function publishLocalBackup() {
+    const pending = readPreviewMessages();
+    if (!pending.length || state.mode !== 'live') return;
+
+    const ok = window.confirm(
+      `Publish ${pending.length} message${pending.length === 1 ? '' : 's'} from your local backup to the live class chat, `
+      + `as ${state.currentUserDisplayName}, with their original timestamps? Everyone in the class will see them. This can't be undone.`
+    );
+    if (!ok) return;
+
+    publishBtn.disabled = true;
+    const sent = [];
+    for (const entry of pending) {
+      if (!(await sendLiveMessage(state.currentUserDisplayName, entry.message, entry.date))) break;
+      sent.push(entry);
+      await delay(120);
+    }
+
+    if (sent.length) {
+      archivePublishedMessages(sent);
+      removeFromPreview(sent);
+    }
+
+    // Don't call updatePublishBanner() here — it would re-hide the banner the
+    // instant a full batch succeeds (no pending messages left), hiding this
+    // confirmation with it. It's shown again on next load only if something
+    // is still pending.
+    const failedCount = pending.length - sent.length;
+    publishBannerEl.hidden = false;
+    publishBannerTextEl.textContent = failedCount > 0
+      ? `Published ${sent.length} of ${pending.length} — ${failedCount} failed. Try again to resend the rest.`
+      : `Published ${sent.length} message${sent.length === 1 ? '' : 's'}.`;
+    publishBtn.disabled = false;
+    publishBtn.hidden = failedCount === 0;
+  }
+
+  publishBtn.addEventListener('click', publishLocalBackup);
+
+  function enterPreviewMode(reason) {
+    state.mode = 'preview';
+    state.currentUserDisplayName = 'You';
+    setStatus('preview', 'ocs-chat__status--preview');
+    showNote(`${reason} This is a local preview — messages stay in this browser and are not sent to the class.`);
+
+    readPreviewMessages().forEach((msg) => {
+      const key = eventKey(msg);
+      if (state.seenKeys.has(key)) return;
+      state.seenKeys.add(key);
+      appendMessage(msg);
+    });
+
+    setComposerEnabled(true);
+    inputEl.focus();
+  }
+
+  async function resolveCurrentUser() {
+    try {
+      const res = await fetch(`${pythonURI}/api/id`, fetchOptions);
+      if (!res.ok) { console.warn('Week chat: /api/id HTTP', res.status); return false; }
+      const user = await res.json();
+      const name = user?.name || user?.uid || user?.github;
+      if (!name) return false;
+      state.currentUserDisplayName = name;
+      return true;
+    } catch (err) {
+      console.warn('Week chat: user lookup failed', err);
+      return false;
+    }
+  }
+
+  async function createGroup() {
+    const res = await fetch(`${javaURI}/api/groups`, {
+      ...fetchOptions,
+      method: 'POST',
+      body: JSON.stringify({ name: GROUP_NAME, period: '', course: COURSE, memberIds: [] }),
+    });
+    if (res.status === 201) {
+      const body = await res.json();
+      return Number(body?.id) || null;
+    }
+    return null;
+  }
+
+  async function resolveBackboneGroup() {
+    const cacheKey = `__weekChatGroupId_${GROUP_NAME}`;
+    if (window[cacheKey]) { state.backboneGroupId = window[cacheKey]; return true; }
+
+    const url = `${javaURI}/api/groups/search?name=${encodeURIComponent(GROUP_NAME)}`;
+    let res;
+    try { res = await fetch(url, fetchOptions); }
+    catch (err) { console.warn('Week chat: group lookup network error', err); return false; }
+    if (!res.ok) { console.warn('Week chat: group lookup HTTP', res.status); return false; }
+
+    let body;
+    try { body = await res.json(); }
+    catch (err) { console.warn('Week chat: group lookup non-JSON response', err); return false; }
+
+    let match = Array.isArray(body) ? body.find((g) => (g?.name || '') === GROUP_NAME) : body;
+
+    if (!match) {
+      const createdId = await createGroup();
+      if (createdId) {
+        state.backboneGroupId = createdId;
+        window[cacheKey] = createdId;
+        return true;
+      }
+      try {
+        const retryRes = await fetch(url, fetchOptions);
+        if (retryRes.ok) {
+          const retryBody = await retryRes.json();
+          match = Array.isArray(retryBody) ? retryBody.find((g) => (g?.name || '') === GROUP_NAME) : retryBody;
+        }
+      } catch (err) { /* ignore, handled below */ }
+    }
+
+    const id = Number(match?.id);
+    if (!id) { console.warn('Week chat: could not resolve or create group', GROUP_NAME); return false; }
+    state.backboneGroupId = id;
+    window[cacheKey] = id;
+    return true;
+  }
+
+  async function loadHistory() {
+    if (!state.backboneGroupId) return;
+    try {
+      const res = await fetch(`${javaURI}/api/groups/chat/${state.backboneGroupId}/messages`, fetchOptions);
+      if (!res.ok) { console.warn('Week chat: history HTTP', res.status); return; }
+      const messages = await res.json();
+      (messages || []).forEach((msg) => {
+        const key = eventKey({ sender: msg.name, date: msg.date, message: msg.message });
+        if (state.seenKeys.has(key)) return;
+        state.seenKeys.add(key);
+        appendMessage({ sender: msg.name, message: msg.message, date: msg.date });
+      });
+    } catch (err) {
+      console.warn('Week chat: history load failed', err);
+    }
+  }
+
+  function handleIncoming(event) {
+    if (!event || event.context !== 'sendMessageServer') return;
+    const key = eventKey(event);
+    if (state.seenKeys.has(key)) return;
+    state.seenKeys.add(key);
+    appendMessage({ sender: event.sender, message: event.message, date: event.date });
+  }
+
+  function connect() {
+    return new Promise((resolve) => {
+      if (state.connected) return resolve(true);
+      if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') { return resolve(false); }
+      setStatus('connecting…');
+      const socket = new SockJS(buildChatSocketEndpoint());
+      const client = Stomp.over(socket);
+      client.debug = null;
+      state.stompClient = client;
+
+      client.connect({}, () => {
+        state.connected = true;
+        setStatus('connected', 'ocs-chat__status--live');
+        state.subscription = client.subscribe(`/topic/group/${state.backboneGroupId}`, (frame) => {
+          try { handleIncoming(JSON.parse(frame.body)); }
+          catch (err) { console.warn('Week chat: bad frame', err); }
+        });
+        resolve(true);
+      }, (err) => {
+        console.warn('Week chat: connection failed', err);
+        state.connected = false;
+        resolve(false);
+      });
+
+      socket.onclose = () => {
+        if (!state.connected) return;
+        state.connected = false;
+        setStatus('disconnected', 'ocs-chat__status--error');
+        setComposerEnabled(false);
+      };
+    });
+  }
+
+  function sendMessage(text) {
+    const date = new Date().toISOString();
+
+    if (state.mode === 'preview') {
+      const entry = { sender: state.currentUserDisplayName || 'You', message: text, date };
+      state.seenKeys.add(eventKey(entry));
+      writePreviewMessage(entry);
+      appendMessage(entry);
+      return true;
+    }
+
+    if (!state.connected || !state.stompClient || !state.backboneGroupId) return false;
+    const payload = {
+      context: 'sendMessage',
+      groupId: state.backboneGroupId,
+      sender: state.currentUserDisplayName || 'anonymous',
+      message: text,
+      image: null,
+      date,
+    };
+    try { state.stompClient.send('/app/groups.chat', {}, JSON.stringify(payload)); return true; }
+    catch (err) { console.error('Week chat: send failed', err); return false; }
+  }
+
+  async function initOnce() {
+    if (state.initialized) return;
+    state.initialized = true;
+    setStatus('loading…');
+
+    const signedIn = await resolveCurrentUser();
+    if (!signedIn) {
+      enterPreviewMode('You are not signed in.');
+      return;
+    }
+
+    const ok = await resolveBackboneGroup();
+    if (!ok) {
+      enterPreviewMode('The class chat service is unreachable.');
+      return;
+    }
+
+    await loadHistory();
+
+    try { await loadChatLibraries(); }
+    catch (err) { console.warn('Week chat: library load failed', err); }
+
+    const connected = await connect();
+    if (connected) {
+      state.mode = 'live';
+      setComposerEnabled(true);
+      inputEl.focus();
+      updatePublishBanner();
+    } else {
+      appendSystem('Live updates are unavailable right now.');
+      enterPreviewMode('The class chat service is unreachable.');
+    }
+  }
+
+  detailsEl.addEventListener('toggle', () => {
+    if (detailsEl.open) initOnce();
+  });
+
+  formEl.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = inputEl.value.trim();
+    if (!text) return;
+    if (sendMessage(text)) inputEl.value = '';
+  });
+
+  window.addEventListener('beforeunload', () => {
+    try {
+      if (state.subscription) state.subscription.unsubscribe();
+      if (state.stompClient && state.connected) state.stompClient.disconnect();
+    } catch (_) { /* ignore */ }
+  });
+</script>
+
+</div>
