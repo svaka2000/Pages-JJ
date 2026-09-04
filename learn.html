@@ -812,6 +812,7 @@
   padding-inline: 0;
 }
 .ocs-card--interactive {
+  padding: 1rem;
   text-align: start;
   text-decoration: none;
   cursor: pointer;
@@ -2047,7 +2048,8 @@
   font-size: 0.875rem;
   font-weight: 700;
 }
-.ocs-chat__title {
+.ocs-chat__title.ocs-chat__title {
+  display: block;
   margin: 0;
   padding: 0;
   border-bottom: 0;
@@ -2679,7 +2681,8 @@
   gap: 0.75rem;
   padding: 1rem 1rem 0.75rem;
 }
-.ocs-chat-list__title {
+.ocs-chat-list__title.ocs-chat-list__title {
+  display: block;
   margin: 0;
   padding: 0;
   border-bottom: 0;
@@ -3117,6 +3120,7 @@ h2 {
 
 .q {
   position: relative;
+  padding: 1.25rem;
   text-align: start;
   font: inherit;
   color: inherit;
@@ -3159,6 +3163,7 @@ h2 {
 
 .brief {
   margin-block-start: 1.25rem;
+  padding: 1.25rem;
 }
 .brief .kicker {
   font-family: "Menlo", "Monaco", "Consolas", "Roboto Mono", "Ubuntu Mono", "Liberation Mono", "Courier New", monospace;
@@ -3892,8 +3897,8 @@ ol.steps li.on .tk {
     <div class="ocs-progress"><div class="ocs-progress__bar" id="xpbar" style="width:0%"></div></div>
   </div>
   <span class="ocs-badge ocs-badge--neutral" id="credtxt" title="Credits">0 cr</span>
-  <button class="ocs-btn ocs-btn--secondary ocs-btn--sm" id="shopbtn">Unlocks</button>
-  <button class="ocs-btn ocs-btn--secondary ocs-btn--sm" id="tokbtn" title="Ctrl/Cmd + K">Tokens</button>
+  <button class="ocs-btn ocs-btn--secondary" id="shopbtn">Unlocks</button>
+  <button class="ocs-btn ocs-btn--secondary" id="tokbtn" title="Ctrl/Cmd + K">Tokens</button>
 </div></header>
 
 <div class="wrap">
@@ -3911,7 +3916,7 @@ ol.steps li.on .tk {
     <div class="ph"><span class="lbl">your checklist</span>
       <span class="grp">
         <span class="ocs-badge ocs-badge--neutral" id="stepcount"></span>
-        <button class="ocs-btn ocs-btn--ghost ocs-btn--sm" id="targetbtn">Show target</button>
+        <button class="ocs-btn ocs-btn--ghost" id="targetbtn">Show target</button>
       </span></div>
     <ol class="steps" id="steps"></ol>
     <div class="targetbox" id="targetbox">
@@ -3925,8 +3930,8 @@ ol.steps li.on .tk {
     <div class="panel">
       <div class="ph"><span class="lbl">your scss</span>
         <span class="grp">
-          <button class="ocs-btn ocs-btn--ghost ocs-btn--sm" id="copy">Copy</button>
-          <button class="ocs-btn ocs-btn--ghost ocs-btn--sm" id="reset">Start over</button>
+          <button class="ocs-btn ocs-btn--ghost" id="copy">Copy</button>
+          <button class="ocs-btn ocs-btn--ghost" id="reset">Start over</button>
         </span></div>
       <div class="ed-wrap">
         <div class="gutter" id="gutter">1</div>
@@ -3977,7 +3982,7 @@ ol.steps li.on .tk {
         <div class="submit__code"><code id="subcode"></code>
           <button class="ocs-btn ocs-btn--ghost ocs-btn--sm" id="subcopy">Copy</button></div>
         <p class="submit__summary" id="subsummary"></p>
-        <button class="ocs-btn ocs-btn--secondary ocs-btn--sm" id="subfile">Download the full submission</button>
+        <button class="ocs-btn ocs-btn--secondary" id="subfile">Download the full submission</button>
         <p class="tiny">The receipt is a fingerprint of the code you actually wrote, so two
           identical submissions produce the same one. It is a receipt, not a lock &mdash;
           everything on this page runs in your browser, so treat it the way you would treat
@@ -4821,7 +4826,7 @@ function renderBrief(){
     <details class="concept"><summary>${e.concept.t}</summary>
       <div class="cbody">${e.concept.b}</div></details>
     <p class="goal"><b>Done when:</b> ${e.goal}</p>
-    <div class="hintbar"><button class="ocs-btn ocs-btn--secondary ocs-btn--sm" id="hint">Need a hint?</button>
+    <div class="hintbar"><button class="ocs-btn ocs-btn--secondary" id="hint">Need a hint?</button>
       <span class="tiny" id="hintleft"></span></div>
     <div class="hints" id="hintlist"></div>`;
   $('#hint').onclick=()=>{ if(hintLevel<e.hints.length){ hintLevel++; paintHints(); } };
