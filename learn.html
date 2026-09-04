@@ -3544,6 +3544,38 @@ textarea:focus-visible {
   margin-block-start: 0;
 }
 
+.coach {
+  margin: 0.75rem 0.75rem 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--ocs-accent-border);
+  border-radius: 10px;
+  background: var(--ocs-accent-bg);
+}
+.coach__h {
+  margin: 0 0 0.25rem;
+  color: var(--ocs-accent);
+  font-family: "Menlo", "Monaco", "Consolas", "Roboto Mono", "Ubuntu Mono", "Liberation Mono", "Courier New", monospace;
+  font-size: 0.69rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.coach__b {
+  margin: 0 0 0.75rem;
+  color: var(--ocs-text);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+.coach__b code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--ocs-surface-base);
+  font-family: "Menlo", "Monaco", "Consolas", "Roboto Mono", "Ubuntu Mono", "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85em;
+}
+.coach__b:last-child {
+  margin-bottom: 0;
+}
+
 ol.steps {
   list-style: none;
   margin: 0;
@@ -4069,6 +4101,10 @@ ol.steps li.on .tk {
         <button class="ocs-btn ocs-btn--ghost" id="targetbtn">Show target</button>
       </span></div>
     <ol class="steps" id="steps"></ol>
+
+    <!-- Always visible, never behind a button. A student who does not know
+         what to do next should not have to work out where to ask. -->
+    <div class="coach" id="coach"></div>
     <div class="targetbox" id="targetbox">
       <div class="ph"><span class="lbl">what it should look like</span></div>
       <div id="targetprev"></div>
@@ -4933,6 +4969,7 @@ function renderSteps(){
   box.innerHTML=e.steps.map((st,i)=>
     `<li class="${done[i]?'on':''}"><span class="tk">${done[i]?'&#10003;':i+1}</span>${st.label}</li>`).join('');
   $('#stepcount').textContent=done.filter(Boolean).length+'/'+e.steps.length;
+  paintCoach();
 }
 
 /* ---------- visual target ---------- */
@@ -5073,6 +5110,104 @@ function insertAtCursor(txt){
   editor.focus();syncGutter();run();saveDraft();
 }
 function saveDraft(){drafts[EXERCISES[active].id]=editor.value;store.set('drafts',drafts);}
+
+
+/* ---------- coach --------------------------------------------------------------
+   The page already knows everything a stuck student needs: which steps are
+   ticked, what the checker is complaining about, and the finished code. The
+   coach turns that into one instruction at a time, and will make the change
+   for you if reading it is not enough.
+
+   No API key, no network. An LLM is not what is missing here - the answer is
+   already on the page, it was just never said as a single next action.       */
+
+// The first line where the student's code differs from the finished version,
+// ignoring blank lines and whitespace-only changes.
+function nextDiff(){
+  const e = EXERCISES[active];
+  const cur  = editor.value.split('\n');
+  const want = (e.solution || '').split('\n');
+  const norm = s => s.replace(/\s+/g, ' ').trim();
+
+  for (let i = 0; i < want.length; i++){
+    if (norm(cur[i] ?? '') !== norm(want[i])) {
+      return {line: i + 1, from: cur[i] ?? '', to: want[i]};
+    }
+  }
+  // Same prefix but the student has extra lines at the end.
+  if (cur.length > want.length) return {line: want.length + 1, from: cur[want.length], to: null};
+  return null;
+}
+
+function coachAdvice(){
+  const e = EXERCISES[active];
+  if (progress[e.id]?.done) {
+    return {head: 'This one is done.', body: 'Pick the next quest above, or change the code and watch what happens.'};
+  }
+
+  // Which checklist step is still open? Its label is already written as an
+  // instruction, so it is the clearest thing to say.
+  const {css} = compileScss(editor.value);
+  let worstOk = true;
+  preview.querySelectorAll('*').forEach(el => {
+    const txt = (el.textContent || el.value || '').trim();
+    if (txt && !el.children.length && contrastOf(el) < 4.5) worstOk = false;
+  });
+  const open = e.steps.findIndex(st => { try { return !st.test(editor.value, css, worstOk); } catch { return true; } });
+
+  // The remaining difference from the finished code is the reliable guide, not
+  // the checklist. A quest is only solved when the code also compiles and the
+  // checker is quiet, and the steps can all tick before that is true - the
+  // last version of this stopped offering help at that point and left the
+  // student with an unclosed brace.
+  const d = nextDiff();
+  const head = open < 0 ? 'Nearly there' : `Step ${open + 1} of ${e.steps.length}`;
+
+  if (!d) {
+    return open < 0
+      ? {head: 'Every step is ticked.', body: 'If it has not turned green yet, read the Checks panel under the editor. Something in there is still marked as a problem.'}
+      : {head, body: e.steps[open].label};
+  }
+  if (d.to === null) {
+    return {head, body: `Delete line ${d.line}. It is not part of the answer.`, line: d.line};
+  }
+  if (!d.from.trim()) {
+    return {head, body: `Add this as line ${d.line}: <code>${esc(d.to.trim())}</code>`, line: d.line, apply: true};
+  }
+  return {
+    head,
+    body: `Change line ${d.line}. It says <code>${esc(d.from.trim())}</code> and it needs to say <code>${esc(d.to.trim())}</code>`,
+    line: d.line, apply: true
+  };
+}
+
+function esc(s){
+  return String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+
+// Apply just the one line the coach is talking about, so a student sees the
+// single change happen rather than the whole answer appearing at once.
+function coachApply(){
+  const d = nextDiff();
+  if (!d) return;
+  const lines = editor.value.split('\n');
+  if (d.to === null) lines.splice(d.line - 1, 1);
+  else lines[d.line - 1] = d.to;
+  editor.value = lines.join('\n');
+  syncGutter(); run(); saveDraft();
+  toast(`Line ${d.line} updated`);
+  paintCoach();
+}
+
+function paintCoach(){
+  const box = $('#coach'); if (!box) return;
+  const a = coachAdvice();
+  box.innerHTML =
+    `<p class="coach__h">${a.head}</p>
+     <p class="coach__b">${a.body}</p>` +
+    (a.apply ? `<button class="ocs-btn ocs-btn--primary ocs-btn--sm" id="coachdo">Do this line for me</button>` : '');
+  const b = $('#coachdo'); if (b) b.onclick = coachApply;
+}
 
 /* ---------- contrast meter ---------- */
 function paintMeter(){
