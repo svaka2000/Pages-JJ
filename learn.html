@@ -4111,10 +4111,9 @@ ol.steps li.on .tk {
           <button class="ocs-btn ocs-btn--ghost ocs-btn--sm" id="subcopy">Copy</button></div>
         <p class="submit__summary" id="subsummary"></p>
         <button class="ocs-btn ocs-btn--secondary" id="subfile">Download the full submission</button>
-        <p class="tiny">The receipt is a fingerprint of the code you actually wrote, so two
-          identical submissions produce the same one. It is a receipt, not a lock &mdash;
-          everything on this page runs in your browser, so treat it the way you would treat
-          any other work a student hands in.</p>
+        <p class="tiny">The code is made from the work you actually wrote. Hand in the same
+          work twice and you get the same code. It is a receipt, not a lock. Everything on
+          this page runs in your browser, so treat it like any other homework.</p>
       </div>
     </div>
   </div>
@@ -4311,13 +4310,13 @@ function runChecks(scss, compiled, previewRoot) {
   }
   if (!looksLikeCss) {
     return [{level:'error', title:'That is not CSS yet',
-      why:'CSS needs a selector, then curly braces, then <code>property: value;</code> lines inside them. Right now there is nothing the browser can read.',
-      fix:'Press <b>Start over</b> to get the starting code back, then change it a piece at a time.'}];
+      why:'A CSS rule needs a name, then curly braces, then lines like <code>property: value;</code> inside them. Right now there is nothing the browser can read.',
+      fix:'Press <b>Start over</b> to get the first version back. Then change one thing at a time.'}];
   }
   if (!compiled.trim()) {
     return [{level:'error', title:'Nothing compiled',
-      why:'There is text in the editor but no complete rule came out of it. Usually a missing <code>{</code>, <code>}</code> or <code>;</code>.',
-      fix:'Check that every <code>{</code> has a matching <code>}</code> and every line inside ends with <code>;</code>.'}];
+      why:'There is text in the editor, but no finished rule came out of it. Usually that means a missing <code>{</code>, <code>}</code> or <code>;</code>.',
+      fix:'Check that every <code>{</code> has a <code>}</code> to match. Every line inside should end with <code>;</code>.'}];
   }
 
   // 1. hardcoded colours where a token exists
@@ -4326,14 +4325,14 @@ function runChecks(scss, compiled, previewRoot) {
     const tok = TOKEN_SUGGEST[h];
     notes.push({
       level:'warn', title:`Hardcoded colour ${h}`,
-      why:'A hex code never changes. var(--ocs-accent) follows whatever accent colour the reader picked in preferences, so the button stays theirs.',
+      why:'A hex code is fixed forever. var(--ocs-accent) changes to whatever colour the reader picked, so the button matches them.',
       fix: tok ? `Swap it for <code>var(${tok})</code>.` : 'Use one of the --ocs-* tokens, or add a new one to _tokens.scss if none fits.'
     });
   }
   if ((scss.match(/rgb\(|rgba\(|hsl\(/gi)||[]).length) {
     notes.push({level:'warn',title:'Literal rgb()/hsl() colour',
       why:'Same problem as a hex code. It won\'t respond to the theme.',
-      fix:'Reach for a --ocs-* token. If you need transparency, color-mix(in srgb, var(--ocs-brand) 20%, transparent) keeps it themeable.'});
+      fix:'Use a --ocs-* token instead. If you need it see-through, color-mix(in srgb, var(--ocs-brand) 20%, transparent) still follows the theme.'});
   }
 
   // 2. background without a paired foreground
@@ -4341,21 +4340,21 @@ function runChecks(scss, compiled, previewRoot) {
   const setsFg = /(^|[^-])color\s*:/.test(src);
   if (setsBg && !setsFg) {
     notes.push({level:'warn',title:'Background set, text colour not set',
-      why:'Every background in this system ships with the text colour meant to sit on it. Setting only one half is how unreadable combinations happen.',
-      fix:'Add the matching foreground, e.g. background: var(--ocs-brand); color: var(--ocs-brand-contrast);'});
+      why:'Every background token has a matching text token. Set only one and you can end up with text nobody can read.',
+      fix:'Add the matching text colour. For example: background: var(--ocs-brand); color: var(--ocs-brand-contrast);'});
   }
 
   // 3. focus handling
   if (/outline\s*:\s*none/.test(src) && !/focus-visible/.test(src)) {
     notes.push({level:'error',title:'Focus outline removed with nothing replacing it',
-      why:'That outline is how a keyboard user knows where they are on the page. Removing it without a replacement makes the component unusable without a mouse.',
+      why:'That outline shows keyboard users where they are. Take it away and put nothing back, and the page cannot be used without a mouse.',
       fix:'If you must remove it, add a :focus-visible style with a visible ring. There is a shared one: @include focus-ring; or box-shadow: var(--ocs-focus-ring);'});
   }
 
   // 4. motion
   if (/transition\s*:\s*all/.test(src)) {
     notes.push({level:'info',title:'transition: all',
-      why:'It animates every property that changes, including ones you did not intend, which costs performance and can cause odd flashes.',
+      why:'It animates every property that changes, including ones you never meant to animate. That is slower, and it can cause odd flashes.',
       fix:'Name the properties: transition: background-color var(--ocs-duration-fast) var(--ocs-ease);'});
   }
   if (/transform|animation|transition/.test(src) && !/prefers-reduced-motion/.test(src)) {
@@ -4457,7 +4456,7 @@ const EXERCISES = [
  {id:0, ch:0, badge:'Start', title:'Change one word',
   learn:'What CSS is, in about thirty seconds.',
   concept:{t:'What am I even looking at?',
-    b:'CSS is how you tell a browser what things should look like. It comes in three parts: <b>who</b> to style (<code>.ocs-demo-btn</code>, the selector), <b>what</b> to change (<code>background</code>, the property), and <b>the value</b> (<code>red</code>). Change the value and the button changes. That is the whole idea.'},
+    b:'CSS is how you tell a browser what something should look like. It has three parts. First, <b>what</b> you are styling: <code>.ocs-demo-btn</code>. Second, <b>which part</b> of it you are changing: <code>background</code>. Third, <b>what to change it to</b>: <code>red</code>. Change that last part and the button changes.'},
   brief:'The button on the right is red. Find the word <code>red</code> in the editor and change it to <code>blue</code>. Watch the preview as you type.',
   steps:[{label:'Change <code>red</code> to <code>blue</code>', test:s=>/background\s*:\s*blue/i.test(s)}],
   hints:['Look at line 2. Delete the word <code>red</code> and type <code>blue</code> in its place.',
@@ -4482,10 +4481,10 @@ const EXERCISES = [
   pass: s => /background\s*:\s*blue/i.test(s)},
 /* ============================ CHAPTER 1 ============================ */
  {id:1, ch:1, badge:'Tokens', title:'Use a token, not a hex code',
-  learn:'Why a hardcoded colour can never follow someone’s theme.',
+  learn:'Why a typed-in colour can never follow the reader’s own.',
   concept:{t:'What is a design token?',
-    b:'A token is a colour, size or spacing value that has a name. Instead of typing <code>#E06665</code> in forty places, you write <code>var(--ocs-accent)</code> and change it in one place. Pages has 78 of them.'},
-  brief:'This button has its colours typed in directly. When a reader picks their own accent colour in preferences, the button ignores them completely. Swap both colours for tokens.',
+    b:'A token is a colour or a size that has a name. Instead of typing <code>#E06665</code> in forty places, you write <code>var(--ocs-accent)</code> everywhere. Then you only have to change it once. Pages has 78 tokens.'},
+  brief:'The colours on this button are typed in by hand. A reader can pick their own colour in preferences, but this button ignores it. Swap both colours for tokens.',
   steps:[
     {label:'Swap the background for <code>var(--ocs-accent)</code>', test:s=>/background[^;]*var\(--ocs-accent\)/.test(s)},
     {label:'Swap the text colour for <code>var(--ocs-accent-contrast)</code>', test:s=>/color\s*:[^;]*var\(--ocs-accent-contrast\)/.test(s)},
@@ -4501,7 +4500,7 @@ const EXERCISES = [
   border-radius: 8px;
 }`,
   html:`<button class="ocs-demo-btn">Save changes</button>`,
-  goal:'No hex codes left, and the button still reads clearly.',
+  goal:'No hex codes left, and the text is still easy to read.',
   solution:`.ocs-demo-btn {
   background: var(--ocs-accent);
   color: var(--ocs-accent-contrast);
@@ -4512,10 +4511,10 @@ const EXERCISES = [
   pass: s => !/#[0-9a-f]{3,8}/i.test(s) && /var\(--ocs-/.test(s)},
 
  {id:2, ch:1, badge:'Pairing', title:'Pair a background with its text',
-  learn:'Why every background token has a partner.',
+  learn:'Every background colour has a matching text colour.',
   concept:{t:'Why colours come in pairs',
-    b:'Every background token is defined next to the text colour meant to sit on it. Because you always grab the pair, you can’t accidentally end up with grey text on a grey button. It is the idea this whole system is built on.'},
-  brief:'This card sets a background but never says what colour the text should be, so the text just inherits whatever the page was using. Set both halves.',
+    b:'Every background token has a matching text token right next to it. Take both and the text is always readable. That is how you avoid grey text on a grey button.'},
+  brief:'This card has a background colour but no text colour. So the text stays whatever colour the page was already using. Set the text colour too.',
   steps:[
     {label:'Use a background token', test:s=>/background[^;]*var\(--ocs-/.test(s)},
     {label:'Set a text colour from a token', test:s=>/(^|[^-])color\s*:[^;]*var\(--ocs-/m.test(s)},
@@ -4529,7 +4528,7 @@ const EXERCISES = [
   border-radius: 12px;
 }`,
   html:`<div class="ocs-demo-card">Two assignments due this week</div>`,
-  goal:'Background and text both from tokens, contrast clears 4.5:1.',
+  goal:'Background and text both from tokens, and the text is readable.',
   solution:`.ocs-demo-card {
   background: var(--ocs-accent-bg);
   color: var(--ocs-text);
@@ -4539,10 +4538,10 @@ const EXERCISES = [
   pass: s => /background[^;]*var\(--ocs-/.test(s) && /(^|[^-])color\s*:[^;]*var\(--ocs-/m.test(s)},
 
  {id:3, ch:1, badge:'Theming', title:'Make the hover follow the theme',
-  learn:'Deriving a colour in the browser instead of freezing it.',
-  concept:{t:'Build time vs the browser',
-    b:'Sass runs on a build server before anyone visits. Anything it calculates gets frozen into the CSS file. <code>color-mix()</code> runs in the browser instead, so it can react to whatever accent colour the reader picked. That is the difference between a hover that follows the theme and one that does not.'},
-  brief:'This hover uses a second colour typed in by hand, so it drifts away from the button as soon as someone changes their accent. <code>color-mix()</code> blends two colours live in the browser.',
+  learn:'Work out a colour in the browser instead of fixing it in advance.',
+  concept:{t:'Two places a colour can be worked out',
+    b:'Sass runs once, before anyone opens the page. Whatever it works out gets written into the CSS file and never changes. <code>color-mix()</code> runs in the browser instead. It sees the colour the reader picked, so the hover matches it.'},
+  brief:'The hover colour here is typed in by hand. Change the button colour and the hover no longer matches it. <code>color-mix()</code> mixes two colours in the browser, so the hover can follow.',
   steps:[
     {label:'Remove the hardcoded hover colour', test:s=>!/#[0-9a-f]{3,8}/i.test(s)},
     {label:'Use <code>color-mix()</code> in the hover', test:s=>/color-mix/.test(s)},
@@ -4562,7 +4561,7 @@ const EXERCISES = [
   }
 }`,
   html:`<button class="ocs-demo-btn">Hover over me</button>`,
-  goal:'Hover derived with color-mix() from var(--ocs-accent), no hex.',
+  goal:'The hover uses color-mix() with var(--ocs-accent). No hex codes.',
   solution:`.ocs-demo-btn {
   background: var(--ocs-accent);
   color: var(--ocs-accent-contrast);
@@ -4578,10 +4577,10 @@ const EXERCISES = [
 
 /* ============================ CHAPTER 2 ============================ */
  {id:4, ch:2, badge:'Nesting', title:'Build a variant with &',
-  learn:'The SCSS <code>&</code> operator, and why variants are named this way.',
+  learn:'The <code>&</code> shortcut, and how components are named.',
   concept:{t:'The & operator',
-    b:'Inside a rule, <code>&</code> means "the selector I am currently in". So <code>&--ghost</code> inside <code>.ocs-demo-btn</code> compiles to <code>.ocs-demo-btn--ghost</code> — a separate class, not a descendant. That double-dash naming is how this codebase marks a variant.'},
-  brief:'Add a ghost variant: see-through background, coloured text, visible border. Use <code>&</code> so it compiles to a modifier class.',
+    b:'Inside a rule, <code>&</code> means the name of the rule you are already in. So <code>&--ghost</code> inside <code>.ocs-demo-btn</code> becomes <code>.ocs-demo-btn--ghost</code>. That is a second class, not something inside the first one. Two dashes is how this codebase names a different version of a component.'},
+  brief:'Add a second version of this button. It should have no background fill, coloured text, and a visible border. Use <code>&</code> so it becomes its own class.',
   steps:[
     {label:'Add a nested block starting with <code>&--ghost</code>', test:s=>/&--ghost/.test(s)},
     {label:'It compiles to <code>.ocs-demo-btn--ghost</code>', test:(s,c)=>/\.ocs-demo-btn--ghost/.test(c)},
@@ -4600,7 +4599,7 @@ const EXERCISES = [
 }`,
   html:`<button class="ocs-demo-btn">Primary</button>
 <button class="ocs-demo-btn demo-btn--ghost">Ghost</button>`,
-  goal:'A &--ghost block that compiles to .ocs-demo-btn--ghost.',
+  goal:'A &--ghost block that becomes .ocs-demo-btn--ghost.',
   solution:`.ocs-demo-btn {
   background: var(--ocs-accent);
   color: var(--ocs-accent-contrast);
@@ -4617,10 +4616,10 @@ const EXERCISES = [
   pass: (s,c) => /&--ghost/.test(s) && /\.ocs-demo-btn--ghost/.test(c)},
 
  {id:5, ch:2, badge:'Focus', title:'Give it a focus ring',
-  learn:'How keyboard users find their place on a page.',
+  learn:'How someone using a keyboard knows where they are.',
   concept:{t:'focus vs focus-visible',
-    b:'<code>:focus</code> matches whenever an element is focused, including from a mouse click, which is why people delete the outline — it looks noisy. <code>:focus-visible</code> only matches when the browser thinks the user needs to see it, usually keyboard navigation. Use it and you keep the outline where it matters without the visual noise.'},
-  brief:'Browsers draw an outline around whatever you tabbed to. This input deletes it and puts nothing back, so a keyboard user is lost. Add a replacement that shows for keyboard users but not mouse clicks.',
+    b:'<code>:focus</code> fires for mouse clicks too. That makes the outline show up when nobody needs it, so people delete it. <code>:focus-visible</code> only fires when the browser thinks you need to see it. That usually means you are using the keyboard. Use that one instead.'},
+  brief:'When you press Tab, the browser draws an outline around whatever you landed on. This input removes that outline and puts nothing in its place. Someone using the keyboard now has no idea where they are. Add an outline back for keyboard users only.',
   steps:[
     {label:'Use <code>:focus-visible</code> instead of <code>:focus</code>', test:s=>/focus-visible/.test(s)},
     {label:'Add something you can actually see', test:s=>/box-shadow|outline\s*:\s*(?!none)/.test(s)}],
@@ -4639,7 +4638,7 @@ const EXERCISES = [
   }
 }`,
   html:`<input class="ocs-demo-input" value="Press Tab to reach me">`,
-  goal:'Uses :focus-visible with something visible. Tab to it in the preview.',
+  goal:'Uses :focus-visible, and you can see it. Press Tab in the preview.',
   solution:`.ocs-demo-input {
   background: var(--ocs-surface-raised);
   color: var(--ocs-text);
@@ -4655,10 +4654,10 @@ const EXERCISES = [
   pass: s => /focus-visible/.test(s) && /(box-shadow|outline\s*:\s*(?!none))/.test(s)},
 
  {id:6, ch:2, badge:'Disabled', title:'Style the disabled state',
-  learn:'Styling from the attribute the browser already knows about.',
+  learn:'Style the state the browser already knows about.',
   concept:{t:'Style from state, not a class',
-    b:'A disabled button already carries the <code>disabled</code> attribute, which screen readers announce. If you style a separate <code>.is-disabled</code> class instead, the two can drift apart — something can look disabled but still be clickable. Style <code>&:disabled</code> and they can never disagree.'},
-  brief:'This button looks identical whether it works or not. Style the real <code>:disabled</code> state so it clearly cannot be clicked. Do not add a new class.',
+    b:'A disabled button already has the <code>disabled</code> attribute. Screen readers read that attribute out. If you make your own <code>.is-disabled</code> class instead, you now have two things to keep in step. Forget one and a button looks disabled but still works. Style <code>&:disabled</code> and there is only one thing to get right.'},
+  brief:'This button looks the same whether it works or not. Style the real <code>:disabled</code> state so you can tell. Do not add a new class.',
   steps:[
     {label:'Add a <code>&:disabled</code> block', test:s=>/&:disabled|:disabled/.test(s)},
     {label:'It compiles to <code>.ocs-demo-btn:disabled</code>', test:(s,c)=>/\.ocs-demo-btn:disabled/.test(c)},
@@ -4678,7 +4677,7 @@ const EXERCISES = [
 }`,
   html:`<button class="ocs-demo-btn">Works</button>
 <button class="ocs-demo-btn" disabled>Disabled</button>`,
-  goal:'A &:disabled block. The second button should look clearly unavailable.',
+  goal:'A &:disabled block. The second button should look like you cannot click it.',
   solution:`.ocs-demo-btn {
   background: var(--ocs-accent);
   color: var(--ocs-accent-contrast);
@@ -4695,10 +4694,10 @@ const EXERCISES = [
   pass: (s,c) => /&:disabled|:disabled/.test(s) && /\.ocs-demo-btn:disabled/.test(c)},
 
  {id:7, ch:2, badge:'Spacing', title:'Use the spacing scale',
-  learn:'Why padding comes from a scale instead of whatever looks right.',
+  learn:'Why spacing comes from a fixed set of sizes.',
   concept:{t:'The spacing scale',
-    b:'Pages has eleven spacing tokens, from <code>--ocs-space-1</code> (0.25rem) up to <code>--ocs-space-16</code> (4rem). Picking from a scale instead of typing numbers is why a page feels ordered rather than slightly off. It is the same reason music uses notes and not any frequency.'},
-  brief:'This card uses numbers somebody guessed: 13px, 19px, 7px. Replace every one with a token from the spacing scale. Pick the nearest step.',
+    b:'Pages has eleven spacing sizes. They run from <code>--ocs-space-1</code> at 0.25rem up to <code>--ocs-space-16</code> at 4rem. Picking from a fixed set keeps every gap on the page related. Typing your own numbers is what makes a layout feel slightly off.'},
+  brief:'The spacing on this card was guessed: 13px, 19px, 7px. Swap each one for a spacing token. Pick the closest size.',
   steps:[
     {label:'Replace the padding numbers with spacing tokens', test:s=>/padding[^;]*var\(--ocs-space-/.test(s)},
     {label:'Replace the gap number too', test:s=>/gap[^;]*var\(--ocs-space-/.test(s)},
@@ -4716,7 +4715,7 @@ const EXERCISES = [
   gap: 7px;
 }`,
   html:`<div class="ocs-demo-card"><b>Unit 3</b><span>due Friday</span></div>`,
-  goal:'No raw pixel values left in padding or gap.',
+  goal:'No pixel numbers left in padding or gap.',
   solution:`.ocs-demo-card {
   background: var(--ocs-surface-raised);
   color: var(--ocs-text);
@@ -4730,10 +4729,10 @@ const EXERCISES = [
 
 /* ============================ CHAPTER 3 ============================ */
  {id:8, ch:3, badge:'Badge', title:'Build a status badge',
-  learn:'Composing a small component from scratch.',
-  concept:{t:'Small components carry the most weight',
-    b:'A badge appears hundreds of times across a site, so its details matter more than a hero image. Pill radius, tight padding, small bold text, and a tinted background that keeps its text readable.'},
-  brief:'Build a badge from nothing. It should be a pill shape with a tinted success background, readable text, small type, and spacing from the scale.',
+  learn:'Build a small component from an empty rule.',
+  concept:{t:'Small things get seen the most',
+    b:'A badge shows up hundreds of times on a site. A big hero image shows up once. So the small details here matter more. You need a pill shape, tight padding, small bold text, and a background the text stays readable on.'},
+  brief:'Build a badge from an empty rule. Make it a pill shape. Give it a soft green background and text you can read on it. Use small text and spacing from the scale.',
   steps:[
     {label:'Make it a pill with <code>--ocs-radius-full</code>', test:s=>/radius-full/.test(s)},
     {label:'Use the success colour set', test:s=>/var\(--ocs-success/.test(s)},
@@ -4746,7 +4745,7 @@ const EXERCISES = [
   // build it from here
 }`,
   html:`<span class="ocs-demo-badge">Passing</span>`,
-  goal:'Pill-shaped, tokenized colours, spacing from the scale, contrast clears.',
+  goal:'Pill shape, colours from tokens, spacing from the scale, and readable text.',
   solution:`.ocs-demo-badge {
   display: inline-block;
   background: var(--ocs-success-bg);
@@ -4760,10 +4759,10 @@ const EXERCISES = [
   pass: s => /radius-full/.test(s) && /var\(--ocs-success/.test(s) && /var\(--ocs-space-/.test(s)},
 
  {id:9, ch:3, badge:'Alert', title:'Build an alert with a border accent',
-  learn:'Using a border to carry meaning, not just decoration.',
-  concept:{t:'Encode meaning in more than colour',
-    b:'Around 1 in 12 people cannot reliably tell red from green. If the only difference between your warning and your success message is hue, those readers get nothing. A thick left border, an icon, or a word all add a second signal.'},
-  brief:'Build a warning alert. Tinted background, a thick left border in the warning colour, readable text, and padding from the scale.',
+  learn:'Use a border to say something, not just to decorate.',
+  concept:{t:'Never let colour be the only clue',
+    b:'About 1 in 12 people cannot tell red from green. Say your warning is red and your success message is green. If that colour is the only difference, those readers see no difference at all. Add something else as well: a thick border, an icon, or just the word.'},
+  brief:'Build a warning box. Give it a soft background and a thick left border in the warning colour. The text needs to be readable. Use padding from the scale.',
   steps:[
     {label:'Add a thick <code>border-left</code>', test:s=>/border-left/.test(s)},
     {label:'Use the warning colour set', test:s=>/var\(--ocs-warning/.test(s)},
@@ -4775,7 +4774,7 @@ const EXERCISES = [
   // build it from here
 }`,
   html:`<div class="ocs-demo-alert"><b>Heads up.</b> Your last submission had no tests.</div>`,
-  goal:'Tinted background, warning-coloured left border, tokenized spacing.',
+  goal:'Soft background, warning-coloured left border, spacing from tokens.',
   solution:`.ocs-demo-alert {
   background: var(--ocs-warning-bg);
   color: var(--ocs-text);
@@ -4786,10 +4785,10 @@ const EXERCISES = [
   pass: s => /border-left/.test(s) && /var\(--ocs-warning/.test(s) && /var\(--ocs-space-/.test(s)},
 
  {id:10, ch:3, badge:'Motion', title:'Respect reduced motion',
-  learn:'Making animation optional for people who need it to be.',
+  learn:'Let people switch the movement off.',
   concept:{t:'prefers-reduced-motion',
-    b:'Some people get motion sickness or migraines from movement on screen, so operating systems have a setting to reduce it. The browser passes that through as a media query. Nothing in the current OCS stylesheets checks for it, and 71 rules animate. Yours should be different.'},
-  brief:'This button lifts and grows on hover. Keep the effect for people who want it, but turn the movement off for anyone who has asked their system to reduce motion.',
+    b:'Movement on screen gives some people motion sickness or migraines. Every operating system has a setting to turn it down. The browser tells your CSS about that setting. Nothing in the current OCS stylesheets checks for it, and 71 rules animate. Yours should.'},
+  brief:'This button lifts and grows when you hover it. Keep that for people who like it. Turn the movement off for anyone who has asked their computer for less motion.',
   steps:[
     {label:'Add a <code>@media (prefers-reduced-motion: reduce)</code> block', test:s=>/prefers-reduced-motion/.test(s)},
     {label:'Switch the movement off inside it', test:s=>/(transform|transition)\s*:\s*none/.test(s)}],
@@ -4809,7 +4808,7 @@ const EXERCISES = [
   // make the movement optional here
 }`,
   html:`<button class="ocs-demo-btn">Hover me</button>`,
-  goal:'A prefers-reduced-motion block that switches the movement off.',
+  goal:'A prefers-reduced-motion block that turns the movement off.',
   solution:`.ocs-demo-btn {
   background: var(--ocs-accent);
   color: var(--ocs-accent-contrast);
