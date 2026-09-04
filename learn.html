@@ -3551,18 +3551,29 @@ textarea:focus-visible {
 }
 
 .coach {
-  margin: 0.75rem 0.75rem 0.75rem;
+  margin: 0.75rem;
   padding: 1rem;
   border: 1px solid var(--ocs-accent-border);
   border-radius: 10px;
   background: var(--ocs-accent-bg);
 }
-.coach__h {
-  margin: 0 0 0.25rem;
+.coach__top {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-block-end: 0.5rem;
+}
+.coach__name {
   color: var(--ocs-accent);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.coach__step {
+  margin-inline-start: auto;
+  color: var(--ocs-text-muted);
   font-family: "Menlo", "Monaco", "Consolas", "Roboto Mono", "Ubuntu Mono", "Liberation Mono", "Courier New", monospace;
   font-size: 0.69rem;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 .coach__b {
@@ -3578,8 +3589,76 @@ textarea:focus-visible {
   font-family: "Menlo", "Monaco", "Consolas", "Roboto Mono", "Ubuntu Mono", "Liberation Mono", "Courier New", monospace;
   font-size: 0.85em;
 }
-.coach__b:last-child {
-  margin-bottom: 0;
+.coach__log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-block-size: 15rem;
+  overflow-y: auto;
+}
+.coach__log:not(:empty) {
+  margin-block: 0.75rem;
+  padding-block-start: 0.75rem;
+  border-block-start: 1px solid var(--ocs-accent-border);
+}
+.coach__msg {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.coach__msg code {
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+  background: var(--ocs-surface-raised);
+  font-family: "Menlo", "Monaco", "Consolas", "Roboto Mono", "Ubuntu Mono", "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85em;
+}
+.coach__msg--you {
+  align-self: flex-end;
+  max-inline-size: 85%;
+  background: var(--ocs-accent);
+  color: var(--ocs-accent-contrast);
+}
+.coach__msg--coach {
+  background: var(--ocs-surface-base);
+  color: var(--ocs-text);
+}
+.coach__wait {
+  color: var(--ocs-text-muted);
+  font-style: italic;
+}
+.coach__ask {
+  display: flex;
+  gap: 0.5rem;
+  margin-block-start: 0.75rem;
+}
+.coach__ask .ocs-input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+.coach__set {
+  margin-block-start: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--ocs-text-muted);
+}
+.coach__set summary {
+  cursor: pointer;
+}
+.coach__set p {
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+.coach__setrow {
+  display: flex;
+  gap: 0.5rem;
+}
+.coach__setrow .ocs-input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+.coach__hintline {
+  margin-block-end: 0 !important;
 }
 
 ol.steps {
@@ -5071,7 +5150,7 @@ function renderChapters(){
       toast('Finish the chapter before this one first');
       return;
     }
-    active = +b.dataset.i; hintLevel = 0; load();
+    active = +b.dataset.i; hintLevel = 0; coachThread = []; load();
     briefEl.scrollIntoView({block:'start', behavior:'smooth'});
   });
 }
@@ -5205,14 +5284,198 @@ function coachApply(){
   paintCoach();
 }
 
+
+/* ---------- asking the coach ---------------------------------------------------
+   Answers come from what the page already contains: the concept written for
+   every quest, all 78 tokens, the checker's own explanations, and the hints.
+   A question is matched against those by word overlap.
+
+   No key needed. If a student saves a Groq key the coach will send anything it
+   cannot answer there instead of shrugging, but that is the extra, not the
+   floor.                                                                     */
+
+// Words that carry no meaning for matching.
+const STOP = new Set(('a an the is are was were do does did what why how when '
+  + 'i im i\'m me my it its this that of to in on for and or but can cant could '
+  + 'should would there here about with not no yes please help').split(' '));
+
+const words = s => String(s).toLowerCase().replace(/[^a-z0-9\-_ ]/g, ' ')
+  .split(/\s+/).filter(w => w.length > 1 && !STOP.has(w));
+
+// Everything the coach can quote, built once from the lesson content.
+function knowledge(){
+  const out = [];
+  EXERCISES.forEach(e => {
+    out.push({q: `${e.concept.t} ${e.title} ${e.learn}`,
+              a: `<b>${e.concept.t}</b><br>${e.concept.b}`, w: 3});
+    out.push({q: `${e.title} ${e.brief}`, a: `<b>Quest ${e.id}: ${e.title}</b><br>${e.brief}`, w: 1});
+  });
+  TOKENS.forEach(tk => {
+    const name = tk.n.replace('--ocs-', '');
+    out.push({token: name, q: `${name} ${tk.n} ${tk.g} token`,
+              a: `<code>${tk.n}</code> is a ${tk.g.toLowerCase()} token. Its value is <code>${tk.v}</code>.`
+                 + ` Use it as <code>var(${tk.n})</code>.`, w: 2});
+  });
+  // Things a beginner asks that the lessons never define.
+  [['selector what part before the curly brace',
+    'The <b>selector</b> is the bit before the <code>{</code>. It says which things on the page this rule applies to. <code>.ocs-demo-btn</code> means "every element with the class ocs-demo-btn".'],
+   ['property value colon semicolon line inside braces',
+    'Inside the braces you write <b>property: value;</b> one per line. The property is what you are changing, like <code>background</code>. The value is what you are changing it to, like <code>blue</code>. Always end the line with a semicolon.'],
+   ['padding space inside',
+    '<b>padding</b> is space inside an element, between its edge and its text. More padding makes a button bigger and roomier.'],
+   ['margin space outside',
+    '<b>margin</b> is space outside an element, pushing other things away from it.'],
+   ['px rem unit size',
+    '<code>px</code> is a pixel, a fixed size. <code>rem</code> is relative to the reader\'s own text size, so it grows if they have made text bigger. This system uses rem for spacing.'],
+   ['hover',
+    '<code>&:hover</code> styles an element while the mouse is over it. Nothing changes until someone points at it.'],
+   ['contrast readable ratio 4.5',
+    'Contrast is how different two colours are. Text needs a ratio of at least <b>4.5:1</b> against its background to be readable. The number under the preview tells you where you are.'],
+   ['nesting nested inside indent scss',
+    'In SCSS you can put one rule inside another. The inner one only applies inside the outer one. That is nesting, and it is the main thing SCSS adds to CSS.'],
+   ['save saved progress lost',
+    'Your code saves by itself, per quest, in this browser. Closing the tab will not lose it.'],
+   ['stuck lost dont know understand confused',
+    null],
+  ].forEach(([q, a]) => out.push({q, a, w: 5, faq: true}));
+  return out;
+}
+let KB = null;
+
+function answerLocally(question){
+  KB = KB || knowledge();
+
+  // The intent checks run BEFORE the empty-words guard below. "what do i do"
+  // is entirely stop words, so the guard used to reject the single most likely
+  // question on the page.
+  //
+  // Only FIRST-PERSON stuck phrasing routes to the next action. Matching a bare
+  // "what.*do" sent "what does the selector do" here instead of to its
+  // definition.
+  if (/\b(i'?m |i am )?(stuck|lost|confused)\b|what (do|should) i do|where do i (start|begin)|help me|i don'?t know what/i.test(question)) {
+    const a = coachAdvice();
+    return `${a.body}` + (a.apply ? ' Use the button above and I will do it for you.' : '');
+  }
+  // "why is it not working" reads the checker.
+  if (/wrong|not work|broken|fail|error|red|why.*(not|isn)/i.test(question)) {
+    const bad = (lastNotes || []).filter(n => n.level !== 'pass');
+    if (bad.length) return `<b>${bad[0].title}</b><br>${bad[0].why}<br><b>Fix:</b> ${bad[0].fix}`;
+    return 'Nothing is flagged right now. The Checks panel under the editor is empty, so keep going.';
+  }
+
+  const qw = words(question);
+  if (!qw.length) return null;
+
+  const named = question.match(/--ocs-[a-z0-9-]+/)?.[0] || null;
+  let best = null;
+  for (const item of KB) {
+    if (!item.a) continue;
+    const iw = new Set(words(item.q));
+    let score = 0;
+    qw.forEach(w => { if (iw.has(w)) score += item.w; });
+
+    if (item.token) {
+      // A token entry only competes when the question actually names it.
+      // Otherwise 78 of them drown out the one hand-written answer.
+      if (named && item.q.includes(named)) score += 20;
+      else if (!qw.includes(item.token)) continue;
+    }
+    if (score && (!best || score > best.score)) best = {score, a: item.a};
+  }
+  return best && best.score >= 3 ? best.a : null;
+}
+
+async function askGroq(question){
+  const key = store.get('groqKey', '');
+  if (!key) return null;
+  const e = EXERCISES[active];
+  const sys = 'You help a beginner learning CSS and SCSS. Answer in at most three short '
+    + 'sentences. One idea per sentence. No jargon unless you define it in the same sentence.';
+  const ctx = `The student is on a quest called "${e.title}". The task is: ${e.brief.replace(/<[^>]+>/g,'')}. `
+    + `Their code right now is:\n${editor.value}`;
+  try {
+    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key},
+      body: JSON.stringify({model: 'llama-3.3-70b-versatile', max_tokens: 220, temperature: 0.3,
+        messages: [{role: 'system', content: sys},
+                   {role: 'user', content: ctx + '\n\nQuestion: ' + question}]})
+    });
+    if (!r.ok) return `That key was refused (HTTP ${r.status}). Check it in Settings below.`;
+    const j = await r.json();
+    return (j.choices?.[0]?.message?.content || '').replace(/</g, '&lt;').replace(/\n/g, '<br>');
+  } catch { return 'Could not reach Groq. You may be offline.'; }
+}
+
+// The thread lives here, not in the DOM. paintCoach() rebuilds the panel on
+// every keystroke, and reading the messages back out of the element it is about
+// to replace dropped whichever one arrived mid-repaint.
+let coachThread = [];
+
+function renderThread(){
+  const log = $('#coachlog'); if (!log) return;
+  log.innerHTML = coachThread
+    .map(m => `<div class="coach__msg coach__msg--${m.who}">${m.html}</div>`).join('');
+  log.scrollTop = log.scrollHeight;
+}
+
+function pushAsk(who, html){
+  coachThread.push({who, html});
+  renderThread();
+}
+
+async function coachAsk(){
+  const box = $('#coachq'); const q = box.value.trim();
+  if (!q) return;
+  pushAsk('you', esc(q));
+  box.value = '';
+  const local = answerLocally(q);
+  if (local) { pushAsk('coach', local); return; }
+  pushAsk('coach', '<span class="coach__wait">Thinking…</span>');
+  const g = await askGroq(q);
+  coachThread.pop();
+  pushAsk('coach', g || 'I do not know that one. Try the hint button on the left, or ask '
+    + 'your question with the name of the thing in it, like "what is --ocs-accent".');
+}
+
 function paintCoach(){
   const box = $('#coach'); if (!box) return;
   const a = coachAdvice();
-  box.innerHTML =
-    `<p class="coach__h">${a.head}</p>
-     <p class="coach__b">${a.body}</p>` +
-    (a.apply ? `<button class="ocs-btn ocs-btn--primary ocs-btn--sm" id="coachdo">Do this line for me</button>` : '');
+
+
+  box.innerHTML = `
+    <div class="coach__top">
+      <span class="coach__name">Coach</span>
+      <span class="coach__step">${a.head}</span>
+    </div>
+    <p class="coach__b">${a.body}</p>
+    ${a.apply ? '<button class="ocs-btn ocs-btn--primary ocs-btn--sm" id="coachdo">Do this line for me</button>' : ''}
+    <div class="coach__log" id="coachlog"></div>
+    <form class="coach__ask" id="coachform">
+      <input class="ocs-input" id="coachq" placeholder="Ask me anything about this quest…"
+             aria-label="Ask the coach a question" autocomplete="off">
+      <button class="ocs-btn ocs-btn--primary ocs-btn--sm" type="submit">Ask</button>
+    </form>
+    <details class="coach__set">
+      <summary>Optional: use an AI for open questions</summary>
+      <p>The coach answers from this page on its own. Paste a free Groq key and it
+         can also answer anything else you ask. The key stays in this browser.</p>
+      <div class="coach__setrow">
+        <input class="ocs-input" id="groqkey" type="password" placeholder="gsk_…"
+               aria-label="Groq API key" autocomplete="off">
+        <button class="ocs-btn ocs-btn--secondary ocs-btn--sm" id="groqsave" type="button">Save</button>
+      </div>
+      <p class="coach__hintline">Get one free at console.groq.com/keys</p>
+    </details>`;
+
+  renderThread();
   const b = $('#coachdo'); if (b) b.onclick = coachApply;
+  $('#coachform').onsubmit = ev => { ev.preventDefault(); coachAsk(); };
+  const k = $('#groqkey'); if (k) k.value = store.get('groqKey', '');
+  $('#groqsave').onclick = () => {
+    store.set('groqKey', $('#groqkey').value.trim());
+    toast($('#groqkey').value.trim() ? 'Key saved in this browser' : 'Key cleared');
+  };
 }
 
 /* ---------- contrast meter ---------- */
