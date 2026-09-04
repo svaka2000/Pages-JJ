@@ -3462,7 +3462,13 @@ textarea {
   overflow: hidden;
 }
 textarea:focus-visible {
-  box-shadow: inset 3px 0 0 var(--ocs-accent);
+  outline: 0;
+}
+
+.ed-wrap:focus-within {
+  outline: 2px solid var(--ocs-accent);
+  outline-offset: -2px;
+  border-radius: 6px;
 }
 
 #preview, #targetprev {
@@ -5555,11 +5561,113 @@ $('#resetall').onclick=()=>{
 let t;
 editor.addEventListener('input',()=>{syncGutter();clearTimeout(t);
   t=setTimeout(()=>{run();saveDraft();},250);});
-editor.addEventListener('keydown',ev=>{
-  if(ev.key==='Tab'){ev.preventDefault();
-    const s=editor.selectionStart;
-    editor.value=editor.value.slice(0,s)+'  '+editor.value.slice(editor.selectionEnd);
-    editor.selectionStart=editor.selectionEnd=s+2;syncGutter();run();}
+/* ---------- editor keys ---------------------------------------------------------
+   A plain <textarea> puts the caret at column 0 on every Enter, so the second
+   line of a rule starts at the left edge and a beginner is fighting the box
+   instead of learning CSS. This adds the handful of behaviours an editor is
+   expected to have.
+
+   Every edit goes through execCommand('insertText') where it can. It is
+   deprecated, but it is the only way to change a textarea and keep the
+   browser's own undo stack, and Ctrl+Z working matters more here than
+   avoiding a deprecated call. Direct assignment is the fallback.           */
+
+const INDENT = '  ';
+
+function edit(text, selStart, selEnd){
+  editor.focus();
+  if (selStart !== undefined) editor.setSelectionRange(selStart, selEnd ?? selStart);
+  let ok = false;
+  try { ok = document.execCommand('insertText', false, text); } catch { ok = false; }
+  if (!ok) {
+    const s = editor.selectionStart, e = editor.selectionEnd;
+    editor.value = editor.value.slice(0, s) + text + editor.value.slice(e);
+    editor.setSelectionRange(s + text.length, s + text.length);
+  }
+  syncGutter();
+  editor.dispatchEvent(new Event('input', {bubbles: true}));
+}
+
+const lineStart = pos => editor.value.lastIndexOf('\n', pos - 1) + 1;
+const indentOf  = line => (line.match(/^[ \t]*/) || [''])[0];
+
+editor.addEventListener('keydown', ev => {
+  const v = editor.value, s = editor.selectionStart, e = editor.selectionEnd;
+  const ls = lineStart(s);
+  const lineSoFar = v.slice(ls, s);
+  const pad = indentOf(v.slice(ls, v.indexOf('\n', ls) < 0 ? v.length : v.indexOf('\n', ls)));
+
+  // --- Enter: keep this line's indent; go one deeper after an opening brace --
+  if (ev.key === 'Enter' && !ev.shiftKey) {
+    ev.preventDefault();
+    const before = v.slice(0, s).trimEnd().slice(-1);
+    const after  = v.slice(e).trimStart().slice(0, 1);
+    const deeper = before === '{';
+    const inner  = pad + (deeper ? INDENT : '');
+
+    // Enter between { and } opens a room: an indented blank line with the
+    // closing brace put back underneath it.
+    if (deeper && after === '}') {
+      edit('\n' + inner + '\n' + pad);
+      const caret = s + 1 + inner.length;
+      editor.setSelectionRange(caret, caret);
+      syncGutter();
+      return;
+    }
+    edit('\n' + inner);
+    return;
+  }
+
+  // --- Tab / Shift+Tab -------------------------------------------------------
+  if (ev.key === 'Tab') {
+    ev.preventDefault();
+    const multi = v.slice(s, e).includes('\n');
+
+    if (!multi && !ev.shiftKey) { edit(INDENT); return; }
+
+    // Whole-line indent or dedent across the selection.
+    const from = lineStart(s);
+    const to   = v.indexOf('\n', e) < 0 ? v.length : v.indexOf('\n', e);
+    const block = v.slice(from, to);
+    const out = block.split('\n').map(l =>
+      ev.shiftKey ? l.replace(new RegExp('^' + INDENT), '') : INDENT + l).join('\n');
+    edit(out, from, to);
+    editor.setSelectionRange(from, from + out.length);
+    syncGutter();
+    return;
+  }
+
+  // --- typing } on a blank line lines it up with its opener -------------------
+  if (ev.key === '}' && /^[ \t]+$/.test(lineSoFar)) {
+    ev.preventDefault();
+    const outdented = lineSoFar.slice(0, Math.max(0, lineSoFar.length - INDENT.length));
+    edit(outdented + '}', ls, s);
+    return;
+  }
+
+  // --- { closes itself, so a rule can never be left open by accident ----------
+  if (ev.key === '{' && s === e) {
+    ev.preventDefault();
+    edit('{}');
+    const caret = editor.selectionStart - 1;
+    editor.setSelectionRange(caret, caret);
+    return;
+  }
+
+  // --- typing } where one already sits just steps over it ---------------------
+  if (ev.key === '}' && s === e && v[s] === '}') {
+    ev.preventDefault();
+    editor.setSelectionRange(s + 1, s + 1);
+    return;
+  }
+
+  // --- Backspace inside pure indentation removes a whole level ----------------
+  if (ev.key === 'Backspace' && s === e && s > ls && /^[ \t]+$/.test(lineSoFar)
+      && lineSoFar.endsWith(INDENT)) {
+    ev.preventDefault();
+    edit('', s - INDENT.length, s);
+    return;
+  }
 });
 document.addEventListener('keydown',ev=>{
   if((ev.metaKey||ev.ctrlKey)&&ev.key==='Enter'){ev.preventDefault();grade();}
