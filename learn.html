@@ -2984,7 +2984,7 @@
 
 body {
   margin: 0;
-  background: var(--ocs-surface-raised);
+  background: var(--ocs-surface-base);
   color: var(--ocs-text);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1rem;
@@ -3049,12 +3049,14 @@ a {
 }
 
 .hero {
-  padding: 2.5rem 0 1rem;
-  max-width: 62ch;
+  padding: 2rem 0 1.25rem;
+}
+.hero p {
+  max-width: 58ch;
 }
 
 h1 {
-  font-size: clamp(1.85rem, 4.4vw, 2.6rem);
+  font-size: clamp(1.75rem, 3.125vw, 2.25rem);
   font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1.08;
@@ -3123,17 +3125,16 @@ h2 {
 }
 
 .chap {
-  padding: 1.5rem;
-  margin-block-end: 1.5rem;
+  padding: 1.25rem;
+  margin-block-end: 1.25rem;
   background: var(--ocs-surface-base);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 .chap__head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  margin-block-end: 1.25rem;
+  margin-block-end: 1rem;
 }
 .chap__id {
   min-width: 0;
@@ -3211,9 +3212,7 @@ h2 {
   line-height: 1.5;
 }
 .q__gate {
-  margin: 0.75rem 0 0;
-  padding-block-start: 0.75rem;
-  border-block-start: 1px solid var(--ocs-border-subtle);
+  margin: 0.5rem 0 0;
   color: var(--ocs-text-muted);
   font-size: 0.875rem;
 }
@@ -3235,7 +3234,7 @@ h2 {
   color: #FFFFFF;
 }
 .q__mark--active {
-  background: var(--ocs-accent);
+  background: var(--ocs-warning);
   width: 0.75rem;
   height: 0.75rem;
   margin: 0.375rem;
@@ -3249,9 +3248,19 @@ h2 {
   background: var(--ocs-success-bg);
 }
 .q--active {
-  border-color: var(--ocs-accent);
-  background: var(--ocs-surface-base);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  border-color: var(--ocs-warning-border);
+  background: var(--ocs-warning-bg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.q--active::after {
+  content: "";
+  position: absolute;
+  inset-inline: -1px;
+  inset-block-end: -1px;
+  height: 3px;
+  border-end-start-radius: 10px;
+  border-end-end-radius: 10px;
+  background: var(--ocs-warning);
 }
 .q--locked {
   background: var(--ocs-surface-base);
@@ -3268,6 +3277,20 @@ h2 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
+@supports (background: color-mix(in srgb, red 50%, white)) {
+  .q {
+    background: color-mix(in srgb, var(--ocs-surface-raised) 50%, var(--ocs-surface-base));
+  }
+  .q--done {
+    background: color-mix(in srgb, var(--ocs-success-bg) 70%, var(--ocs-surface-base));
+  }
+  .q--active {
+    background: color-mix(in srgb, var(--ocs-warning-bg) 40%, var(--ocs-surface-base));
+  }
+  .q--locked {
+    background: var(--ocs-surface-base);
+  }
+}
 .brief {
   margin-block-start: 1.25rem;
   padding: 1.25rem;
@@ -4964,11 +4987,15 @@ function renderChapters(){
       const badge = st === 'done'
         ? '<span class="q__mark q__mark--done" aria-hidden="true">&#10003;</span>'
         : st === 'locked'
-          ? '<span class="q__mark q__mark--locked" aria-hidden="true">&#128274;</span>'
+          ? '<span class="q__mark q__mark--locked" aria-hidden="true">'
+            + '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
+            + '<rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.6"/>'
+            + '<path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.6"/>'
+            + '</svg></span>'
           : isOpen ? '<span class="q__mark q__mark--active" aria-hidden="true"></span>' : '';
 
       const foot = st === 'locked' && prev
-        ? `<p class="q__gate">Finish Chapter ${prev.n} &middot; ${prev.name}</p>` : '';
+        ? `<p class="q__gate">Finish Chapter ${prev.n} first</p>` : '';
 
       // The state in words, for anyone who cannot see the tint or the badge.
       const said = st === 'done' ? 'Solved. ' : st === 'locked' ? 'Locked. ' : '';
