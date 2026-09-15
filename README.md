@@ -12,7 +12,7 @@ This GitHub Pages repository can be customized by the blogger to support compute
 
 HS students will have the opportunity to create their personal GitHub Pages repository as they progress through their coursework.
 In general, students and instructors are expected to use GitHub Pages to build lessons, complete classroom hacks/challenges and perform exploratory work.
-Exchange of information from this repository to you personal GitHub Pages can be done in many ways...
+Exchange of information from this repository to your personal GitHub Pages can be done in many ways...
 
 1. sharing a file, ie: `wget "raw-link.ipynb"`
 2. creating a template from this repository
