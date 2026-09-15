@@ -1,3 +1,4 @@
+<!-- Built by _sass/ocs/tools/learn/build.py from the parts in that folder. Edit the parts, not this file. -->
 <!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8">
@@ -125,10 +126,6 @@
   --ocs-border: #CECED3;
   --ocs-border-strong: #B6B6BA;
   --ocs-border-subtle: #E5E5E9;
-  --ocs-shadow-sm: 0 1px 2px rgba(18, 18, 18, 0.06);
-  --ocs-shadow-md: 0 1px 3px rgba(18, 18, 18, 0.08), 0 4px 12px rgba(18, 18, 18, 0.05);
-  --ocs-shadow-lg: 0 2px 6px rgba(18, 18, 18, 0.08), 0 12px 28px rgba(18, 18, 18, 0.07);
-  --ocs-shadow-xl: 0 4px 10px rgba(18, 18, 18, 0.10), 0 24px 48px rgba(18, 18, 18, 0.09);
   --ocs-brand: #AE4042;
   --ocs-brand-border: #DF6564;
   --ocs-brand-bg: #FFEDEB;
@@ -816,7 +813,6 @@
   padding-inline: 0;
 }
 .ocs-card--interactive {
-  padding: 1rem;
   text-align: start;
   text-decoration: none;
   cursor: pointer;
@@ -2011,820 +2007,6 @@
   inset-block-start: calc(100% + 0.5rem);
 }
 
-.ocs-chat {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  border: 1px solid var(--ocs-border);
-  border-radius: 14px;
-  background: var(--ocs-surface-raised);
-  color: var(--ocs-text);
-  font-family: var(--ocs-font-sans);
-  overflow: hidden;
-}
-.ocs-chat__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--ocs-border-subtle);
-}
-.ocs-chat__heading {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  min-width: 0;
-}
-.ocs-chat__heading-text {
-  min-width: 0;
-}
-.ocs-chat__icon {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 10px;
-  background: var(--ocs-accent);
-  color: var(--ocs-accent-contrast);
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-.ocs-chat__title.ocs-chat__title {
-  display: block;
-  margin: 0;
-  padding: 0;
-  border-bottom: 0;
-  color: var(--ocs-text);
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.4;
-}
-.ocs-chat__subtitle {
-  margin: 0.25rem 0 0;
-  color: var(--ocs-text-muted);
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-.ocs-chat__status {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  border: 1px solid var(--ocs-border);
-  border-radius: 999px;
-  background: var(--ocs-surface-base);
-  color: var(--ocs-text-muted);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-.ocs-chat__status--live {
-  border-color: var(--ocs-success-border);
-  color: var(--ocs-success);
-}
-.ocs-chat__status--preview {
-  border-color: var(--ocs-warning-border);
-  color: var(--ocs-warning);
-}
-.ocs-chat__status--error {
-  border-color: var(--ocs-danger-border);
-  color: var(--ocs-danger);
-}
-.ocs-chat__status-dot {
-  flex: 0 0 auto;
-  width: 0.375rem;
-  height: 0.375rem;
-  border-radius: 999px;
-  background: currentcolor;
-}
-.ocs-chat__status-label {
-  color: inherit;
-  white-space: nowrap;
-}
-.ocs-chat__body {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  padding: 1rem 1.25rem;
-}
-.ocs-chat__log {
-  flex: 1 1 auto;
-  min-height: 10rem;
-  max-height: 26rem;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--ocs-border) transparent;
-}
-.ocs-chat__log::-webkit-scrollbar {
-  width: 0.5rem;
-}
-.ocs-chat__log::-webkit-scrollbar-thumb {
-  background: var(--ocs-border);
-  border-radius: 4px;
-}
-.ocs-chat__day {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1rem 0 0.75rem;
-  color: var(--ocs-text-muted);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.ocs-chat__day:first-child {
-  margin-top: 0;
-}
-.ocs-chat__day::before, .ocs-chat__day::after {
-  content: "";
-  flex: 1 1 auto;
-  height: 1px;
-  background: var(--ocs-border-subtle);
-}
-.ocs-chat__msg {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
-}
-.ocs-chat__msg--continued {
-  padding-top: 0;
-}
-.ocs-chat__msg--continued .ocs-chat__avatar {
-  display: none;
-}
-.ocs-chat__msg--continued .ocs-chat__meta {
-  display: none;
-}
-.ocs-chat__msg--continued .ocs-chat__main {
-  margin-inline-start: calc(2.5rem + 0.75rem);
-  padding-inline-start: 0.75rem;
-  border-inline-start: 2px solid var(--ocs-border-subtle);
-}
-.ocs-chat__avatar {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 999px;
-  background: var(--ocs-surface-elevated);
-  color: #FFFFFF;
-  font-size: 0.875rem;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  user-select: none;
-}
-.ocs-chat__avatar--tint-1 {
-  background: #73674E;
-}
-.ocs-chat__avatar--tint-2 {
-  background: #566E59;
-}
-.ocs-chat__avatar--tint-3 {
-  background: #426F73;
-}
-.ocs-chat__avatar--tint-4 {
-  background: #566A82;
-}
-.ocs-chat__avatar--tint-5 {
-  background: #786177;
-}
-.ocs-chat__main {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.ocs-chat__meta {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-}
-.ocs-chat__sender {
-  color: var(--ocs-text);
-  font-size: 1rem;
-  font-weight: 600;
-}
-.ocs-chat__time {
-  color: var(--ocs-text-muted);
-  font-family: var(--ocs-font-mono);
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-}
-.ocs-chat__text {
-  display: block;
-  color: var(--ocs-text-secondary);
-  font-size: 1rem;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.ocs-chat__text a {
-  color: var(--ocs-info);
-  text-decoration: underline;
-  text-underline-offset: 0.125em;
-}
-.ocs-chat__text a:hover {
-  color: var(--ocs-info-border);
-}
-.ocs-chat__msg--self .ocs-chat__avatar {
-  background: #BA4C4C;
-}
-.ocs-chat__msg--self .ocs-chat__text {
-  color: var(--ocs-text);
-}
-.ocs-chat__unfurl {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  max-width: 30rem;
-  border: 1px solid var(--ocs-border-subtle);
-  border-radius: 10px;
-  background: var(--ocs-surface-base);
-  color: inherit;
-  text-decoration: none;
-  transition: border-color 180ms cubic-bezier(0.2, 0, 0, 1), background 180ms cubic-bezier(0.2, 0, 0, 1);
-}
-.ocs-chat__unfurl:hover {
-  border-color: var(--ocs-accent-border);
-  background: var(--ocs-accent-bg);
-}
-.ocs-chat__unfurl-thumb {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  overflow: hidden;
-  border-radius: 6px;
-  background: var(--ocs-accent-bg);
-  color: var(--ocs-accent);
-  font-size: 1rem;
-}
-.ocs-chat__unfurl-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.ocs-chat__unfurl-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.25rem;
-  min-width: 0;
-}
-.ocs-chat__unfurl-site {
-  color: var(--ocs-text-muted);
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.ocs-chat__unfurl-title {
-  color: var(--ocs-text);
-  font-size: 0.875rem;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.ocs-chat__unfurl-desc {
-  color: var(--ocs-text-muted);
-  font-size: 0.875rem;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.ocs-chat__system {
-  margin: 0.75rem 0;
-  color: var(--ocs-text-muted);
-  font-size: 0.875rem;
-  font-style: italic;
-  text-align: center;
-}
-.ocs-chat__empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  min-height: 8rem;
-  padding: 1rem;
-  text-align: center;
-}
-.ocs-chat__empty i, .ocs-chat__empty svg {
-  margin-bottom: 0.25rem;
-  color: var(--ocs-text-muted);
-  font-size: 1.5rem;
-  opacity: 0.6;
-}
-.ocs-chat__empty-title {
-  margin: 0;
-  color: var(--ocs-text);
-  font-size: 1rem;
-  font-weight: 600;
-}
-.ocs-chat__empty-hint {
-  color: var(--ocs-text-muted);
-  font-size: 0.875rem;
-}
-.ocs-chat__banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--ocs-border);
-  border-radius: 6px;
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-.ocs-chat__banner--warning {
-  border-color: var(--ocs-warning-border);
-  background: var(--ocs-warning-bg);
-  color: var(--ocs-warning);
-}
-.ocs-chat__banner--accent {
-  border-color: var(--ocs-accent-border);
-  background: var(--ocs-accent-bg);
-  color: var(--ocs-text);
-}
-.ocs-chat__banner[hidden] {
-  display: none;
-}
-.ocs-chat__banner-text {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  min-width: 0;
-}
-.ocs-chat__banner-text i, .ocs-chat__banner-text svg {
-  flex: 0 0 auto;
-  margin-top: 0.125rem;
-}
-.ocs-chat__composer {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--ocs-border-subtle);
-}
-.ocs-chat__composer .ocs-input {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.ocs-chat__composer .ocs-btn {
-  flex: 0 0 auto;
-}
-
-.ocs-chat--compact {
-  border-radius: 10px;
-}
-.ocs-chat--compact .ocs-chat__body {
-  padding: 0.75rem 1rem;
-}
-.ocs-chat--compact .ocs-chat__log {
-  min-height: 8rem;
-  max-height: 16rem;
-}
-.ocs-chat--compact .ocs-chat__avatar {
-  width: 1.75rem;
-  height: 1.75rem;
-  font-size: 0.6875rem;
-}
-.ocs-chat--compact .ocs-chat__msg--continued .ocs-chat__main {
-  margin-inline-start: calc(1.75rem + 0.75rem);
-}
-.ocs-chat--compact .ocs-chat__sender,
-.ocs-chat--compact .ocs-chat__text {
-  font-size: 0.875rem;
-}
-.ocs-chat--compact .ocs-chat__empty {
-  display: block;
-  min-height: 0;
-  padding: 0.25rem 0;
-  text-align: start;
-  color: var(--ocs-text-muted);
-  font-size: 0.875rem;
-  font-style: italic;
-}
-.ocs-chat--compact .ocs-chat__empty i, .ocs-chat--compact .ocs-chat__empty svg {
-  display: none;
-}
-.ocs-chat--compact .ocs-chat__empty .ocs-chat__empty-title {
-  display: inline;
-  color: inherit;
-  font-size: inherit;
-  font-weight: 400;
-}
-.ocs-chat--compact .ocs-chat__empty .ocs-chat__empty-hint {
-  display: none;
-}
-.ocs-chat--compact .ocs-chat__log {
-  min-height: 6rem;
-}
-
-.ocs-chat--collapsible[open] {
-  border-color: var(--ocs-accent-border);
-}
-.ocs-chat--collapsible .ocs-chat__summary {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  color: var(--ocs-text);
-  font-size: 0.875rem;
-  cursor: pointer;
-  list-style: none;
-  transition: background 180ms cubic-bezier(0.2, 0, 0, 1);
-}
-.ocs-chat--collapsible .ocs-chat__summary::-webkit-details-marker {
-  display: none;
-}
-.ocs-chat--collapsible .ocs-chat__summary:hover {
-  background: var(--ocs-surface-elevated);
-}
-.ocs-chat--collapsible .ocs-chat__summary:focus-visible {
-  outline: 2px solid var(--ocs-accent);
-  outline-offset: -2px;
-}
-.ocs-chat--collapsible .ocs-chat__summary-icon {
-  color: var(--ocs-accent);
-}
-.ocs-chat--collapsible .ocs-chat__summary-title {
-  font-weight: 600;
-}
-.ocs-chat--collapsible .ocs-chat__summary-caret {
-  margin-inline-start: auto;
-  color: var(--ocs-text-muted);
-  font-size: 0.6875rem;
-  transition: transform 180ms cubic-bezier(0.2, 0, 0, 1);
-}
-.ocs-chat--collapsible[open] .ocs-chat__summary-caret {
-  transform: rotate(180deg);
-}
-.ocs-chat--collapsible .ocs-chat__body {
-  border-top: 1px solid var(--ocs-border-subtle);
-}
-
-.ocs-chat--bubbles .ocs-chat__msg {
-  padding: 0.5rem 0;
-}
-.ocs-chat--bubbles .ocs-chat__main {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  max-width: 72%;
-}
-.ocs-chat--bubbles .ocs-chat__text {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--ocs-border-subtle);
-  border-radius: 10px;
-  background: var(--ocs-surface-elevated);
-  color: var(--ocs-text);
-}
-.ocs-chat--bubbles .ocs-chat__time {
-  margin-top: 0.25rem;
-  padding-inline: 0.25rem;
-}
-.ocs-chat--bubbles .ocs-chat__meta {
-  display: none;
-}
-.ocs-chat--bubbles .ocs-chat__msg--self {
-  flex-direction: row-reverse;
-}
-.ocs-chat--bubbles .ocs-chat__msg--self .ocs-chat__avatar {
-  display: none;
-}
-.ocs-chat--bubbles .ocs-chat__msg--self .ocs-chat__main {
-  align-items: flex-end;
-}
-.ocs-chat--bubbles .ocs-chat__msg--self .ocs-chat__text {
-  background: var(--ocs-brand-bg);
-}
-.ocs-chat--bubbles .ocs-chat__msg--continued {
-  padding-top: 0;
-}
-.ocs-chat--bubbles .ocs-chat__msg--continued .ocs-chat__avatar {
-  visibility: hidden;
-}
-.ocs-chat--bubbles .ocs-chat__msg--continued .ocs-chat__main {
-  margin-inline-start: 0;
-  padding-inline-start: 0;
-  border-inline-start: 0;
-}
-.ocs-chat--bubbles .ocs-chat__unfurl {
-  max-width: 100%;
-}
-
-.ocs-chat__receipt {
-  margin-top: 0.25rem;
-  padding-inline: 0.25rem;
-  color: var(--ocs-text-muted);
-  font-size: 0.875rem;
-}
-
-.ocs-chat__presence {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--ocs-text-muted);
-  font-size: 0.875rem;
-}
-.ocs-chat__presence::before {
-  content: "";
-  flex: 0 0 auto;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 999px;
-  background: var(--ocs-text-muted);
-}
-.ocs-chat__presence--active::before {
-  background: var(--ocs-success);
-}
-
-.ocs-chat__unread {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.25rem;
-  height: 1.25rem;
-  padding-inline: 0.375rem;
-  border-radius: 999px;
-  background: var(--ocs-brand);
-  color: var(--ocs-accent-contrast);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.ocs-chat__typing {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin: 0.5rem 0;
-  padding: 0.5rem 0.75rem;
-  border-radius: 999px;
-  background: var(--ocs-surface-elevated);
-}
-.ocs-chat__typing span {
-  width: 0.375rem;
-  height: 0.375rem;
-  border-radius: 999px;
-  background: var(--ocs-text-muted);
-  animation: ocs-chat-typing 1.2s infinite ease-in-out;
-}
-.ocs-chat__typing span:nth-child(2) {
-  animation-delay: 0.15s;
-}
-.ocs-chat__typing span:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-@keyframes ocs-chat-typing {
-  0%, 60%, 100% {
-    opacity: 0.3;
-  }
-  30% {
-    opacity: 1;
-  }
-}
-.ocs-chat__actions {
-  position: absolute;
-  inset-block-start: calc(-1 * 1rem);
-  inset-inline-end: 0.5rem;
-  z-index: 100;
-  display: flex;
-  gap: 0.25rem;
-  padding: 0.25rem;
-  border: 1px solid var(--ocs-border);
-  border-radius: 6px;
-  background: var(--ocs-surface-elevated);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-.ocs-chat__msg {
-  position: relative;
-}
-.ocs-chat__msg:hover > .ocs-chat__actions, .ocs-chat__msg:focus-within > .ocs-chat__actions {
-  opacity: 1;
-  pointer-events: auto;
-}
-.ocs-chat__msg:first-child > .ocs-chat__actions {
-  inset-block-start: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ocs-chat__unfurl,
-  .ocs-chat__summary,
-  .ocs-chat__summary-caret,
-  .ocs-chat__actions {
-    transition: none;
-  }
-  .ocs-chat__typing span {
-    animation: none;
-    opacity: 0.7;
-  }
-}
-@media (max-width: 768px) {
-  .ocs-chat__header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-  }
-  .ocs-chat__body {
-    padding: 0.75rem 1rem;
-  }
-  .ocs-chat__log {
-    max-height: 18rem;
-  }
-  .ocs-chat__avatar {
-    width: 2rem;
-    height: 2rem;
-    font-size: 0.6875rem;
-  }
-  .ocs-chat__msg--continued .ocs-chat__main {
-    margin-inline-start: calc(2rem + 0.75rem);
-  }
-}
-.ocs-chat-list {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  border: 1px solid var(--ocs-border);
-  border-radius: 14px;
-  background: var(--ocs-surface-base);
-  font-family: var(--ocs-font-sans);
-  overflow: hidden;
-}
-.ocs-chat-list__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 1rem 1rem 0.75rem;
-}
-.ocs-chat-list__title.ocs-chat-list__title {
-  display: block;
-  margin: 0;
-  padding: 0;
-  border-bottom: 0;
-  color: var(--ocs-text);
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1;
-}
-.ocs-chat-list__search {
-  position: relative;
-  padding: 0 1rem 0.75rem;
-}
-.ocs-chat-list__search svg, .ocs-chat-list__search i {
-  position: absolute;
-  inset-block-start: 50%;
-  inset-inline-start: calc(1rem + 0.75rem);
-  transform: translateY(-50%);
-  margin-top: calc(-1 * 0.75rem / 2);
-  color: var(--ocs-text-muted);
-  pointer-events: none;
-}
-.ocs-chat-list__search .ocs-input {
-  width: 100%;
-  padding-inline-start: 2rem;
-}
-.ocs-chat-list__items {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 0 0.5rem 0.5rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--ocs-border) transparent;
-}
-.ocs-chat-list__items::-webkit-scrollbar {
-  width: 0.5rem;
-}
-.ocs-chat-list__items::-webkit-scrollbar-thumb {
-  background: var(--ocs-border);
-  border-radius: 4px;
-}
-.ocs-chat-list__item {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 10px;
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 120ms cubic-bezier(0.2, 0, 0, 1);
-}
-.ocs-chat-list__item:hover {
-  background: var(--ocs-surface-raised);
-}
-.ocs-chat-list__item:focus-visible {
-  outline: 2px solid var(--ocs-accent);
-  outline-offset: -2px;
-}
-.ocs-chat-list__item--active {
-  background: var(--ocs-surface-raised);
-}
-.ocs-chat-list__item--active::before {
-  content: "";
-  position: absolute;
-  inset-block: 0.5rem;
-  inset-inline-start: 0;
-  width: 3px;
-  border-radius: 999px;
-  background: var(--ocs-accent);
-}
-.ocs-chat-list__item-body {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.ocs-chat-list__item-top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-.ocs-chat-list__item-name {
-  color: var(--ocs-text);
-  font-size: 1rem;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.ocs-chat-list__item-time {
-  flex: 0 0 auto;
-  color: var(--ocs-text-muted);
-  font-family: var(--ocs-font-mono);
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-}
-.ocs-chat-list__item-preview {
-  display: block;
-  margin-top: 0.25rem;
-  color: var(--ocs-text-muted);
-  font-size: 0.875rem;
-  line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.ocs-chat-list__item--unread .ocs-chat-list__item-name {
-  color: var(--ocs-text);
-  font-weight: 700;
-}
-.ocs-chat-list__item--unread .ocs-chat-list__item-preview {
-  color: var(--ocs-text-secondary);
-}
-.ocs-chat-list__item-badge {
-  flex: 0 0 auto;
-  align-self: center;
-}
-.ocs-chat-list__empty {
-  padding: 2rem 1rem;
-  color: var(--ocs-text-muted);
-  font-size: 0.875rem;
-  text-align: center;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ocs-chat-list__item {
-    transition: none;
-  }
-}
-@media (max-width: 768px) {
-  .ocs-chat-list {
-    border-radius: 10px;
-  }
-  .ocs-chat-list__items {
-    max-height: 20rem;
-  }
-}
 .ocs-stack {
   display: flex;
   flex-direction: column;
@@ -4145,6 +3327,164 @@ ol.steps li.on .tk {
     animation: none !important;
   }
 }
+/* The line that appears when the compiled CSS is not usable. It replaces the
+   ticks rather than sitting beside them, so nothing reads as done. */
+#steps li.steps__block {
+  color: var(--ocs-danger);
+  align-items: flex-start;
+  line-height: 1.45;
+}
+#steps li.steps__block .tk {
+  background: var(--ocs-danger);
+  color: var(--ocs-danger-contrast, #fff);
+  border-color: var(--ocs-danger);
+  flex: 0 0 auto;
+}
+
+body[data-editor-theme=dusk] #editor, body[data-editor-theme=dusk] .gutter {
+  background: #12141a;
+  color: #d6dae6;
+}
+body[data-editor-theme=dusk] .gutter {
+  color: #545c70;
+}
+body[data-editor-theme=dusk] #editor::selection {
+  background: #35507d;
+}
+
+body[data-editor-theme=paper] #editor, body[data-editor-theme=paper] .gutter {
+  background: #f6f1e7;
+  color: #3a352c;
+}
+body[data-editor-theme=paper] .gutter {
+  color: #a89e8c;
+}
+body[data-editor-theme=paper] #editor::selection {
+  background: #e2d7bd;
+}
+
+body[data-editor-theme=crt] #editor, body[data-editor-theme=crt] .gutter {
+  background: #050a05;
+  color: #4dff8a;
+  text-shadow: 0 0 4px rgba(77, 255, 138, 0.55);
+  caret-color: #4dff8a;
+}
+body[data-editor-theme=crt] .gutter {
+  color: #1f6b38;
+}
+body[data-editor-theme=crt] #editor::selection {
+  background: rgba(77, 255, 138, 0.28);
+}
+body[data-editor-theme=crt] .ed-wrap {
+  position: relative;
+  overflow: hidden;
+}
+body[data-editor-theme=crt] .ed-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px);
+  animation: crtflicker 5s steps(30) infinite;
+}
+
+@keyframes crtflicker {
+  0%, 96%, 100% {
+    opacity: 0.55;
+  }
+  97% {
+    opacity: 0.4;
+  }
+  98% {
+    opacity: 0.7;
+  }
+}
+body[data-bigtype=on] #editor, body[data-bigtype=on] .gutter, body[data-bigtype=on] #cssout {
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+#previewLight {
+  background: #ffffff;
+  color: #1c1c1e;
+  padding: 1.25rem;
+  border-top: 1px solid var(--ocs-border);
+  color-scheme: light;
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+.confetti i {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confettifall 2.2s cubic-bezier(0.25, 0.6, 0.4, 1) forwards;
+}
+
+@keyframes confettifall {
+  to {
+    transform: translateY(102vh) rotate(540deg);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+  body[data-editor-theme=crt] .ed-wrap::after {
+    animation: none;
+  }
+}
+.shopgroup {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.69rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ocs-text-muted);
+}
+.shopgroup:first-child {
+  margin-top: 0;
+}
+
+.shopitem__act {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shopitem__dot {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  margin-right: 0.5rem;
+  vertical-align: baseline;
+}
+
+.shopitem__pick {
+  width: 2.2rem;
+  height: 1.9rem;
+  padding: 0;
+  border: 1px solid var(--ocs-border);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+#steps li.steps__none {
+  color: var(--ocs-text-muted);
+  font-style: italic;
+}
+#steps li.steps__none .tk {
+  display: none;
+}
 </style>
 </head>
 <!-- The page chrome runs on .ocs-light, one of the system's own themes. The
@@ -4203,6 +3543,7 @@ ol.steps li.on .tk {
       <div class="ph"><span class="lbl">your scss</span>
         <span class="grp">
           <button class="ocs-btn ocs-btn--ghost" id="copy">Copy</button>
+          <button class="ocs-btn ocs-btn--ghost" id="reveal" hidden>Show me the answer</button>
           <button class="ocs-btn ocs-btn--ghost" id="reset">Start over</button>
         </span></div>
       <div class="ed-wrap">
@@ -4214,6 +3555,7 @@ ol.steps li.on .tk {
     <div class="panel">
       <div class="ph"><span class="lbl">live preview</span><span id="verdict"></span></div>
       <div id="preview"></div>
+        <div id="previewLight" class="preview--light" hidden></div>
       <div class="ph"><span class="lbl">compiled css</span><span class="meter" id="meter"></span></div>
       <pre id="cssout"></pre>
     </div>
@@ -4287,11 +3629,11 @@ ol.steps li.on .tk {
   </div>
 
   <p class="foot">
-    See the finished system: <a href="./showcase.html">component showcase</a> &middot;
-    <a href="./lesson.html">lesson page</a> &middot; <a href="./dashboard.html">gradebook</a><br>
+    See the finished system: <a href="./design-system/">component docs</a> &middot;
+    <a href="./capstone/ocs-design-system/">capstone page</a><br>
     This page is itself built from the components it teaches.<br>
-    Source on the <code class="ocs-code-inline">design-system</code> branch &middot;
-    <a href="https://github.com/UGRC-CSA/Pages/issues/23">discussion</a><br>
+    Source in <code class="ocs-code-inline">_sass/ocs/tools/learn/</code> &middot;
+    <a href="https://github.com/UGRC-CSA/Pages/issues/34">discussion</a><br>
     <span class="grp" style="display:inline-flex;gap:.4rem;margin-block-start:.6rem">
       <button class="ocs-btn ocs-btn--ghost ocs-btn--sm" id="tourbtn">Replay the tour</button>
       <button class="ocs-btn ocs-btn--ghost ocs-btn--sm" id="export">Download my solutions</button>
@@ -4535,7 +3877,7 @@ function runChecks(scss, compiled, previewRoot) {
   return notes;
 }
 </script>
-<script>const TOKENS = [{"n":"--ocs-brand","v":"#EA706E","g":"Semantic colour","c":true},{"n":"--ocs-brand-border","v":"#E06665","g":"Semantic colour","c":true},{"n":"--ocs-brand-bg","v":"#3B2827","g":"Semantic colour","c":true},{"n":"--ocs-info","v":"#5293FF","g":"Semantic colour","c":true},{"n":"--ocs-info-border","v":"#007AFF","g":"Semantic colour","c":true},{"n":"--ocs-info-bg","v":"#272B3F","g":"Semantic colour","c":true},{"n":"--ocs-success","v":"#34C759","g":"Semantic colour","c":true},{"n":"--ocs-success-border","v":"#34C759","g":"Semantic colour","c":true},{"n":"--ocs-success-bg","v":"#283929","g":"Semantic colour","c":true},{"n":"--ocs-warning","v":"#FF9F0A","g":"Semantic colour","c":true},{"n":"--ocs-warning-border","v":"#FF9F0A","g":"Semantic colour","c":true},{"n":"--ocs-warning-bg","v":"#423220","g":"Semantic colour","c":true},{"n":"--ocs-danger","v":"#FF5E4D","g":"Semantic colour","c":true},{"n":"--ocs-danger-border","v":"#FF453A","g":"Semantic colour","c":true},{"n":"--ocs-danger-bg","v":"#412520","g":"Semantic colour","c":true},{"n":"--ocs-accent","v":"var(--ocs-brand)","g":"Semantic colour","c":false},{"n":"--ocs-accent-border","v":"var(--ocs-brand-border)","g":"Semantic colour","c":false},{"n":"--ocs-accent-bg","v":"var(--ocs-brand-bg)","g":"Semantic colour","c":false},{"n":"--ocs-accent-contrast","v":"#121212","g":"Semantic colour","c":true},{"n":"--ocs-text","v":"#FFFFFF","g":"Text","c":true},{"n":"--ocs-text-secondary","v":"#E1E1E6","g":"Text","c":true},{"n":"--ocs-text-muted","v":"#949498","g":"Text","c":true},{"n":"--ocs-text-inverse","v":"#121212","g":"Text","c":true},{"n":"--ocs-surface-base","v":"#121212","g":"Surface","c":true},{"n":"--ocs-surface-raised","v":"#1C1C1E","g":"Surface","c":true},{"n":"--ocs-surface-elevated","v":"#2C2C2E","g":"Surface","c":true},{"n":"--ocs-surface-overlay","v":"rgba(0, 0, 0, 0.72)","g":"Surface","c":true},{"n":"--ocs-border","v":"#444448","g":"Border","c":true},{"n":"--ocs-border-strong","v":"#59595D","g":"Border","c":true},{"n":"--ocs-border-subtle","v":"#303033","g":"Border","c":true},{"n":"--ocs-space-0","v":"0","g":"Spacing","c":false},{"n":"--ocs-space-1","v":"0.25rem","g":"Spacing","c":false},{"n":"--ocs-space-2","v":"0.5rem","g":"Spacing","c":false},{"n":"--ocs-space-3","v":"0.75rem","g":"Spacing","c":false},{"n":"--ocs-space-4","v":"1rem","g":"Spacing","c":false},{"n":"--ocs-space-5","v":"1.25rem","g":"Spacing","c":false},{"n":"--ocs-space-6","v":"1.5rem","g":"Spacing","c":false},{"n":"--ocs-space-8","v":"2rem","g":"Spacing","c":false},{"n":"--ocs-space-10","v":"2.5rem","g":"Spacing","c":false},{"n":"--ocs-space-12","v":"3rem","g":"Spacing","c":false},{"n":"--ocs-space-16","v":"4rem","g":"Spacing","c":false},{"n":"--ocs-radius-none","v":"0","g":"Radius","c":false},{"n":"--ocs-radius-sm","v":"4px","g":"Radius","c":false},{"n":"--ocs-radius-md","v":"6px","g":"Radius","c":false},{"n":"--ocs-radius-lg","v":"10px","g":"Radius","c":false},{"n":"--ocs-radius-xl","v":"14px","g":"Radius","c":false},{"n":"--ocs-radius-full","v":"999px","g":"Radius","c":false},{"n":"--ocs-coral-50","v":"#FFD7D1","g":"Colour ramp","c":true},{"n":"--ocs-coral-100","v":"#FFC8C2","g":"Colour ramp","c":true},{"n":"--ocs-coral-200","v":"#FFAFAA","g":"Colour ramp","c":true},{"n":"--ocs-coral-300","v":"#FF9490","g":"Colour ramp","c":true},{"n":"--ocs-coral-400","v":"#F27A77","g":"Colour ramp","c":true},{"n":"--ocs-coral-500","v":"#E06665","g":"Colour ramp","c":true},{"n":"--ocs-coral-600","v":"#BA4C4C","g":"Colour ramp","c":true},{"n":"--ocs-coral-700","v":"#9C3739","g":"Colour ramp","c":true},{"n":"--ocs-coral-800","v":"#7F2228","g":"Colour ramp","c":true},{"n":"--ocs-coral-900","v":"#630C17","g":"Colour ramp","c":true},{"n":"--ocs-neutral-50","v":"#F3F3F8","g":"Colour ramp","c":true},{"n":"--ocs-neutral-100","v":"#E5E5E9","g":"Colour ramp","c":true},{"n":"--ocs-neutral-200","v":"#CECED3","g":"Colour ramp","c":true},{"n":"--ocs-neutral-300","v":"#B6B6BA","g":"Colour ramp","c":true},{"n":"--ocs-neutral-400","v":"#9D9DA2","g":"Colour ramp","c":true},{"n":"--ocs-neutral-500","v":"#8E8E93","g":"Colour ramp","c":true},{"n":"--ocs-neutral-600","v":"#6F6F74","g":"Colour ramp","c":true},{"n":"--ocs-neutral-700","v":"#59595D","g":"Colour ramp","c":true},{"n":"--ocs-neutral-800","v":"#444448","g":"Colour ramp","c":true},{"n":"--ocs-neutral-900","v":"#303033","g":"Colour ramp","c":true},{"n":"--ocs-shadow-sm","v":"0 1px 2px rgba(0, 0, 0, 0.3)","g":"Shadow","c":false},{"n":"--ocs-shadow-md","v":"0 4px 12px rgba(0, 0, 0, 0.35)","g":"Shadow","c":false},{"n":"--ocs-shadow-lg","v":"0 10px 30px rgba(0, 0, 0, 0.45)","g":"Shadow","c":false},{"n":"--ocs-shadow-xl","v":"0 20px 50px rgba(0, 0, 0, 0.55)","g":"Shadow","c":false},{"n":"--ocs-duration-fast","v":"120ms","g":"Motion","c":false},{"n":"--ocs-duration-base","v":"180ms","g":"Motion","c":false},{"n":"--ocs-duration-slow","v":"280ms","g":"Motion","c":false},{"n":"--ocs-ease","v":"cubic-bezier(0.2, 0, 0, 1)","g":"Motion","c":false},{"n":"--ocs-font-sans","v":"var(--pref-font-family, Inter, system-ui, -apple-sys","g":"Type","c":false},{"n":"--ocs-font-mono","v":"Menlo, Monaco, Consolas, Roboto Mono, Ubuntu Mono, L","g":"Type","c":false},{"n":"--ocs-focus-ring","v":"0 0 0 2px var(--ocs-surface-base), 0 0 0 4px var(--o","g":"Other","c":false}];
+<script>const TOKENS = [{"n":"--ocs-brand","v":"#EA706E","g":"Semantic colour","c":true},{"n":"--ocs-brand-border","v":"#E06665","g":"Semantic colour","c":true},{"n":"--ocs-brand-bg","v":"#3B2827","g":"Semantic colour","c":true},{"n":"--ocs-info","v":"#5293FF","g":"Semantic colour","c":true},{"n":"--ocs-info-border","v":"#007AFF","g":"Semantic colour","c":true},{"n":"--ocs-info-bg","v":"#272B3F","g":"Semantic colour","c":true},{"n":"--ocs-success","v":"#34C759","g":"Semantic colour","c":true},{"n":"--ocs-success-border","v":"#34C759","g":"Semantic colour","c":true},{"n":"--ocs-success-bg","v":"#283929","g":"Semantic colour","c":true},{"n":"--ocs-warning","v":"#FF9F0A","g":"Semantic colour","c":true},{"n":"--ocs-warning-border","v":"#FF9F0A","g":"Semantic colour","c":true},{"n":"--ocs-warning-bg","v":"#423220","g":"Semantic colour","c":true},{"n":"--ocs-danger","v":"#FF5E4D","g":"Semantic colour","c":true},{"n":"--ocs-danger-border","v":"#FF453A","g":"Semantic colour","c":true},{"n":"--ocs-danger-bg","v":"#412520","g":"Semantic colour","c":true},{"n":"--ocs-accent","v":"var(--ocs-brand)","g":"Semantic colour","c":false},{"n":"--ocs-accent-border","v":"var(--ocs-brand-border)","g":"Semantic colour","c":false},{"n":"--ocs-accent-bg","v":"var(--ocs-brand-bg)","g":"Semantic colour","c":false},{"n":"--ocs-accent-contrast","v":"#121212","g":"Semantic colour","c":true},{"n":"--ocs-text","v":"#FFFFFF","g":"Text","c":true},{"n":"--ocs-text-secondary","v":"#E1E1E6","g":"Text","c":true},{"n":"--ocs-text-muted","v":"#949498","g":"Text","c":true},{"n":"--ocs-text-inverse","v":"#121212","g":"Text","c":true},{"n":"--ocs-surface-base","v":"#121212","g":"Surface","c":true},{"n":"--ocs-surface-raised","v":"#1C1C1E","g":"Surface","c":true},{"n":"--ocs-surface-elevated","v":"#2C2C2E","g":"Surface","c":true},{"n":"--ocs-surface-overlay","v":"rgba(0, 0, 0, 0.72)","g":"Surface","c":true},{"n":"--ocs-border","v":"#444448","g":"Border","c":true},{"n":"--ocs-border-strong","v":"#59595D","g":"Border","c":true},{"n":"--ocs-border-subtle","v":"#303033","g":"Border","c":true},{"n":"--ocs-space-0","v":"0","g":"Spacing","c":false},{"n":"--ocs-space-1","v":"0.25rem","g":"Spacing","c":false},{"n":"--ocs-space-2","v":"0.5rem","g":"Spacing","c":false},{"n":"--ocs-space-3","v":"0.75rem","g":"Spacing","c":false},{"n":"--ocs-space-4","v":"1rem","g":"Spacing","c":false},{"n":"--ocs-space-5","v":"1.25rem","g":"Spacing","c":false},{"n":"--ocs-space-6","v":"1.5rem","g":"Spacing","c":false},{"n":"--ocs-space-8","v":"2rem","g":"Spacing","c":false},{"n":"--ocs-space-10","v":"2.5rem","g":"Spacing","c":false},{"n":"--ocs-space-12","v":"3rem","g":"Spacing","c":false},{"n":"--ocs-space-16","v":"4rem","g":"Spacing","c":false},{"n":"--ocs-radius-none","v":"0","g":"Radius","c":false},{"n":"--ocs-radius-sm","v":"4px","g":"Radius","c":false},{"n":"--ocs-radius-md","v":"6px","g":"Radius","c":false},{"n":"--ocs-radius-lg","v":"10px","g":"Radius","c":false},{"n":"--ocs-radius-xl","v":"14px","g":"Radius","c":false},{"n":"--ocs-radius-full","v":"999px","g":"Radius","c":false},{"n":"--ocs-duration-fast","v":"120ms","g":"Motion","c":false},{"n":"--ocs-duration-base","v":"180ms","g":"Motion","c":false},{"n":"--ocs-duration-slow","v":"280ms","g":"Motion","c":false},{"n":"--ocs-ease","v":"cubic-bezier(0.2, 0, 0, 1)","g":"Motion","c":false},{"n":"--ocs-coral-50","v":"#FFD7D1","g":"Colour ramp","c":true},{"n":"--ocs-coral-100","v":"#FFC8C2","g":"Colour ramp","c":true},{"n":"--ocs-coral-200","v":"#FFAFAA","g":"Colour ramp","c":true},{"n":"--ocs-coral-300","v":"#FF9490","g":"Colour ramp","c":true},{"n":"--ocs-coral-400","v":"#F27A77","g":"Colour ramp","c":true},{"n":"--ocs-coral-500","v":"#E06665","g":"Colour ramp","c":true},{"n":"--ocs-coral-600","v":"#BA4C4C","g":"Colour ramp","c":true},{"n":"--ocs-coral-700","v":"#9C3739","g":"Colour ramp","c":true},{"n":"--ocs-coral-800","v":"#7F2228","g":"Colour ramp","c":true},{"n":"--ocs-coral-900","v":"#630C17","g":"Colour ramp","c":true},{"n":"--ocs-neutral-50","v":"#F3F3F8","g":"Colour ramp","c":true},{"n":"--ocs-neutral-100","v":"#E5E5E9","g":"Colour ramp","c":true},{"n":"--ocs-neutral-200","v":"#CECED3","g":"Colour ramp","c":true},{"n":"--ocs-neutral-300","v":"#B6B6BA","g":"Colour ramp","c":true},{"n":"--ocs-neutral-400","v":"#9D9DA2","g":"Colour ramp","c":true},{"n":"--ocs-neutral-500","v":"#8E8E93","g":"Colour ramp","c":true},{"n":"--ocs-neutral-600","v":"#6F6F74","g":"Colour ramp","c":true},{"n":"--ocs-neutral-700","v":"#59595D","g":"Colour ramp","c":true},{"n":"--ocs-neutral-800","v":"#444448","g":"Colour ramp","c":true},{"n":"--ocs-neutral-900","v":"#303033","g":"Colour ramp","c":true},{"n":"--ocs-shadow-sm","v":"0 1px 2px rgba(0, 0, 0, 0.3)","g":"Shadow","c":false},{"n":"--ocs-shadow-md","v":"0 4px 12px rgba(0, 0, 0, 0.35)","g":"Shadow","c":false},{"n":"--ocs-shadow-lg","v":"0 10px 30px rgba(0, 0, 0, 0.45)","g":"Shadow","c":false},{"n":"--ocs-shadow-xl","v":"0 20px 50px rgba(0, 0, 0, 0.55)","g":"Shadow","c":false},{"n":"--ocs-font-sans","v":"var(--pref-font-family, Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif)","g":"Type","c":false},{"n":"--ocs-font-mono","v":"Menlo, Monaco, Consolas, Roboto Mono, Ubuntu Mono, Liberation Mono, Courier New, monospace","g":"Type","c":false},{"n":"--ocs-focus-ring","v":"0 0 0 2px var(--ocs-surface-base), 0 0 0 4px var(--ocs-accent)","g":"Other","c":false}];
 </script>
 <script>/* ---------------------------------------------------------------
    Small localStorage helper. Every read and write is wrapped, because
@@ -4551,21 +3893,60 @@ const store = {
 /* ---------------------------------------------------------------
    Credits. Deliberately NOT a cosmetics casino.
    Research is clear that pure extrinsic reward loops shift focus off
-   the learning (Hanus & Fox 2015). So credits buy things that let you
-   learn MORE, plus a couple of harmless personalisations. The only
-   "cost" in the learning path is the full-answer hint, which exists to
-   make you try first, never to block you.
+   the learning (Hanus & Fox 2015). So most of what credits buy is a
+   tool that lets you learn more. The looks are there because a page
+   you enjoy sitting in is a page you stay on, and because recolouring
+   this one is the same skill the quests teach.
+
+   Every entry below does something. The first version of this list was
+   six items and not one of them was wired to anything: sandbox and
+   challenge had no code at all, the editor themes had no CSS, and the
+   accents set a --coral variable the stylesheet never used.
    --------------------------------------------------------------- */
 const SHOP = [
-  {id:'sandbox', cost:30, name:'Sandbox mode',
-   what:'A blank canvas with every token available. Build whatever you like, no quest, no checks.'},
-  {id:'challenge', cost:40, name:'Challenge quests',
-   what:'Three harder builds with no starting code and no step list. Just a target to hit.'},
-  {id:'theme-dusk', cost:15, name:'Dusk editor theme', what:'A darker editor, easier at night.'},
-  {id:'theme-paper', cost:15, name:'Paper editor theme', what:'Warm and low-contrast, easier on long sessions.'},
-  {id:'accent-blue', cost:10, name:'Blue accent', what:'Recolour this page from coral to blue.'},
-  {id:'accent-green',cost:10, name:'Green accent', what:'Recolour this page from coral to green.'}
+  // ---- tools: these change what you can do -------------------------------
+  {id:'reveal', cost:20, kind:'tool', name:'Answer key',
+   what:'Adds a "Show me the answer" button to every quest. Fills the editor with the solution so you can read it and take it apart.'},
+  {id:'compare', cost:25, kind:'tool', name:'Light and dark side by side',
+   what:'Shows your component on both backgrounds at once. This is how you catch a colour that only works on one of them.'},
+  {id:'sandbox', cost:30, kind:'tool', name:'Sandbox',
+   what:'A blank canvas with every token available and nothing to solve. Build whatever you like.'},
+  {id:'challenge', cost:45, kind:'tool', name:'Challenge quests',
+   what:'Three harder builds with no starting code and no step list. A target, and that is all.'},
+
+  // ---- editor: how the code pane looks ------------------------------------
+  {id:'theme-dusk', cost:10, kind:'editor', name:'Dusk editor',
+   what:'A darker editor, easier at night.'},
+  {id:'theme-paper', cost:10, kind:'editor', name:'Paper editor',
+   what:'Warm and low contrast, easier on long sessions.'},
+  {id:'theme-crt', cost:25, kind:'editor', name:'Phosphor editor',
+   what:'Green text, black screen, scanlines and a slow flicker. A 1983 terminal.'},
+  {id:'bigtype', cost:10, kind:'editor', name:'Bigger code',
+   what:'Steps the editor text up two sizes.'},
+
+  // ---- accent: recolour this page -----------------------------------------
+  {id:'accent-blue', cost:8, kind:'accent', name:'Blue accent', what:'Recolour this page from coral to blue.', hex:'#4C8DF5'},
+  {id:'accent-green', cost:8, kind:'accent', name:'Green accent', what:'Recolour this page from coral to green.', hex:'#3DBE72'},
+  {id:'accent-violet', cost:8, kind:'accent', name:'Violet accent', what:'Recolour this page from coral to violet.', hex:'#9A7BE8'},
+  {id:'accent-pick', cost:40, kind:'accent', name:'Any colour you like',
+   what:'A colour picker for this page. Everything follows it, exactly the way the tokens you have been writing are supposed to.'},
+
+  // ---- flair ---------------------------------------------------------------
+  {id:'confetti', cost:15, kind:'flair', name:'Confetti',
+   what:'Solving a quest throws a handful of it across the screen.'},
+  {id:'ranks', cost:20, kind:'flair', name:'Ranks',
+   what:'A title next to your credits that changes as you finish quests, from Beginner up to Tokensmith.'}
 ];
+
+const RANKS = [
+  [0,'Beginner'], [2,'Apprentice'], [4,'Stylist'], [6,'Themer'],
+  [8,'Token wrangler'], [10,'Tokensmith'], [13,'Grandmaster of Braces']
+];
+function rankFor(solvedCount){
+  let name = RANKS[0][1];
+  for (const [n, label] of RANKS) if (solvedCount >= n) name = label;
+  return name;
+}
 
 function credits(){ return store.get('credits', 0); }
 function addCredits(n){ store.set('credits', credits()+n); paintCredits(); }
@@ -4576,23 +3957,72 @@ function buy(item){
   if(owns(item.id)) return 'already';
   if(!spend(item.cost)) return 'poor';
   store.set('owned', [...owned(), item.id]);
+  // Turning a look on the moment it is bought is the least surprising thing
+  // to do. Tools switch themselves on because there is nothing to choose.
+  if(item.kind==='editor') store.set('activeTheme', item.id);
+  // accent-pick has no fixed hex, so an `item.hex` guard here skipped it and
+  // buying the picker left the previous accent switched on.
+  if(item.kind==='accent') store.set('activeAccent', item.id);
   applyUnlocks();
   return 'ok';
 }
+
+// Everything a purchase actually changes, in one place, run on load too.
 function applyUnlocks(){
-  const o = owned();
-  document.body.dataset.editorTheme = o.includes('theme-dusk') && store.get('activeTheme','')==='theme-dusk' ? 'dusk'
-    : o.includes('theme-paper') && store.get('activeTheme','')==='theme-paper' ? 'paper' : '';
-  const acc = store.get('activeAccent','');
-  document.documentElement.style.setProperty('--coral',
-    acc==='accent-blue' ? '#2563A8' : acc==='accent-green' ? '#1F7A45' : '');
+  const o = owned(), root = document.documentElement, body = document.body;
+
+  // Editor look. The CSS lives under [data-editor-theme] in page.scss.
+  const th = store.get('activeTheme','');
+  body.dataset.editorTheme = (o.includes(th) && th.startsWith('theme-')) ? th.replace('theme-','') : '';
+  body.dataset.bigtype = o.includes('bigtype') && store.get('bigtype', true) ? 'on' : '';
+
+  // Page accent. The page is built on --ocs-brand, so that is what to move,
+  // along with the two tokens derived from it.
+  const accId = store.get('activeAccent','');
+  const acc = SHOP.find(s => s.id === accId);
+  let hex = null;
+  if (accId === 'accent-pick' && o.includes('accent-pick')) hex = store.get('pickHex', '#4C8DF5');
+  else if (acc && acc.hex && o.includes(accId)) hex = acc.hex;
+  if (hex) {
+    root.style.setProperty('--ocs-brand', hex);
+    root.style.setProperty('--ocs-accent', hex);
+    root.style.setProperty('--ocs-brand-border', hex);
+  } else {
+    root.style.removeProperty('--ocs-brand');
+    root.style.removeProperty('--ocs-accent');
+    root.style.removeProperty('--ocs-brand-border');
+  }
+
+  // Tools just flip a flag the rest of the page reads.
+  body.dataset.compare = o.includes('compare') && store.get('compare', true) ? 'on' : '';
+  if (typeof renderChapters === 'function') renderChapters();
+}
+
+// Confetti, drawn with nothing but divs so there is no library to load.
+function celebrate(){
+  if (!owns('confetti')) return;
+  const colours = ['#EA706E','#4C8DF5','#3DBE72','#F5C24C','#9A7BE8'];
+  const box = document.createElement('div');
+  box.className = 'confetti';
+  for (let i = 0; i < 40; i++) {
+    const bit = document.createElement('i');
+    bit.style.left = Math.random()*100 + '%';
+    bit.style.background = colours[i % colours.length];
+    bit.style.animationDelay = (Math.random()*0.35).toFixed(2) + 's';
+    bit.style.transform = `rotate(${Math.floor(Math.random()*360)}deg)`;
+    box.appendChild(bit);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 2600);
 }
 </script>
 <script>const CHAPTERS = [
   {n:0, name:'Warm-up',    blurb:'Never written CSS before? Start here. One line, one change.'},
   {n:1, name:'Colour',      blurb:'How the token system keeps everything readable and themeable.'},
   {n:2, name:'State',       blurb:'Making components respond to hover, focus and disabled.'},
-  {n:3, name:'Components',  blurb:'Putting it together into things people actually use.'}
+  {n:3, name:'Components',  blurb:'Putting it together into things people actually use.'},
+  {n:4, name:'Challenges',   blurb:'No starting code and no step list. Unlocked with credits.', locked:'challenge'},
+  {n:5, name:'Sandbox',      blurb:'No quest, no checks. Build whatever you want.', locked:'sandbox'}
 ];
 
 const EXERCISES = [
@@ -4686,10 +4116,21 @@ const EXERCISES = [
   concept:{t:'Two places a colour can be worked out',
     b:'Sass runs once, before anyone opens the page. Whatever it works out gets written into the CSS file and never changes. <code>color-mix()</code> runs in the browser instead. It sees the colour the reader picked, so the hover matches it.'},
   brief:'The hover colour here is typed in by hand. Change the button colour and the hover no longer matches it. <code>color-mix()</code> mixes two colours in the browser, so the hover can follow.',
+  // These read the compiled rule, not the letters in the editor. `color-mix(
+  // var(--ocs-accent));` used to tick all three: it has no property, no colon,
+  // and the browser drops it, but every word the old regexes wanted was there.
   steps:[
     {label:'Remove the hardcoded hover colour', test:s=>!/#[0-9a-f]{3,8}/i.test(s)},
-    {label:'Use <code>color-mix()</code> in the hover', test:s=>/color-mix/.test(s)},
-    {label:'Mix from <code>var(--ocs-accent)</code>', test:s=>/color-mix[^;]*var\(--ocs-accent\)/.test(s)}],
+    {label:'Use <code>color-mix()</code> in the hover',
+     // Chrome will say it "supports" color-mix() without a colour space, so ask
+     // for the `in <space>` explicitly rather than trusting CSS.supports alone.
+     test:(s,c)=>declarations(c).some(d => /:hover\b/.test(d.sel) && d.prop
+                && /color-mix\s*\(\s*in\s+[a-z-]+/i.test(codeOf(d.value))
+                && browserAccepts(d.prop, d.value))},
+    {label:'Mix from <code>var(--ocs-accent)</code>',
+     test:(s,c)=>declarations(c).some(d => /:hover\b/.test(d.sel) && d.prop
+                && /color-mix\s*\(\s*in\s+[a-z-]+[^)]*var\(\s*--ocs-accent\s*\)/i.test(codeOf(d.value))
+                && browserAccepts(d.prop, d.value))}],
   hints:['<code>color-mix()</code> takes a colour space, then two colours with a percentage.',
          'Shape: <code>color-mix(in srgb, SOMECOLOUR 85%, black)</code> gives a slightly darker version.',
          'Full answer: <code>background: color-mix(in srgb, var(--ocs-accent) 85%, black);</code>'],
@@ -4717,7 +4158,10 @@ const EXERCISES = [
     background: color-mix(in srgb, var(--ocs-accent) 85%, black);
   }
 }`,
-  pass: s => /color-mix/.test(s) && !/#[0-9a-f]{3,8}/i.test(s)},
+  pass: (s, c) => !/#[0-9a-f]{3,8}/i.test(s)
+    && declarations(c).some(d => /:hover\b/.test(d.sel) && d.prop
+         && /color-mix\s*\(\s*in\s+[a-z-]+[^)]*var\(\s*--ocs-accent\s*\)/i.test(codeOf(d.value))
+         && browserAccepts(d.prop, d.value))},
 
 /* ============================ CHAPTER 2 ============================ */
  {id:4, ch:2, badge:'Nesting', title:'Build a variant with &',
@@ -4969,6 +4413,147 @@ const EXERCISES = [
   }
 }`,
   pass: s => /prefers-reduced-motion/.test(s) && /(transform|transition)\s*:\s*none/.test(s)}
+
+/* ============================ CHALLENGES ============================
+   Bought with credits. No starting code and no step list: a target, a
+   goal sentence, and the checker. `locked` keeps them out of the
+   chapter list until the unlock is owned.                             */
+ ,{id:11, ch:4, badge:'Challenge', locked:'challenge', title:'Build a toast from nothing',
+  learn:'A whole component with no scaffolding.',
+  concept:{t:'No starting code',
+    b:'From here you get a description and a target picture. Everything else is yours. Use the token drawer when you cannot remember a name.'},
+  brief:'Build a toast: a dark rounded box, readable text, a coloured bar down the left edge, and comfortable padding. Every colour and every size has to come from a token.',
+  steps:[
+    {label:'Pad it from the spacing scale',
+     test:(s,c)=>declarations(c).some(d=>d.prop==='padding' && /var\(--ocs-space-/.test(d.value) && browserAccepts(d.prop,d.value))},
+    {label:'Round it from the radius scale',
+     test:(s,c)=>declarations(c).some(d=>/^border-radius$/.test(d.prop||'') && /var\(--ocs-radius-/.test(d.value) && browserAccepts(d.prop,d.value))},
+    {label:'A coloured bar down the left edge',
+     test:(s,c)=>declarations(c).some(d=>/^border-left/.test(d.prop||'') && /var\(--ocs-/.test(d.value) && browserAccepts(d.prop,d.value))},
+    {label:'No hex codes anywhere', test:s=>!/#[0-9a-f]{3,8}/i.test(s)}],
+  hints:['Start with the box: a background token, a text token, padding and a radius.',
+         'The bar is <code>border-left</code>. It takes a width, a style and a colour.',
+         'Full answer: <code>border-left: 4px solid var(--ocs-info);</code>'],
+  start:`.ocs-demo-toast {
+  /* nothing here yet. build it. */
+}`,
+  html:`<div class="ocs-demo-toast">Saved to your portfolio.</div>`,
+  goal:'A dark rounded toast with a coloured left bar, built only from tokens.',
+  solution:`.ocs-demo-toast {
+  background: var(--ocs-surface-elevated);
+  color: var(--ocs-text);
+  padding: var(--ocs-space-3) var(--ocs-space-4);
+  border-radius: var(--ocs-radius-md);
+  border-left: 4px solid var(--ocs-info);
+}`,
+  pass:(s,c)=>!/#[0-9a-f]{3,8}/i.test(s)
+    && declarations(c).some(d=>d.prop==='padding' && /var\(--ocs-space-/.test(d.value))
+    && declarations(c).some(d=>/^border-left/.test(d.prop||'') && /var\(--ocs-/.test(d.value))}
+
+ ,{id:12, ch:4, badge:'Challenge', locked:'challenge', title:'Two states, one rule',
+  learn:'Hover and focus that agree with each other.',
+  concept:{t:'States are a set, not a list',
+    b:'A control needs to look different when you point at it and when you tab to it, and the two should feel like the same component. Build both from the same token so they cannot drift apart.'},
+  brief:'Build a button that lifts on hover and shows a visible ring on <code>:focus-visible</code>. Both effects must be built from <code>var(--ocs-accent)</code>, and the movement must switch off under reduced motion.',
+  steps:[
+    {label:'A hover state that uses the accent',
+     test:(s,c)=>declarations(c).some(d=>/:hover/.test(d.sel) && d.prop && /var\(--ocs-accent/.test(d.value) && browserAccepts(d.prop,d.value))},
+    {label:'A visible <code>:focus-visible</code> ring',
+     test:(s,c)=>declarations(c).some(d=>/:focus-visible/.test(d.sel) && /^(outline|box-shadow)/.test(d.prop||'') && !/none/.test(d.value) && browserAccepts(d.prop,d.value))},
+    {label:'Movement off under reduced motion', test:s=>/prefers-reduced-motion[\s\S]*(transform|transition)\s*:\s*none/.test(s)}],
+  hints:['Give the base button a transition first, then add the two state blocks.',
+         'A ring is <code>box-shadow: 0 0 0 3px SOMECOLOUR;</code>',
+         'Mix a see-through version: <code>color-mix(in srgb, var(--ocs-accent) 45%, transparent)</code>'],
+  start:`.ocs-demo-btn {
+  /* build the base, then &:hover and &:focus-visible */
+}`,
+  html:`<button class="ocs-demo-btn">Publish</button>`,
+  goal:'Lifts on hover, rings on keyboard focus, still on reduced motion.',
+  solution:`.ocs-demo-btn {
+  background: var(--ocs-accent);
+  color: var(--ocs-accent-contrast);
+  padding: var(--ocs-space-2) var(--ocs-space-4);
+  border: none;
+  border-radius: var(--ocs-radius-md);
+  transition: transform var(--ocs-duration-fast) var(--ocs-ease);
+
+  &:hover {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--ocs-accent) 85%, black);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ocs-accent) 45%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover { transform: none; }
+  }
+}`,
+  pass:(s,c)=>/prefers-reduced-motion/.test(s)
+    && declarations(c).some(d=>/:focus-visible/.test(d.sel) && /^(outline|box-shadow)/.test(d.prop||'') && !/none/.test(d.value))
+    && declarations(c).some(d=>/:hover/.test(d.sel) && d.prop && /var\(--ocs-accent/.test(d.value))}
+
+ ,{id:13, ch:4, badge:'Challenge', locked:'challenge', title:'A card that survives a theme change',
+  learn:'Everything from tokens, nothing typed in.',
+  concept:{t:'The real test',
+    b:'Change the page colour in Unlocks and watch. A component built from tokens follows it. A component with one typed-in value stands out immediately, and that is the bug this whole page is about.'},
+  brief:'Build a card: a raised surface, a border, a heading, body text and padding. Every single value has to be a token. No hex codes, no rgb(), no raw pixels except a border width.',
+  steps:[
+    {label:'Surface and text both from tokens',
+     test:(s,c)=>declarations(c).some(d=>/^background/.test(d.prop||'') && /var\(--ocs-/.test(d.value))
+              && declarations(c).some(d=>d.prop==='color' && /var\(--ocs-/.test(d.value))},
+    {label:'Padding and radius from the scales',
+     test:(s,c)=>declarations(c).some(d=>d.prop==='padding' && /var\(--ocs-space-/.test(d.value))
+              && declarations(c).some(d=>/^border-radius/.test(d.prop||'') && /var\(--ocs-radius-/.test(d.value))},
+    {label:'No hex, no rgb(), no raw px padding',
+     test:s=>!/#[0-9a-f]{3,8}/i.test(s) && !/rgba?\(/i.test(s) && !/padding\s*:[^;]*\d+px/.test(s)}],
+  hints:['Surfaces: <code>--ocs-surface-raised</code> and <code>--ocs-surface-elevated</code>.',
+         'Borders have their own token: <code>--ocs-border</code>.',
+         'Full answer is in the token drawer. Everything you need is already named.'],
+  start:`.ocs-demo-card {
+  /* every value a token. no exceptions. */
+}`,
+  html:`<div class="ocs-demo-card"><h4>Weekly report</h4><p>Three things shipped and one rolled back.</p></div>`,
+  goal:'A card that recolours itself when the page accent changes.',
+  solution:`.ocs-demo-card {
+  background: var(--ocs-surface-raised);
+  color: var(--ocs-text);
+  border: 1px solid var(--ocs-border);
+  border-radius: var(--ocs-radius-lg);
+  padding: var(--ocs-space-5);
+}`,
+  pass:s=>!/#[0-9a-f]{3,8}/i.test(s) && !/rgba?\(/i.test(s)
+    && /background[^;]*var\(--ocs-/.test(s) && /padding[^;]*var\(--ocs-space-/.test(s)}
+
+ ,{id:14, ch:5, badge:'Sandbox', locked:'sandbox', title:'Sandbox',
+  learn:'Nothing to solve. Every token, a blank file, and the live preview.',
+  concept:{t:'No checks here',
+    b:'The checklist is empty and nothing is marked solved, on purpose. The contrast reading under the preview still works, and so does the token drawer, so you can use this to try something out before you put it in a real component.'},
+  brief:'Write whatever you like. The preview shows a heading, a paragraph, a button and an input, so you have something to style. Your work saves in this browser like every other quest.',
+  steps:[],
+  hints:['Open the token drawer for the full list of names.',
+         'The preview markup is a heading, a paragraph, <code>.ocs-demo-btn</code> and <code>.ocs-demo-input</code>.',
+         'Nothing is checked here, so nothing can be wrong.'],
+  start:`/* Anything you like. The preview has a heading, a paragraph,
+   .ocs-demo-btn and .ocs-demo-input to aim at. */
+
+.ocs-demo-btn {
+  background: var(--ocs-accent);
+  color: var(--ocs-accent-contrast);
+  padding: var(--ocs-space-2) var(--ocs-space-4);
+  border: none;
+  border-radius: var(--ocs-radius-md);
+}`,
+  html:`<h3>A heading</h3>
+<p>A paragraph of body text to check your colours against.</p>
+<button class="ocs-demo-btn">A button</button>
+<input class="ocs-demo-input" placeholder="An input">`,
+  goal:'Whatever you want it to be.',
+  solution:null,
+  pass:()=>false}
 ];
 </script>
 <script>const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -5008,7 +4593,7 @@ function award(id,xp){
   if((cur.xp||0)>=xp && cur.done) return false;
   progress[id]={done:true,xp:Math.max(cur.xp||0,xp)};
   store.set('progress',progress);
-  if(fresh) addCredits(10);
+  if(fresh) { addCredits(10); celebrate(); }
   paintXP(); renderChapters();
   // The per-quest pills that this animated are gone; the quest card itself is
   // now the thing that visibly changes state.
@@ -5018,28 +4603,139 @@ function award(id,xp){
 
 function paintCredits(){
   const c=credits();
-  const el=$('#credtxt'); if(el) el.textContent=c+' cr';
+  const solved = EXERCISES.filter(e => (progress[e.id]||{}).done).length;
+  const el=$('#credtxt');
+  if (el) el.textContent = owns('ranks') ? `${rankFor(solved)} \u00B7 ${c} cr` : c + ' cr';
+
   const list=$('#shoplist'); if(!list) return;
-  list.innerHTML=SHOP.map(it=>{
-    const has=owns(it.id), afford=c>=it.cost;
-    const active=store.get('activeTheme','')===it.id||store.get('activeAccent','')===it.id;
-    return `<div class="shopitem ${has?'owned':''}">
-      <div><b>${it.name}</b><p>${it.what}</p></div>
-      <button class="ocs-btn ocs-btn--sm ${has?'ocs-btn--secondary':'ocs-btn--primary'}" data-buy="${it.id}" ${!has&&!afford?'disabled':''}>
-        ${has?(it.id.startsWith('theme')||it.id.startsWith('accent')?(active?'On':'Use'):'Unlocked'):it.cost+' cr'}</button>
-    </div>`;}).join('');
-  $$('#shoplist [data-buy]').forEach(b=>b.onclick=()=>{
-    const it=SHOP.find(x=>x.id===b.dataset.buy);
-    if(owns(it.id)){
-      if(it.id.startsWith('theme')) store.set('activeTheme', store.get('activeTheme','')===it.id?'':it.id);
-      if(it.id.startsWith('accent')) store.set('activeAccent', store.get('activeAccent','')===it.id?'':it.id);
-      applyUnlocks(); paintCredits(); return;
-    }
-    const r=buy(it);
-    if(r==='poor') toast('Not enough credits yet');
-    else { toast(it.name+' unlocked'); paintCredits(); }
+  const GROUPS = [['tool','Tools'], ['editor','Editor'], ['accent','Page colour'], ['flair','Flair']];
+  list.innerHTML = GROUPS.map(([kind, label]) => {
+    const rows = SHOP.filter(it => it.kind === kind).map(it => {
+      const has = owns(it.id), afford = c >= it.cost;
+      let btn;
+      if (!has) btn = `<button class="ocs-btn ocs-btn--sm ocs-btn--primary" data-buy="${it.id}" ${afford?'':'disabled'}>${it.cost} cr</button>`;
+      else if (it.kind === 'editor') {
+        const on = store.get('activeTheme','') === it.id;
+        btn = `<button class="ocs-btn ocs-btn--sm ${on?'ocs-btn--primary':'ocs-btn--secondary'}" data-use="${it.id}">${on?'On':'Use'}</button>`;
+      } else if (it.kind === 'accent') {
+        const on = store.get('activeAccent','') === it.id;
+        btn = `<button class="ocs-btn ocs-btn--sm ${on?'ocs-btn--primary':'ocs-btn--secondary'}" data-use="${it.id}">${on?'On':'Use'}</button>`
+            + (it.id === 'accent-pick' && on
+                ? `<input class="shopitem__pick" type="color" data-pick value="${store.get('pickHex','#4C8DF5')}" aria-label="Pick the page colour">` : '');
+      } else {
+        const on = store.get(it.id === 'bigtype' ? 'bigtype' : it.id, true);
+        btn = `<button class="ocs-btn ocs-btn--sm ${on?'ocs-btn--primary':'ocs-btn--secondary'}" data-toggle="${it.id}">${on?'On':'Off'}</button>`;
+      }
+      const swatch = it.hex ? `<span class="shopitem__dot" style="background:${it.hex}"></span>` : '';
+      return `<div class="shopitem ${has?'owned':''}">
+        <div><b>${swatch}${it.name}</b><p>${it.what}</p></div>
+        <div class="shopitem__act">${btn}</div>
+      </div>`;
+    }).join('');
+    return `<h4 class="shopgroup">${label}</h4>${rows}`;
+  }).join('');
+
+  $$('#shoplist [data-buy]').forEach(b => b.onclick = () => {
+    const it = SHOP.find(x => x.id === b.dataset.buy);
+    const r = buy(it);
+    if (r === 'poor') return toast('Not enough credits yet');
+    toast(it.name + ' unlocked');
+    paintCredits();
   });
+  $$('#shoplist [data-use]').forEach(b => b.onclick = () => {
+    const it = SHOP.find(x => x.id === b.dataset.use);
+    const key = it.kind === 'editor' ? 'activeTheme' : 'activeAccent';
+    store.set(key, store.get(key,'') === it.id ? '' : it.id);
+    applyUnlocks(); paintCredits();
+  });
+  $$('#shoplist [data-toggle]').forEach(b => b.onclick = () => {
+    const id = b.dataset.toggle, key = id === 'bigtype' ? 'bigtype' : id;
+    store.set(key, !store.get(key, true));
+    applyUnlocks(); paintCredits();
+  });
+  const pick = $('#shoplist [data-pick]');
+  if (pick) pick.oninput = () => { store.set('pickHex', pick.value); applyUnlocks(); };
 }
+
+/* ---------- is the CSS actually CSS? ------------------------------------------
+   Every step used to be a text match on what the student typed. That meant
+   `color-mix(var(--ocs-accent));` ticked all three boxes on quest 3: it has no
+   property, no colon, and the browser throws it away, but the letters are all
+   there. These two helpers check the compiled result instead.                */
+
+// CSS.supports() says yes to anything containing var(), because a custom
+// property could hold anything. Swapping each var() for the value that token
+// actually holds makes the answer honest: color-mix(#EA706E) is rejected,
+// color-mix(in srgb, #EA706E 85%, black) is accepted.
+//
+// Substituting a colour for EVERY var() was the first attempt and it was wrong.
+// padding: var(--ocs-space-3) became padding: red, so four correct quests
+// started reporting themselves broken. The value has to come from the token.
+let TOKVAL = null;
+function tokenValue(name){
+  // TOKENS is a top-level const, so it is NOT a property of window. Reading
+  // window.TOKENS gave an empty map, every token resolved to null, and the
+  // check quietly passed everything.
+  if (!TOKVAL) { TOKVAL = {}; TOKENS.forEach(t => { TOKVAL[t.n] = t.v; }); }
+  let v = TOKVAL[name], guard = 0;
+  // A token can point at another token. Follow it, but never forever.
+  while (v && /^var\(\s*--/.test(v) && guard++ < 5) {
+    v = TOKVAL[v.replace(/^var\(\s*|\s*\).*$/g, '')];
+  }
+  return v || null;
+}
+function browserAccepts(prop, value){
+  let unknown = false;
+  const concrete = String(value).replace(/var\(\s*(--[a-z0-9-]+)\s*(?:,([^()]*))?\)/gi,
+    (_m, name, fallback) => {
+      const v = tokenValue(name) || (fallback || '').trim();
+      if (!v) { unknown = true; return 'red'; }
+      return v;
+    });
+  // An unknown custom property could legitimately hold anything, so say nothing
+  // rather than accuse a student of breaking something we cannot check.
+  if (unknown) return true;
+  try { return CSS.supports(prop, concrete); } catch { return false; }
+}
+
+// Every declaration in the compiled CSS, with the selector it sits under.
+// Anything between the braces that is not `property: value` is returned with
+// prop null, which is what catches a line that is not a declaration at all.
+// "color-mix(...)" inside quotes is a string the browser prints, not a colour
+// it works out. Blank the quotes before looking for code in a value.
+function codeOf(value){ return String(value).replace(/"[^"]*"|'[^']*'/g, '""'); }
+
+function declarations(css){
+  const out = [];
+  String(css).replace(/([^{}]+)\{([^{}]*)\}/g, (_m, sel, body) => {
+    body.split(';').forEach(piece => {
+      const raw = piece.trim();
+      if (!raw) return;
+      const i = raw.indexOf(':');
+      if (i < 1) { out.push({sel: sel.trim(), raw, prop: null, value: null}); return; }
+      out.push({sel: sel.trim(), raw, prop: raw.slice(0, i).trim(), value: raw.slice(i + 1).trim()});
+    });
+    return '';
+  });
+  return out;
+}
+
+// What is wrong with the compiled CSS, in words a beginner can act on.
+function cssProblems(css){
+  const bad = [];
+  for (const d of declarations(css)) {
+    if (!d.prop) {
+      bad.push(`<code>${esc(d.raw)}</code> is not a CSS line. A line needs a name, then `
+        + `<code>:</code>, then a value, like <code>background: blue</code>.`);
+    } else if (!d.prop.startsWith('--') && !browserAccepts(d.prop, d.value)) {
+      bad.push(`The browser will not accept <code>${esc(d.prop)}: ${esc(d.value)}</code>, `
+        + `so it gets thrown away and nothing changes.`);
+    }
+  }
+  return bad;
+}
+
+let lastProblems = [];
 
 /* ---------- step checklist ---------- */
 function renderSteps(){
@@ -5050,10 +4746,28 @@ function renderSteps(){
     const txt=(el.textContent||el.value||'').trim();
     if(txt&&!el.children.length&&contrastOf(el)<4.5) worstOk=false;
   });
-  const done=e.steps.map(st=>{try{return !!st.test(editor.value,css,worstOk);}catch{return false;}});
+  // Nothing ticks while the CSS is broken. A step that only reads the text the
+  // student typed cannot tell the difference between a working rule and a line
+  // the browser discards, so this gate runs first for every quest.
+  // The sandbox has no steps. Say so instead of drawing an empty list.
+  if (!e.steps || !e.steps.length) {
+    box.innerHTML = '<li class="steps__none">Nothing to check here. Build whatever you like.</li>';
+    $('#stepcount').textContent = '';
+    lastProblems = [];
+    paintCoach();
+    return;
+  }
+  const problems = cssProblems(css);
+  const done = problems.length
+    ? e.steps.map(() => false)
+    : e.steps.map(st=>{try{return !!st.test(editor.value,css,worstOk);}catch{return false;}});
   box.innerHTML=e.steps.map((st,i)=>
-    `<li class="${done[i]?'on':''}"><span class="tk">${done[i]?'&#10003;':i+1}</span>${st.label}</li>`).join('');
+    `<li class="${done[i]?'on':''}"><span class="tk">${done[i]?'&#10003;':i+1}</span>${st.label}</li>`).join('')
+    + (problems.length
+        ? `<li class="steps__block"><span class="tk">!</span>${problems[0]}</li>`
+        : '');
   $('#stepcount').textContent=done.filter(Boolean).length+'/'+e.steps.length;
+  lastProblems = problems;
   paintCoach();
 }
 
@@ -5092,8 +4806,10 @@ function questState(e){
 }
 
 function renderChapters(){
-  chapsEl.innerHTML = CHAPTERS.map(c => {
-    const list = EXERCISES.filter(e => e.ch === c.n);
+  // A chapter or a quest can be gated behind an unlock. Hide it until it is
+  // bought rather than showing a locked row, so the page is not a shop window.
+  chapsEl.innerHTML = CHAPTERS.filter(c => !c.locked || owns(c.locked)).map(c => {
+    const list = EXERCISES.filter(e => e.ch === c.n && (!e.locked || owns(e.locked)));
     const done = list.filter(e => progress[e.id]?.done).length;
     const open = chapterOpen(c.n);
     const prev = CHAPTERS.find(x => x.n === c.n - 1);
@@ -5352,6 +5068,12 @@ function answerLocally(question){
   // Only FIRST-PERSON stuck phrasing routes to the next action. Matching a bare
   // "what.*do" sent "what does the selector do" here instead of to its
   // definition.
+  // A greeting is not a question. Answer it instead of shrugging at it.
+  if (/^\s*(yo|hi|hey|hello|sup|hiya|howdy)\b[\s!.?]*$/i.test(question)) {
+    return 'Hello. Ask me about anything on this page. Try <b>what is contrast</b>, '
+      + '<b>what is padding</b>, <b>what is a selector</b>, or the name of any token, '
+      + 'like <b>what is --ocs-accent</b>.';
+  }
   if (/\b(i'?m |i am )?(stuck|lost|confused)\b|what (do|should) i do|where do i (start|begin)|help me|i don'?t know what/i.test(question)) {
     const a = coachAdvice();
     return `${a.body}` + (a.apply ? ' Use the button above and I will do it for you.' : '');
@@ -5370,9 +5092,20 @@ function answerLocally(question){
   let best = null;
   for (const item of KB) {
     if (!item.a) continue;
-    const iw = new Set(words(item.q));
-    let score = 0;
-    qw.forEach(w => { if (iw.has(w)) score += item.w; });
+    const iwList = words(item.q);
+    const iw = new Set(iwList);
+    let score = 0, exact = 0, partial = 0;
+    qw.forEach(w => {
+      if (iw.has(w)) { score += item.w; exact++; return; }
+      // Part-words, so a half-typed "contra" still finds "contrast".
+      if (w.length >= 4 && iwList.some(k => k.startsWith(w) || w.startsWith(k))) {
+        score += item.w; partial++;
+      }
+    });
+    // A part-word on its own is only trustworthy when it IS the question.
+    // Otherwise "why would a designer pick a pill shape" matches the entry for
+    // "design token" on one stem and answers something nobody asked.
+    if (!exact && partial && qw.length > 1) continue;
 
     if (item.token) {
       // A token entry only competes when the question actually names it.
@@ -5397,13 +5130,27 @@ async function askGroq(question){
     const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key},
-      body: JSON.stringify({model: 'llama-3.3-70b-versatile', max_tokens: 220, temperature: 0.3,
+      // gpt-oss models think before they answer, and that thinking spends the
+      // token budget. At 220 tokens the reply came back empty every time.
+      // reasoning_effort 'low' keeps it short; the headroom covers the rest.
+      body: JSON.stringify({model: 'openai/gpt-oss-20b', max_tokens: 900,
+        temperature: 0.3, reasoning_effort: 'low',
         messages: [{role: 'system', content: sys},
                    {role: 'user', content: ctx + '\n\nQuestion: ' + question}]})
     });
-    if (!r.ok) return `That key was refused (HTTP ${r.status}). Check it in Settings below.`;
+    if (r.status === 401 || r.status === 403) {
+      return 'That key was refused. Check it under Settings below, or make a new one at console.groq.com/keys.';
+    }
+    if (r.status === 429) return 'Groq is rate limiting that key. Wait a few seconds and ask again.';
+    if (!r.ok) return `Groq answered with HTTP ${r.status}. Try again in a moment.`;
     const j = await r.json();
-    return (j.choices?.[0]?.message?.content || '').replace(/</g, '&lt;').replace(/\n/g, '<br>');
+    const raw = (j.choices?.[0]?.message?.content || '').trim();
+    if (!raw) return 'The model replied with nothing that time. Ask again, or word it differently.';
+    // Escape first, then allow the little markdown the model actually emits.
+    return raw.replace(/</g, '&lt;')
+              .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+              .replace(/`([^`]+)`/g, '<code>$1</code>')
+              .replace(/\n/g, '<br>');
   } catch { return 'Could not reach Groq. You may be offline.'; }
 }
 
@@ -5434,8 +5181,14 @@ async function coachAsk(){
   pushAsk('coach', '<span class="coach__wait">Thinking…</span>');
   const g = await askGroq(q);
   coachThread.pop();
-  pushAsk('coach', g || 'I do not know that one. Try the hint button on the left, or ask '
-    + 'your question with the name of the thing in it, like "what is --ocs-accent".');
+  pushAsk('coach', g || (
+    'I could not match that to anything on this page. I can answer:<br>'
+    + '\u2022 any token by name, like <b>what is --ocs-accent</b><br>'
+    + '\u2022 CSS words: <b>selector</b>, <b>property</b>, <b>padding</b>, <b>margin</b>, '
+    + '<b>hover</b>, <b>nesting</b>, <b>contrast</b>, <b>px</b> and <b>rem</b><br>'
+    + '\u2022 <b>what do I do</b> for the next step, or <b>why is it not working</b> '
+    + 'to read the checks<br>'
+    + 'For anything else, add your own Groq key under Settings below and I will ask it.'));
 }
 
 function paintCoach(){
@@ -5500,6 +5253,10 @@ function load(){
   renderChapters();renderBrief();
   editor.value=drafts[e.id]!==undefined?drafts[e.id]:e.start;
   preview.innerHTML=e.html;
+  const lite = $('#previewLight');
+  if (lite) lite.innerHTML = e.html;
+  const rev = $('#reveal');
+  if (rev) rev.hidden = !owns('reveal');
     syncGutter();run();
 }
 function run(){
@@ -5507,8 +5264,14 @@ function run(){
   const {css,errors}=compileScss(editor.value);
   lastCss=css;
   cssout.textContent=css||'/* nothing compiled yet */';
-  styleTag.textContent=css.replace(/(^|})\s*([^{}@]+)\{/g,(m,a,sel)=>
-    `${a} ${sel.split(',').map(s=>'#preview '+s.trim()).join(', ')}{`);
+  // Scope the student's CSS to the preview so it cannot touch the page. When
+  // the compare unlock is on, the same rules are scoped to the light pane too.
+  const scopeTo = root => css.replace(/(^|})\s*([^{}@]+)\{/g,(m,a,sel)=>
+    `${a} ${sel.split(',').map(s=>root+' '+s.trim()).join(', ')}{`);
+  styleTag.textContent = scopeTo('#preview')
+    + (document.body.dataset.compare === 'on' ? '\n' + scopeTo('#previewLight') : '');
+  const lp = $('#previewLight');
+  if (lp) lp.hidden = document.body.dataset.compare !== 'on';
   paintMeter();
   renderSteps();
 
@@ -5516,10 +5279,16 @@ function run(){
     why:'The compiler stopped here, so nothing after this point was applied.',
     fix:'Check your braces and semicolons.'}));
   notes.push(...runChecks(editor.value,css,preview));
+  cssProblems(css).forEach(msg => notes.unshift({level:'error',
+    title:'That line is not doing anything',
+    why: msg,
+    fix:'Every line inside the braces needs a name, a colon, then a value, and the value has to be one the browser understands.'}));
   lastNotes=notes;
 
   const clean=!errors.length&&!notes.some(n=>n.level==='error');
-  const passed=clean&&e.pass(editor.value,css);
+  // Same gate as the checklist: a quest is not solved by text that the browser
+  // discards, however well it matches what the answer is supposed to contain.
+  const passed=clean&&!cssProblems(css).length&&e.pass(editor.value,css);
   verdict.innerHTML=passed?'<span style="color:var(--ok);font-weight:650">&#10003; solved</span>':'';
   ccount.textContent=notes.length?notes.length+' to look at':'all clear';
 
@@ -5790,6 +5559,13 @@ function downloadSubmission(){
 
 /* ---------- wire up ---------- */
 $('#reset').onclick=()=>{editor.value=EXERCISES[active].start;syncGutter();run();saveDraft();toast('Reset to the starting code');};
+$('#reveal').onclick=()=>{
+  const e = EXERCISES[active];
+  if (!owns('reveal')) return toast('Unlock the answer key first');
+  editor.value = e.solution || e.start;
+  syncGutter(); run(); saveDraft();
+  toast('Answer filled in. Read it, then press Start over and try it yourself.');
+};
 $('#copy').onclick=async()=>{try{await navigator.clipboard.writeText(editor.value);toast('Copied');}catch{toast('Could not copy');}};
 $('#tokbtn').onclick=()=>openDrawer(true);
 $('#tokclose').onclick=()=>openDrawer(false);
