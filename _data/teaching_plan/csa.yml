@@ -43,9 +43,9 @@ periods:
         topic: "Chat and WebSockets"
         team: "UGRC"
         presenters:
-          - { name: "Samarth", uid: "" }
-          - { name: "Akshaj", uid: "" }
-          - { name: "Tarun", uid: "" }
+          - { name: "", uid: "" }
+          - { name: "", uid: "" }
+          - { name: "", uid: "" }
         builds: "UGRC builds the course chat: class announcements, week threads, and direct messages."
         project_url: /capstone/ocs-communications/
         lesson: ""
@@ -63,9 +63,9 @@ periods:
         topic: "API, MVC, and security systems"
         team: "UGRC"
         presenters:
-          - { name: "Sathwik", uid: "" }
-          - { name: "Akhil", uid: "" }
-          - { name: "Skandan", uid: "" }
+          - { name: "", uid: "" }
+          - { name: "", uid: "" }
+          - { name: "", uid: "" }
         builds: "This UGRC team hosts the backend on AWS and owns the Groups management page."
         project_url: /capstone/ocs-communications/
         lesson: ""
@@ -78,9 +78,9 @@ periods:
         topic: "Roles in submitting, teaching, and grading"
         team: "AAA"
         presenters:
-          - { name: "Aneesh Deevi", uid: "" }
-          - { name: "Aditya Srivastava", uid: "" }
-          - { name: "Aaryav Lal", uid: "" }
+          - { name: "", uid: "" }
+          - { name: "", uid: "" }
+          - { name: "", uid: "" }
         builds: "AAA builds OCS Submissions: who may create an assignment, who may grade it, and the analytics behind it."
         project_url: ""   # AAA's capstone page is not on this site yet
         lesson: ""
@@ -135,7 +135,7 @@ periods:
         topic: "Designing SASS utilities and runners similar to Tailwind class definitions"
         team: "UGRC"
         presenters:
-          - { name: "Samarth", uid: "" }
+          - { name: "", uid: "" }
         builds: "The OCS design system: one list of colours and sizes, fifteen components, and a docs page, all in SCSS."
         project_url: /capstone/ocs-design-system/   # lands with UGRC-CSA/Pages#38
         lesson: ""
