@@ -18,12 +18,12 @@ Every row below is a proposal. The teacher and the tables confirm or change them
 
 | Day | Topic | Table | Why this table |
 |---|---|---|---|
-| Tue 09-22 | Chat and WebSockets | UGRC — Samarth, Akshaj, Tarun | They built the course chat: announcements, week threads, direct messages. |
-| Wed 09-23 | API, MVC, and security systems | UGRC — Sathwik, Akhil, Skandan | They host the backend on AWS and own the Groups management page. |
-| Thu 09-24 | Roles in submitting, teaching, and grading | AAA — Aneesh Deevi, Aditya Srivastava, Aaryav Lal | They build who may create an assignment and who may grade it. |
+| Tue 09-22 | Chat and WebSockets | UGRC | They built the course chat: announcements, week threads, direct messages. |
+| Wed 09-23 | API, MVC, and security systems | UGRC | They host the backend on AWS and own the Groups management page. |
+| Thu 09-24 | Roles in submitting, teaching, and grading | AAA | They build who may create an assignment and who may grade it. |
 | Fri 09-25 | AI pipeline in grading | Compute-Cuties | They built the AI autograder: a rubric per assignment and a Gemini call that scores against it. |
 | Wed 09-30 | JWT login and cookies | Admin table | They own login: password reset, password rules, rate limits. |
-| Thu 10-01 | Designing SASS utilities and runners similar to Tailwind class definitions | UGRC — Samarth | The OCS design system: tokens, fifteen components, a docs page. |
+| Thu 10-01 | Designing SASS utilities and runners similar to Tailwind class definitions | UGRC | The OCS design system: tokens, fifteen components, a docs page. |
 
 ## Checkpoints for everyone
 
