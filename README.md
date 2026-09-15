@@ -48,7 +48,7 @@ The Apache license has its roots in Fastpages.  Thus, it carries that license fo
 
 ## GitHub Pages setup
 
-The absolutes in setup up...
+The essentials of setup are outlined below.
 
 **Activate GitHub Pages Actions**: This step involves enabling GitHub Pages Actions for your project. By doing so, your project will be automatically deployed using GitHub Pages Actions, ensuring that your project is always up to date with the latest changes you push to your repository.
 
