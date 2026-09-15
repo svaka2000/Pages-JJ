@@ -14,7 +14,7 @@ HS students will have the opportunity to create their personal GitHub Pages repo
 In general, students and instructors are expected to use GitHub Pages to build lessons, complete classroom hacks/challenges and perform exploratory work.
 Exchange of information from this repository to your personal GitHub Pages can be done in many ways...
 
-1. sharing a file, ie: `wget "raw-link.ipynb"`
+1. sharing a file, i.e.: `wget "raw-link.ipynb"`
 2. creating a template from this repository
 3. creating a fork to be shared by you and team members
 4. etc.
