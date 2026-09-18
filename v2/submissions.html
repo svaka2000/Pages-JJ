@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Submissions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- User preferences CSS (must come after Tailwind to override) and JS -->
+    <link rel="stylesheet" href="/Pages-JJ/v2/assets/css/style.css">
+    <script src="/Pages-JJ/v2/assets/js/user-preferences.js"></script>
+    <!--Keyboard Shortcuts (Alt+Shift+key navigation)-->
+    <script>window.baseurl = "/Pages-JJ/v2";</script>
+    <script src="/Pages-JJ/v2/assets/js/keyboard-shortcuts.js" defer></script>
+    
+</head>
+
+
+<body class="min-h-screen flex flex-col flex-auto flex-shrink-0 transition-colors user-theme-root page-aesthetihawk">
+    <!-- navbar -->    <header class="site-header">
+        <div class="wrapper"><a class="site-title" rel="author" href="/Pages-JJ/v2/" data-value="Open Coding">
+                <img id="site-logo" src="/Pages-JJ/v2/images/logo.png" alt="Logo">
+            </a><nav class="site-nav">
+                <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+                <label for="nav-trigger">
+                    <span class="menu-icon">
+                        <svg viewBox="0 0 18 15" width="18px" height="15px">
+                            <path
+                                d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z" />
+                        </svg>
+                    </span>
+                </label>
+
+                <div class="trigger"><a class="page-link" href="/Pages-JJ/v2/navigation/blogs/">Blogs</a><a class="page-link" href="/Pages-JJ/v2/capstone/">Capstone</a><a class="page-link" href="/Pages-JJ/v2/search/">Search</a><a id="loginArea" class="page-link" href="/Pages-JJ/v2/login">Login</a>
+                </div>
+            </nav></div>
+    </header>
+
+    <script type="module" src="/Pages-JJ/v2/assets/js/api/login.js"></script>    
+<script>
+  (function () {
+    function findCardAncestor(element) {
+      while (element && element !== document.documentElement) {
+        var className = element.className || '';
+        if (/(^|\s)[a-z0-9_-]*-card(\s|$)/i.test(className) || /(^|\s)card(\s|$)/i.test(className)) {
+          return element;
+        }
+        element = element.parentElement;
+      }
+      return null;
+    }
+
+    function gatherTechText(stackElement) {
+      if (!stackElement) {
+        return '';
+      }
+
+      var chips = Array.from(stackElement.querySelectorAll('span, .tag, .tech-tag, .sd-auto-tag'))
+        .map(function (chip) { return chip.textContent.trim(); })
+        .filter(Boolean);
+
+      if (chips.length) {
+        return chips.join(' · ');
+      }
+
+      return stackElement.textContent.trim().replace(/\s+/g, ' ').slice(0, 300);
+    }
+
+    function attachTooltips() {
+      var stacks = Array.from(document.querySelectorAll('[class*="tech-stack"], .tech-tags, .tags'));
+      stacks.forEach(function (stack) {
+        try {
+          var techText = gatherTechText(stack);
+          if (!techText) {
+            return;
+          }
+
+          var card = findCardAncestor(stack);
+          if (!card || card.querySelector('.project-tooltip')) {
+            return;
+          }
+
+          card.classList.add('project-tooltip-anchor');
+
+          var tooltip = document.createElement('div');
+          tooltip.className = 'project-tooltip';
+          tooltip.setAttribute('role', 'status');
+          tooltip.textContent = techText;
+          card.appendChild(tooltip);
+
+          card.addEventListener('mouseenter', function () { tooltip.classList.add('visible'); });
+          card.addEventListener('mouseleave', function () { tooltip.classList.remove('visible'); });
+          card.addEventListener('focusin', function () { tooltip.classList.add('visible'); });
+          card.addEventListener('focusout', function () { tooltip.classList.remove('visible'); });
+          card.addEventListener('touchstart', function () {
+            tooltip.classList.add('visible');
+            setTimeout(function () { tooltip.classList.remove('visible'); }, 2500);
+          }, { passive: true });
+        } catch (error) {
+          console.warn('tooltip attach failed', error);
+        }
+      });
+    }
+
+    function showNudgeToast() {
+      var wrap = document.querySelector('.site-toast-wrap');
+      if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.className = 'site-toast-wrap';
+        document.body.appendChild(wrap);
+      }
+
+      var toast = document.createElement('div');
+      toast.className = 'site-toast';
+      toast.innerHTML = '<span>Got thoughts on a project? Drop a comment.</span>';
+
+      var closeButton = document.createElement('button');
+      closeButton.className = 'toast-close';
+      closeButton.setAttribute('aria-label', 'Dismiss');
+      closeButton.textContent = '✕';
+
+      toast.appendChild(closeButton);
+      wrap.appendChild(toast);
+
+      requestAnimationFrame(function () { toast.classList.add('show'); });
+
+      function dismiss() {
+        toast.classList.remove('show');
+        setTimeout(function () {
+          try {
+            toast.remove();
+          } catch (error) {
+            console.warn('toast removal failed', error);
+          }
+        }, 350);
+      }
+
+      closeButton.addEventListener('click', dismiss);
+      var autoDismiss = setTimeout(dismiss, 6000);
+      toast.addEventListener('mouseenter', function () { clearTimeout(autoDismiss); });
+    }
+
+    function initHeaderEnhancements() {
+      attachTooltips();
+      setTimeout(showNudgeToast, 3000);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initHeaderEnhancements);
+    } else {
+      initHeaderEnhancements();
+    }
+  })();
+</script><div class="min-h-screen flex flex-col flex-auto flex-shrink-0 antialiased mt-[53px] theme-inner">
+
+        <!-- Sidebar -->
+        <div class="fixed left-0 top-[53px] w-64 h-full border-r flex flex-col lesson-sidebar">
+
+            <!-- welcome section 
+            <div class="p-6 flex flex-col items-center bg-neutral-800">
+                <h2 class="text-lg font-semibold text-center mb-6" id="sidebarWelcome">Welcome. Please log in.</h2>
+            </div>
+            -->
+
+            <!-- Scrollable menu section -->
+            <div class="overflow-y-auto flex-grow">
+                <!-- sidebar menu --><ul class="flex flex-col py-4 space-y-1">
+  
+    <li class="px-5">
+      <div class="flex flex-row items-center h-8">
+        <div class="text-sm font-light tracking-wide text-neutral-500">Menu</div>
+      </div>
+    </li>
+
+    
+    
+      
+      <li>
+        <a id="sidebar-profile" href="/Pages-JJ/v2/profile"
+           class="nav-item relative flex flex-row items-center h-11 focus:outline-none pr-6 border-l-4
+           
+             text-neutral-600 border-transparent hover:text-neutral-50 hover:border-indigo-500
+           ">
+          <span class="inline-flex justify-center items-center ml-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M10 19H5a1 1 0 0 1-1-1v-1a3 3 0 0 1 3-3h2m10 1a3 3 0 0 1-3 3m3-3a3 3 0 0 0-3-3m3 3h1m-4 3a3 3 0 0 1-3-3m3 3v1m-3-4a3 3 0 0 1 3-3m-3 3h-1m4-3v-1m-2.121 1.879-.707-.707m5.656 5.656-.707-.707m-4.242 0-.707.707m5.656-5.656-.707.707M12 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+
+            </svg>
+          </span>
+          <span class="ml-2 text-sm tracking-wide truncate">Profile</span>
+        </a>
+      </li>
+    
+      
+      <li>
+        <a id="sidebar-dashboard" href="/Pages-JJ/v2/dashboard"
+           class="nav-item relative flex flex-row items-center h-11 focus:outline-none pr-6 border-l-4
+           
+             text-neutral-600 border-transparent hover:text-neutral-50 hover:border-indigo-500
+           ">
+          <span class="inline-flex justify-center items-center ml-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+
+            </svg>
+          </span>
+          <span class="ml-2 text-sm tracking-wide truncate">Dashboard/Preferences</span>
+        </a>
+      </li>
+    
+      
+      <li>
+        <a id="sidebar-analytics" href="/Pages-JJ/v2/analytics-dashboard"
+           class="nav-item relative flex flex-row items-center h-11 focus:outline-none pr-6 border-l-4
+           
+             text-neutral-600 border-transparent hover:text-neutral-50 hover:border-indigo-500
+           ">
+          <span class="inline-flex justify-center items-center ml-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M9 19v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2zm0 0V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10m-6 0a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2m0 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/>
+
+            </svg>
+          </span>
+          <span class="ml-2 text-sm tracking-wide truncate">Analytics Dashboard</span>
+        </a>
+      </li>
+    
+      
+      <li>
+        <a id="sidebar-grades" href="/Pages-JJ/v2/student/view-grades"
+           class="nav-item relative flex flex-row items-center h-11 focus:outline-none pr-6 border-l-4
+           
+             text-neutral-600 border-transparent hover:text-neutral-50 hover:border-indigo-500
+           ">
+          <span class="inline-flex justify-center items-center ml-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+
+            </svg>
+          </span>
+          <span class="ml-2 text-sm tracking-wide truncate">View Grades</span>
+        </a>
+      </li>
+    
+      
+      <li>
+        <a id="sidebar-submissions" href="/Pages-JJ/v2/submissions"
+           class="nav-item relative flex flex-row items-center h-11 focus:outline-none pr-6 border-l-4
+           
+             text-neutral-600 border-transparent hover:text-neutral-50 hover:border-indigo-500
+           ">
+          <span class="inline-flex justify-center items-center ml-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+
+            </svg>
+          </span>
+          <span class="ml-2 text-sm tracking-wide truncate">Submissions</span>
+        </a>
+      </li>
+    
+  
+    <li class="px-5">
+      <div class="flex flex-row items-center h-8">
+        <div class="text-sm font-light tracking-wide text-neutral-500">Toolkit</div>
+      </div>
+    </li>
+
+    
+    
+      
+      <li>
+        <a id="sidebar-calendar" href="/Pages-JJ/v2/student/calendar"
+           class="nav-item relative flex flex-row items-center h-11 focus:outline-none pr-6 border-l-4
+           
+             text-neutral-600 border-transparent hover:text-neutral-50 hover:border-indigo-500
+           ">
+          <span class="inline-flex justify-center items-center ml-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/>
+
+            </svg>
+          </span>
+          <span class="ml-2 text-sm tracking-wide truncate">Calendar</span>
+        </a>
+      </li>
+    
+      
+      <li>
+        <a id="sidebar-bathroom_pass" href="/Pages-JJ/v2/student/bathroom_pass"
+           class="nav-item relative flex flex-row items-center h-11 focus:outline-none pr-6 border-l-4
+           
+             text-neutral-600 border-transparent hover:text-neutral-50 hover:border-indigo-500
+           ">
+          <span class="inline-flex justify-center items-center ml-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+
+            </svg>
+          </span>
+          <span class="ml-2 text-sm tracking-wide truncate">Bathroom Pass</span>
+        </a>
+      </li>
+    
+      
+      <li>
+        <a id="sidebar-groups" href="/Pages-JJ/v2/student/groups"
+           class="nav-item relative flex flex-row items-center h-11 focus:outline-none pr-6 border-l-4
+           
+             text-neutral-600 border-transparent hover:text-neutral-50 hover:border-indigo-500
+           ">
+          <span class="inline-flex justify-center items-center ml-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+
+            </svg>
+          </span>
+          <span class="ml-2 text-sm tracking-wide truncate">Groups</span>
+        </a>
+      </li>
+    
+  
+</ul>
+</div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="ml-64 p-8 lesson-main">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-2xl font-bold">Submissions</h1>
+            </div>
+
+            
+
+<link rel="stylesheet" href="/Pages-JJ/v2/assets/css/submissions.css">
+
+
+<div class="subs">
+  
+  <div class="subs__head">
+    <div>
+      <div class="subs__subtitle" id="subs-subtitle">Everything you have turned in, and what the grader said about it.</div>
+    </div>
+    <div class="subm-cluster">
+      <a class="ocs__btn subm-btn--ghost subm-btn--sm" href="/Pages-JJ/v2/navigation/csa-lessons/">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14V6m0 0 3 3M8 6 5 9M3 2.5h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Go to a lesson
+      </a>
+    </div>
+  </div>
+
+  
+  <div class="subm-alert subm-alert--warning" id="subs-alert" role="status" hidden style="margin-bottom:1.25rem">
+    <svg class="subm-alert__icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M8 2.5 14.5 13.5h-13z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+      <path d="M8 6.6v3M8 11.4v.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    <div class="subm-alert__content">
+      <p class="subm-alert__title" id="subs-alert-title"></p>
+      <p>Open the feedback on each one and do what it asks, then bring them to your next check-in.
+         Your teacher sets the grade that counts &mdash; the AI writes the first draft.</p>
+      <div class="subs__scale">Scale: <strong>Exceeds</strong> 90&ndash;100 &middot;
+        <strong>Meets</strong> 80&ndash;89 &middot;
+        <strong>Approaching</strong> 70&ndash;79 &middot;
+        <strong>Not yet</strong> below 70. Each one is a word and its own shape, not color alone.</div>
+    </div>
+  </div>
+
+  <div class="subs__stats">
+    <div class="subm-card subm-card--stat">
+      <span class="subm-card__stat-value" id="stat-submitted">&ndash;</span>
+      <span class="subm-card__stat-label">Submitted</span>
+    </div>
+    <div class="subm-card subm-card--stat">
+      <span class="subm-card__stat-value" id="stat-average">&ndash;</span>
+      <span class="subm-card__stat-label">Average score</span>
+    </div>
+    <div class="subm-card subm-card--stat">
+      <span class="subm-card__stat-value" id="stat-notyet">&ndash;</span>
+      <span class="subm-card__stat-label">Not yet</span>
+    </div>
+    <div class="subm-card subm-card--stat">
+      <span class="subm-card__stat-value" id="stat-awaiting">&ndash;</span>
+      <span class="subm-card__stat-label">Awaiting grade</span>
+    </div>
+  </div>
+
+  <div class="subm-tabs" role="tablist" aria-label="Submission views" style="margin-bottom:1rem">
+    <button class="subm-tabs__tab" role="tab" id="tb-mine" aria-controls="tp-mine" aria-selected="true">My submissions</button>
+    
+    <button class="subm-tabs__tab" role="tab" id="tb-all" aria-controls="tp-all" aria-selected="false" hidden disabled>All submissions</button>
+  </div>
+
+  <!-- ==================== MY SUBMISSIONS ==================== -->
+  <div id="tp-mine" role="tabpanel" aria-labelledby="tb-mine">
+    <div class="subs__toolbar">
+      <div class="subs__search">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.3 10.3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <label class="subm-sr-only" for="mine-q">Search my submissions</label>
+        <input class="subm-input" id="mine-q" type="search" placeholder="Search assignments">
+      </div>
+      <label class="subm-sr-only" for="mine-unit">Filter by unit</label>
+      <select class="subm-select" id="mine-unit" style="width:auto">
+        <option value="all">All units</option>
+        
+        <option value="1">Unit 1 &middot; Using Objects and Methods</option>
+        
+        <option value="2">Unit 2 &middot; Selection and Iteration</option>
+        
+        <option value="3">Unit 3 &middot; Class Creation</option>
+        
+        <option value="4">Unit 4 &middot; Data Collections</option>
+        
+        <option value="none">No unit set</option>
+      </select>
+      <label class="subm-sr-only" for="mine-status">Filter by status</label>
+      <select class="subm-select" id="mine-status" style="width:auto">
+        <option value="all">All statuses</option>
+        <option value="exceeds">Exceeds</option>
+        <option value="meets">Meets</option>
+        <option value="approaching">Approaching</option>
+        <option value="notyet">Not yet</option>
+        <option value="awaiting">Awaiting grade</option>
+      </select>
+      <span class="subs__spacer"></span>
+      <label class="subm-switch"><input type="checkbox" role="switch" id="mine-late" checked> Show late</label>
+    </div>
+
+    <div id="mine-body" aria-live="polite">
+      <div class="subs-empty" id="mine-loading">
+        <span class="subm-spinner" aria-hidden="true"></span>
+        <p style="margin-top:.75rem">Loading your submissions&hellip;</p>
+      </div>
+    </div>
+    <div class="subm-help subs-foot" id="mine-foot" hidden></div>
+  </div>
+
+  <!-- ==================== ALL SUBMISSIONS (admin) ==================== -->
+  <div id="tp-all" role="tabpanel" aria-labelledby="tb-all" hidden>
+    <div class="subs__toolbar">
+      <div class="subs__search">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.3 10.3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <label class="subm-sr-only" for="admin-filter-student">Filter by student</label>
+        <input class="subm-input" id="admin-filter-student" type="search" placeholder="Student">
+      </div>
+      <label class="subm-sr-only" for="admin-filter-assignment">Filter by assignment</label>
+      <input class="subm-input" id="admin-filter-assignment" type="search" placeholder="Assignment" style="flex:0 1 200px">
+      <label class="subm-sr-only" for="admin-filter-status">Filter by status</label>
+      <select class="subm-select" id="admin-filter-status" style="width:auto">
+        <option value="">All statuses</option>
+        <option value="graded">Graded</option>
+        <option value="pending">Pending review</option>
+        <option value="late">Late</option>
+      </select>
+      <label class="subm-sr-only" for="admin-filter-quality">Filter by AI check</label>
+      <select class="subm-select" id="admin-filter-quality" style="width:auto">
+        <option value="">Any AI check</option>
+        <option value="5">5 of 5</option>
+        <option value="4">4 of 5</option>
+        <option value="3">3 of 5</option>
+        <option value="2">2 of 5</option>
+        <option value="1">1 of 5</option>
+        <option value="none">Not checked yet</option>
+      </select>
+      <span class="subs__spacer"></span>
+      <button class="ocs__btn subm-btn--secondary subm-btn--sm" id="summarize-batch-btn" type="button">Run AI check</button>
+    </div>
+    <div class="subm-help" id="summarize-batch-status" aria-live="polite" style="margin-bottom:.75rem"></div>
+
+    <div id="all-body" aria-live="polite">
+      <div class="subs-empty" id="all-loading">
+        <span class="subm-spinner" aria-hidden="true"></span>
+        <p style="margin-top:.75rem">Loading submissions&hellip;</p>
+      </div>
+    </div>
+    <div class="subm-help subs-foot" id="all-foot" hidden></div>
+  </div>
+</div>
+
+<!-- ==================== FEEDBACK DIALOG ==================== -->
+
+<dialog class="subm-modal subm-modal--wide" id="fb" aria-labelledby="fb-title">
+  <form method="dialog" class="subm-modal__panel">
+    <header class="subm-modal__header">
+      <h2 class="subm-modal__title" id="fb-title">Feedback</h2>
+      <button class="subm-modal__close" value="cancel" aria-label="Close">&times;</button>
+    </header>
+    <div class="subm-modal__body">
+      <div class="fb-assignment">
+        <span class="subs-kind" id="fb-kind">link</span>
+        <span id="fb-name">Assignment</span>
+      </div>
+      <div class="fb-meta" id="fb-meta">&nbsp;</div>
+
+      <div class="fb-score">
+        <div>
+          <span class="fb-score__value" id="fb-score">&ndash;</span>
+          <span class="fb-score__label" id="fb-score-label">Grade</span>
+        </div>
+        <span class="subm-badge subm-badge--dot" id="fb-band">&ndash;</span>
+      </div>
+
+      <h3 class="fb-h">What you turned in</h3>
+      <div class="fb-body" id="fb-content">&nbsp;</div>
+
+      <h3 class="fb-h">AI check</h3>
+      <div class="fb-body" id="fb-ai">&nbsp;</div>
+
+      <h3 class="fb-h">Teacher feedback</h3>
+      <div class="fb-teacher" id="fb-feedback">&nbsp;</div>
+
+      <h3 class="fb-h">Your comment</h3>
+      <div class="fb-body" id="fb-comment">&nbsp;</div>
+    </div>
+    <footer class="subm-modal__footer">
+      <button class="ocs__btn subm-btn--ghost" value="cancel">Close</button>
+      <button class="ocs__btn subm-btn--primary" type="button" id="fb-edit">Edit this submission</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ==================== EDIT DIALOG ==================== -->
+
+<dialog class="subm-modal" id="submission-edit-modal" aria-labelledby="edit-modal-title">
+  <form method="dialog" class="subm-modal__panel" id="submission-edit-form">
+    <header class="subm-modal__header">
+      <div>
+        <h2 class="subm-modal__title" id="edit-modal-title">Update your submission</h2>
+        <div class="fb-meta" id="edit-modal-subtitle" style="margin:.25rem 0 0"></div>
+      </div>
+      <button class="subm-modal__close" type="button" value="cancel" data-close-edit-modal aria-label="Close edit dialog">&times;</button>
+    </header>
+
+    <div class="subm-modal__body">
+      <input type="hidden" id="edit-submission-id">
+      <input type="hidden" id="edit-content-type">
+
+      <div class="subm-field">
+        <span class="subm-label">Assignment</span>
+        <div id="edit-assignment-name"></div>
+      </div>
+      <div class="subm-field">
+        <span class="subm-label">Submission type</span>
+        <div id="edit-submission-type"></div>
+      </div>
+
+      <div id="edit-link-fields" class="subm-field">
+        <label class="subm-label" for="edit-url">Submission URL</label>
+        <input type="url" id="edit-url" class="subm-input" placeholder="https://...">
+      </div>
+
+      <div id="edit-file-fields" class="subm-field" hidden>
+        <div class="subm-help" id="edit-current-file"></div>
+        <label class="subm-label" for="edit-file">Replace file</label>
+        <input type="file" id="edit-file" class="subm-input">
+      </div>
+
+      <div class="subm-field">
+        <label class="subm-label" for="edit-notes">Submission notes</label>
+        <textarea id="edit-notes" class="subm-textarea" rows="3" placeholder="Add or update the notes shown with the submission"></textarea>
+      </div>
+
+      <div class="subm-field">
+        <label class="subm-label" for="edit-comment">Comment</label>
+        <textarea id="edit-comment" class="subm-textarea" rows="3" placeholder="Add or update the submission comment"></textarea>
+      </div>
+
+      <div id="edit-admin-fields" class="subm-field" hidden>
+        <label class="subm-check"><input type="checkbox" id="edit-is-late"> Mark as late</label>
+        <label class="subm-label" for="edit-grade" style="margin-top:.75rem">Grade</label>
+        <input type="number" id="edit-grade" class="subm-input" min="0" max="100" step="0.5" placeholder="0-100">
+        <label class="subm-label" for="edit-feedback" style="margin-top:.75rem">Feedback</label>
+        <textarea id="edit-feedback" class="subm-textarea" rows="3" placeholder="Feedback for the student"></textarea>
+      </div>
+
+      <div class="subm-help" id="edit-modal-status" aria-live="polite"></div>
+      <div class="subm-help">Saving clears the current grade and feedback so the updated submission can be reviewed again.</div>
+    </div>
+
+    <footer class="subm-modal__footer">
+      <button type="button" class="ocs__btn subm-btn--ghost" value="cancel" data-close-edit-modal>Cancel</button>
+      <button type="submit" class="ocs__btn subm-btn--primary" id="edit-submit-btn">Save changes</button>
+    </footer>
+  </form>
+</dialog>
+
+<script src="/Pages-JJ/v2/assets/js/submissions.js" defer></script>
+
+<script type="module">
+    import { javaURI, pythonURI, fetchOptions } from '/Pages-JJ/v2/assets/js/api/config.js';
+
+    const apiUrl = `${javaURI}/api/assignment-submission-view/list`;
+    const userInfoUrl = `${javaURI}/api/assignment-submission-view/user-info`;
+    const summarizeUrl = `${pythonURI}/api/gemini/summarize-submissions`;
+    const MAX_SUMMARY_BATCH_ITEMS = 10;
+
+    let allSubmissions = [];
+    let mySubmissions = [];
+    let isAdmin = false;
+    let currentUserId = null;
+    let currentUsername = '';
+    let activeEditSubmissionId = null;
+
+    // =========================================================================
+    // BANDS
+    // =========================================================================
+    // The badge and the score bar both come off this one table, so a row can
+    // never show a green word beside an orange bar. Four levels, in the
+    // standards language a teacher already uses when talking to a student.
+    const BANDS = [
+        { min: 90, key: 'exceeds',     label: 'Exceeds',     tone: 'success' },
+        { min: 80, key: 'meets',       label: 'Meets',       tone: 'success' },
+        { min: 70, key: 'approaching', label: 'Approaching', tone: 'warning' },
+        { min: -1, key: 'notyet',      label: 'Not yet',     tone: 'danger'  }
+    ];
+    const AWAITING = { key: 'awaiting', label: 'Awaiting grade', tone: 'info' };
+
+    function bandFor(submission) {
+        const grade = submission.grade;
+        if (grade === null || grade === undefined || grade === '') return AWAITING;
+        return BANDS.find(b => Number(grade) >= b.min) || BANDS[BANDS.length - 1];
+    }
+
+    // =========================================================================
+    // INIT
+    // =========================================================================
+    async function init() {
+        try {
+            await checkAdminStatus();
+            await loadSubmissions();
+            setupFilters();
+            setupMineFilters();
+            setupEditModal();
+            setupFeedbackDialog();
+            setupSummarizeButton();
+        } catch (error) {
+            console.error('Error initializing submissions:', error);
+            showErrorMessage('Failed to initialize submissions dashboard');
+        }
+    }
+
+    async function checkAdminStatus() {
+        try {
+            const response = await fetch(userInfoUrl, fetchOptions);
+            if (!response.ok) {
+                console.warn('Could not fetch user info, status:', response.status);
+                return;
+            }
+
+            const userInfo = await response.json();
+            isAdmin = userInfo.isAdmin;
+            currentUsername = userInfo.username || '';
+
+            if (currentUsername) {
+                try {
+                    const personResponse = await fetch(`${javaURI}/api/person/uid/${encodeURIComponent(currentUsername)}`, fetchOptions);
+                    if (personResponse.ok) {
+                        currentUserId = (await personResponse.json()).id;
+                    } else {
+                        console.warn('Could not resolve current user id, status:', personResponse.status);
+                    }
+                } catch (personError) {
+                    console.error('Error resolving current user id:', personError);
+                }
+            }
+
+            if (isAdmin) {
+                const tab = document.getElementById('tb-all');
+                tab.hidden = false;
+                tab.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error checking admin status:', error);
+            // Continue anyway - the page still works, minus the admin tab.
+        }
+    }
+
+    async function loadSubmissions() {
+        try {
+            const response = await fetch(apiUrl, fetchOptions);
+
+            if (!response.ok) {
+                let errorMsg = `HTTP ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.error) errorMsg = errorData.error;
+                } catch (parseError) {
+                    console.warn('Could not parse error response');
+                }
+                throw new Error(`Failed to fetch submissions: ${errorMsg}`);
+            }
+
+            const data = await response.json();
+            allSubmissions = Array.isArray(data) ? data : [];
+
+            mySubmissions = allSubmissions.filter(submission => {
+                if (currentUserId !== null && submission.submitterId !== undefined && submission.submitterId !== null) {
+                    return submission.submitterId === currentUserId;
+                }
+                if (currentUsername) {
+                    return (submission.submitterName || '').toLowerCase() === currentUsername.toLowerCase();
+                }
+                return false;
+            });
+
+            renderStats();
+            displayUserSubmissions();
+            if (isAdmin) displayAllSubmissions();
+        } catch (error) {
+            console.error('Error in loadSubmissions:', error);
+            showErrorMessage(`Error loading submissions: ${error.message}`);
+        }
+    }
+
+    // =========================================================================
+    // SUMMARY TILES
+    // =========================================================================
+    function renderStats() {
+        const graded = mySubmissions.filter(s => s.grade !== null && s.grade !== undefined);
+        const notYet = graded.filter(s => Number(s.grade) < 70).length;
+        const awaiting = mySubmissions.length - graded.length;
+        const average = graded.length
+            ? Math.round(graded.reduce((sum, s) => sum + Number(s.grade), 0) / graded.length)
+            : null;
+
+        text('stat-submitted', mySubmissions.length);
+        text('stat-average', average === null ? '–' : `${average}%`);
+        text('stat-notyet', notYet);
+        text('stat-awaiting', awaiting);
+
+        const alert = document.getElementById('subs-alert');
+        if (notYet > 0) {
+            text('subs-alert-title',
+                `${notYet} submission${notYet === 1 ? '' : 's'} came back Not yet`);
+            alert.hidden = false;
+        } else {
+            alert.hidden = true;
+        }
+    }
+
+    // =========================================================================
+    // CELLS
+    // =========================================================================
+    function scoreCell(submission) {
+        const band = bandFor(submission);
+        if (band === AWAITING) {
+            return '<div class="subs-bar">' +
+                '<div class="subm-progress subm-progress--sm subm-progress--info subm-progress--indeterminate"' +
+                ' role="progressbar" aria-label="Not graded yet"><div class="subm-progress__bar"></div></div>' +
+                '<span class="subs-pct">&ndash;&ndash;</span></div>';
+        }
+        const grade = Math.max(0, Math.min(100, Number(submission.grade)));
+        return `<div class="subs-bar">
+            <div class="subm-progress subm-progress--sm subm-progress--${band.tone}" role="progressbar"
+                 aria-valuenow="${grade}" aria-valuemin="0" aria-valuemax="100" aria-label="Grade">
+              <div class="subm-progress__bar" style="width:${grade}%"></div>
+            </div><span class="subs-pct">${Math.round(grade)}%</span></div>`;
+    }
+
+    // 1-5 drawn as five pips, not a bar: a five-step scale in a bar reads as a
+    // percentage, and "3/5" is not "60% done".
+    function aiCheckCell(submission) {
+        const score = Number(submission.qualityScore) || 0;
+        if (!score) return '<span class="subs-muted">Not checked</span>';
+        let pips = '';
+        for (let i = 1; i <= 5; i++) pips += `<span class="subs-pip" data-on="${i <= score ? 1 : 0}"></span>`;
+        return `<span class="subs-pips" role="img" aria-label="AI check ${score} of 5">${pips}` +
+               `<span class="subs-pips__label">${score}/5</span></span>`;
+    }
+
+    function statusCell(submission) {
+        const band = bandFor(submission);
+        const late = submission.isLate
+            ? ' <span class="subm-badge subm-badge--warning">Late</span>'
+            : '';
+        return `<span class="subm-badge subm-badge--${band.tone} subm-badge--dot" data-band="${band.key}">${band.label}</span>${late}`;
+    }
+
+    // The unit and chapter a submission was filed under. They ride inside
+    // `content`, which the lesson's submission form fills in and the API stores
+    // and returns verbatim -- so this needs no backend field of its own.
+    // Older submissions predate the form and have neither; they report "none".
+    function topicOf(submission) {
+        const content = submission.content;
+        if (!content || typeof content === 'string') return null;
+        const unit = Number(content.unit);
+        const chapter = Number(content.chapter);
+        if (!unit || !chapter) return null;
+        return { unit, chapter, code: content.topic || (unit + '.' + chapter), title: content.topicTitle || '' };
+    }
+
+    function contentKind(submission) {
+        const content = submission.content || {};
+        const type = (content.type || (content.filename ? 'file' : 'link') || '').toString().toLowerCase();
+        return type === 'file' ? 'file' : 'link';
+    }
+
+    // What the student actually handed in: the link, or the file with a
+    // download. Plain text is possible too -- older rows store a bare string.
+    function turnedInCell(submission) {
+        const content = submission.content;
+        if (!content) return '<span class="subs-muted">Nothing attached</span>';
+        if (typeof content === 'string') return `<div class="subs-clamp">${escapeHtml(content)}</div>`;
+
+        if (content.type === 'file' || content.filename) {
+            const fileName = content.filename || content.storedFilename || 'File submission';
+            const url = getSubmissionFileDownloadUrl(content);
+            return url
+                ? `<a class="subs-link" href="${escapeHtml(url)}" target="_blank" rel="noopener"
+                      title="${escapeHtml(fileName)}">${escapeHtml(fileName)}</a>`
+                : `<span title="${escapeHtml(fileName)}">${escapeHtml(fileName)}</span>`;
+        }
+        if (content.type === 'link' || content.url) {
+            return `<a class="subs-link" href="${escapeHtml(content.url)}" target="_blank" rel="noopener"
+                       title="${escapeHtml(content.url)}">${escapeHtml(shortUrl(content.url))}</a>`;
+        }
+        if (content.text) return `<div class="subs-clamp">${escapeHtml(content.text)}</div>`;
+        return '<span class="subs-muted">Nothing attached</span>';
+    }
+
+    function assignmentCell(submission, openable) {
+        const name = escapeHtml(submission.assignmentName || 'Unknown assignment');
+        const nameEl = openable
+            ? `<button type="button" class="subs-linkish" data-fb="${submission.id}">${name}</button>`
+            : `<span class="subs-name">${name}</span>`;
+        const topic = topicOf(submission);
+        // The chip carries the topic code when the submission has one, because
+        // "4.2" locates the work in the course and "link" does not. The kind is
+        // still on the row, one column over, as the link or the filename.
+        const chip = topic ? escapeHtml(topic.code) : contentKind(submission);
+        const sub = topic && topic.title
+            ? escapeHtml(topic.title)
+            : '#' + escapeHtml(String(submission.id));
+        return `<span class="subs-cell">
+            <span class="subs-kind" aria-hidden="true">${chip}</span>
+            <span>${nameEl}<span class="subs-sub">${sub}</span></span>
+          </span>`;
+    }
+
+    // "https://github.com/achen/jpa-lesson/" -> "github.com/achen/jpa-lesson".
+    // The scheme is noise in a table; the full URL stays in the title and href.
+    function shortUrl(url) {
+        return String(url || '')
+            .replace(/^https?:\/\//i, '')
+            .replace(/^www\./i, '')
+            .replace(/\/$/, '');
+    }
+
+    function getSubmissionFileDownloadUrl(content) {
+        if (!content || !content.storagePath) return '';
+        const storagePath = String(content.storagePath);
+        const slashIndex = storagePath.indexOf('/');
+        if (slashIndex <= 0 || slashIndex >= storagePath.length - 1) return '';
+        const params = new URLSearchParams({
+            uid: storagePath.slice(0, slashIndex),
+            filename: storagePath.slice(slashIndex + 1)
+        });
+        return `${javaURI}/api/files/download?${params.toString()}`;
+    }
+
+    function getSubmissionContentType(submission) {
+        return contentKind(submission);
+    }
+
+    // =========================================================================
+    // MY SUBMISSIONS
+    // =========================================================================
+    function displayUserSubmissions() {
+        const body = document.getElementById('mine-body');
+        const foot = document.getElementById('mine-foot');
+
+        if (mySubmissions.length === 0) {
+            body.innerHTML = '<div class="subs-empty">Nothing turned in yet. ' +
+                'Submit work from a lesson page and it shows up here once the grader has seen it.</div>';
+            foot.hidden = true;
+            return;
+        }
+
+        const rows = mySubmissions.map(submission => {
+            const band = bandFor(submission);
+            const t = topicOf(submission);
+            const search = `${submission.assignmentName || ''} ${band.label} ${t ? t.code + ' ' + t.title : ''}`.toLowerCase();
+            const topic = topicOf(submission);
+            return `<tr data-band="${band.key}" data-late="${submission.isLate ? 1 : 0}"
+                        data-unit="${topic ? topic.unit : 'none'}" data-text="${escapeHtml(search)}">
+                <th scope="row">${assignmentCell(submission, band !== AWAITING)}</th>
+                <td>${turnedInCell(submission)}</td>
+                <td>${aiCheckCell(submission)}</td>
+                <td>${scoreCell(submission)}</td>
+                <td>${statusCell(submission)}</td>
+                <td>
+                  <div class="subs-actions">
+                    ${band === AWAITING ? '' : `<button type="button" class="ocs__btn subm-btn--ghost subm-btn--sm" data-fb="${submission.id}">Feedback</button>`}
+                    <button type="button" class="ocs__btn subm-btn--ghost subm-btn--sm" data-edit="${submission.id}">Edit</button>
+                  </div>
+                </td>
+              </tr>`;
+        }).join('');
+
+        body.innerHTML = `<div class="ocs__table-wrap" role="region" aria-label="My submissions" tabindex="0">
+            <table class="ocs__table subm-table--striped subm-table--compact subs-table">
+              <caption class="subm-sr-only">Every assignment you have turned in, with its grade and status</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Assignment</th>
+                  <th scope="col">Turned in</th>
+                  <th scope="col">AI check</th>
+                  <th scope="col">Score</th>
+                  <th scope="col">Status</th>
+                  <th scope="col"><span class="subm-sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>${rows}
+                <tr data-role="empty" hidden><td colspan="6" class="subs-empty">No submission matches those filters.</td></tr>
+              </tbody>
+            </table>
+          </div>`;
+        foot.hidden = false;
+        applyMineFilters();
+    }
+
+    function setupMineFilters() {
+        ['mine-q', 'mine-unit', 'mine-status', 'mine-late'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            ['input', 'change'].forEach(ev => el.addEventListener(ev, applyMineFilters));
+        });
+    }
+
+    function applyMineFilters() {
+        const panel = document.getElementById('mine-body');
+        const rows = panel.querySelectorAll('tbody tr[data-band]');
+        if (!rows.length) return;
+
+        const needle = (document.getElementById('mine-q').value || '').trim().toLowerCase();
+        const want = document.getElementById('mine-status').value;
+        const wantUnit = document.getElementById('mine-unit').value;
+        const showLate = document.getElementById('mine-late').checked;
+
+        let shown = 0;
+        rows.forEach(row => {
+            const ok = (!needle || row.dataset.text.indexOf(needle) > -1) &&
+                       (want === 'all' || row.dataset.band === want) &&
+                       (wantUnit === 'all' || row.dataset.unit === wantUnit) &&
+                       (showLate || row.dataset.late !== '1');
+            row.hidden = !ok;
+            if (ok) shown++;
+        });
+
+        const empty = panel.querySelector('[data-role="empty"]');
+        if (empty) empty.hidden = shown > 0;
+        document.getElementById('mine-foot').textContent =
+            `Showing ${shown} of ${rows.length}. Every score here is the AI grader's first draft — ` +
+            `your teacher reviews the flagged ones with you and sets the grade that counts.`;
+    }
+
+    // =========================================================================
+    // ALL SUBMISSIONS (admin)
+    // =========================================================================
+    function adminRow(submission, idx) {
+        const gradeVal = submission.grade != null ? submission.grade : '';
+        const feedbackVal = submission.feedback != null ? submission.feedback : '';
+        const band = bandFor(submission);
+        return `<tr>
+            <th scope="row"><span class="subs-name">${escapeHtml(submission.submitterName || 'Unknown')}</span></th>
+            <td>${assignmentCell(submission, band !== AWAITING)}</td>
+            <td>${turnedInCell(submission)}</td>
+            <td><div class="subs-clamp"${cellTitle(submission.aiSummary)}>${submission.aiSummary ? escapeHtml(submission.aiSummary) : '<span class="subs-muted">Not checked</span>'}</div></td>
+            <td>${aiCheckCell(submission)}</td>
+            <td>
+              <label class="subm-sr-only" for="grade-input-${idx}">Grade for ${escapeHtml(submission.submitterName || 'student')}</label>
+              <input class="subm-input subs-grade-input" type="number" min="0" max="100" step="0.5"
+                     value="${escapeHtml(String(gradeVal))}" id="grade-input-${idx}" placeholder="0-100">
+            </td>
+            <td>
+              <label class="subm-sr-only" for="feedback-input-${idx}">Feedback</label>
+              <textarea class="subm-textarea subs-feedback-input" id="feedback-input-${idx}" rows="2" placeholder="Feedback">${escapeHtml(String(feedbackVal))}</textarea>
+            </td>
+            <td>${statusCell(submission)}</td>
+            <td>
+              <div class="subs-rowactions">
+                <button type="button" class="ocs__btn subm-btn--primary subm-btn--sm" onclick="saveGrade(${idx}, ${submission.id})">Save grade</button>
+                <button type="button" class="ocs__btn subm-btn--ghost subm-btn--sm" data-edit="${submission.id}">Edit</button>
+                <button type="button" class="ocs__btn subm-btn--danger subm-btn--sm" onclick="deleteSubmission(${submission.id}, ${idx})">Delete</button>
+                <span class="subs-rowstatus" id="grade-status-${idx}"></span>
+                <span class="subs-rowstatus" id="delete-status-${idx}"></span>
+              </div>
+            </td>
+          </tr>`;
+    }
+
+    function renderAdminTable(list) {
+        const body = document.getElementById('all-body');
+        const foot = document.getElementById('all-foot');
+
+        if (!list.length) {
+            body.innerHTML = '<div class="subs-empty">No submission matches those filters.</div>';
+            foot.hidden = true;
+            return;
+        }
+
+        body.innerHTML = `<div class="ocs__table-wrap" role="region" aria-label="All submissions" tabindex="0">
+            <table class="ocs__table subm-table--striped subm-table--compact subs-table subs-table--admin">
+              <caption class="subm-sr-only">Every student submission, with grading controls</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Student</th>
+                  <th scope="col">Assignment</th>
+                  <th scope="col">Turned in</th>
+                  <th scope="col">AI summary</th>
+                  <th scope="col">AI check</th>
+                  <th scope="col">Grade</th>
+                  <th scope="col">Feedback</th>
+                  <th scope="col">Status</th>
+                  <th scope="col"><span class="subm-sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>${list.map(adminRow).join('')}</tbody>
+            </table>
+          </div>`;
+        foot.hidden = false;
+        foot.textContent = `Showing ${list.length} of ${allSubmissions.length} submissions.`;
+    }
+
+    function displayAllSubmissions() {
+        renderAdminTable(allSubmissions);
+    }
+
+    function setupFilters() {
+        ['admin-filter-assignment', 'admin-filter-student', 'admin-filter-status', 'admin-filter-quality']
+            .forEach(id => {
+                const el = document.getElementById(id);
+                if (el) ['input', 'change'].forEach(ev => el.addEventListener(ev, applyFilters));
+            });
+    }
+
+    function applyFilters() {
+        const assignmentFilter = (document.getElementById('admin-filter-assignment').value || '').toLowerCase();
+        const studentFilter = (document.getElementById('admin-filter-student').value || '').toLowerCase();
+        const statusFilter = document.getElementById('admin-filter-status').value;
+        const qualityFilter = document.getElementById('admin-filter-quality').value;
+
+        renderAdminTable(allSubmissions.filter(sub => {
+            const assignmentMatch = (sub.assignmentName || '').toLowerCase().includes(assignmentFilter);
+            const studentMatch = (sub.submitterName || '').toLowerCase().includes(studentFilter);
+            const statusMatch = !statusFilter || getFilterStatus(sub) === statusFilter;
+            const qualityMatch = !qualityFilter
+                || (qualityFilter === 'none' ? !sub.qualityScore : sub.qualityScore === Number(qualityFilter));
+            return assignmentMatch && studentMatch && statusMatch && qualityMatch;
+        }));
+    }
+
+    function getFilterStatus(submission) {
+        if (submission.grade !== null && submission.grade !== undefined) return 'graded';
+        if (submission.isLate) return 'late';
+        return 'pending';
+    }
+
+    // =========================================================================
+    // FEEDBACK DIALOG
+    // =========================================================================
+    function setupFeedbackDialog() {
+        const dialog = document.getElementById('fb');
+
+        document.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!target || !target.closest) return;
+
+            const fbButton = target.closest('[data-fb]');
+            if (fbButton) {
+                openFeedback(fbButton.dataset.fb);
+                return;
+            }
+
+            const editButton = target.closest('[data-edit]');
+            if (editButton) openEditModal(editButton.dataset.edit);
+        });
+
+        document.getElementById('fb-edit').addEventListener('click', () => {
+            const id = dialog.dataset.submissionId;
+            closeDialog(dialog);
+            if (id) openEditModal(id);
+        });
+    }
+
+    function openFeedback(submissionId) {
+        const submission = getSubmissionById(submissionId);
+        if (!submission) return;
+
+        const dialog = document.getElementById('fb');
+        const band = bandFor(submission);
+        dialog.dataset.submissionId = submission.id;
+
+        text('fb-kind', contentKind(submission));
+        text('fb-name', submission.assignmentName || 'Unknown assignment');
+        text('fb-meta', [
+            `Submission #${submission.id}`,
+            submission.submitterName ? `by ${submission.submitterName}` : '',
+            submission.isLate ? 'turned in late' : ''
+        ].filter(Boolean).join(' · '));
+
+        text('fb-score', band === AWAITING ? '–' : `${Math.round(Number(submission.grade))}%`);
+        text('fb-score-label', band === AWAITING ? 'Not graded yet' : 'Grade out of 100');
+        const badge = document.getElementById('fb-band');
+        badge.textContent = band.label;
+        badge.className = `subm-badge subm-badge--dot subm-badge--${band.tone}`;
+
+        document.getElementById('fb-content').innerHTML = turnedInCell(submission);
+
+        const ai = document.getElementById('fb-ai');
+        if (submission.aiSummary) {
+            ai.innerHTML = `${escapeHtml(submission.aiSummary)}<br>
+                <span style="display:inline-block;margin-top:.5rem">${aiCheckCell(submission)}</span>`;
+        } else {
+            ai.innerHTML = '<span class="subs-muted">The AI grader has not looked at this one yet.</span>';
+        }
+
+        fill('fb-feedback', submission.feedback,
+             'No teacher feedback yet. Notes your teacher adds during a check-in show up here.',
+             'fb-teacher', 'fb-teacher--empty');
+        fill('fb-comment', submission.comment, 'You did not leave a comment with this submission.');
+
+        showDialog(dialog);
+    }
+
+    // Writes `value` into an element, or an italicised placeholder when it is
+    // empty, keeping the element's own class list intact.
+    function fill(id, value, placeholder, baseClass, emptyClass) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const empty = !value;
+        el.textContent = empty ? placeholder : value;
+        if (baseClass) {
+            el.className = empty ? `${baseClass} ${emptyClass}` : baseClass;
+        } else {
+            el.className = empty ? 'fb-body subs-muted' : 'fb-body';
+        }
+    }
+
+    // =========================================================================
+    // EDIT DIALOG
+    // =========================================================================
+    function getSubmissionById(submissionId) {
+        return allSubmissions.find(submission => String(submission.id) === String(submissionId));
+    }
+
+    function setEditModalStatus(message, type = 'info') {
+        const status = document.getElementById('edit-modal-status');
+        if (!status) return;
+        status.textContent = message || '';
+        status.style.color = type === 'error' ? 'var(--subm-danger)'
+            : type === 'success' ? 'var(--subm-success)' : 'var(--subm-text-muted)';
+    }
+
+    function toggleEditSections(contentType) {
+        const linkFields = document.getElementById('edit-link-fields');
+        const fileFields = document.getElementById('edit-file-fields');
+        if (!linkFields || !fileFields) return;
+        linkFields.hidden = contentType === 'file';
+        fileFields.hidden = contentType !== 'file';
+    }
+
+    // <dialog> without showModal() renders non-modally -- no focus trap, no
+    // inerting -- so the fallback is only for browsers that lack the method.
+    function showDialog(dialog) {
+        if (dialog.showModal) dialog.showModal();
+        else dialog.setAttribute('open', '');
+    }
+
+    function closeDialog(dialog) {
+        if (dialog.open && dialog.close) dialog.close();
+        else dialog.removeAttribute('open');
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('submission-edit-modal');
+        const form = document.getElementById('submission-edit-form');
+        if (form) form.reset();
+        activeEditSubmissionId = null;
+        setEditModalStatus('');
+        if (modal) closeDialog(modal);
+    }
+
+    function openEditModal(submissionId) {
+        const submission = getSubmissionById(submissionId);
+        if (!submission) {
+            showErrorMessage('Could not find that submission to edit.');
+            return;
+        }
+
+        const contentType = getSubmissionContentType(submission);
+        const content = submission.content || {};
+
+        activeEditSubmissionId = submission.id;
+        document.getElementById('edit-submission-id').value = submission.id;
+        document.getElementById('edit-content-type').value = contentType;
+        text('edit-assignment-name', submission.assignmentName || 'Unknown assignment');
+        text('edit-submission-type', contentType === 'file' ? 'File upload' : 'Link submission');
+        text('edit-modal-subtitle', `Editing submission #${submission.id}`);
+        document.getElementById('edit-is-late').checked = Boolean(submission.isLate);
+
+        const urlInput = document.getElementById('edit-url');
+        const fileInput = document.getElementById('edit-file');
+        urlInput.value = content.url || '';
+        document.getElementById('edit-notes').value = content.notes || submission.comment || '';
+        document.getElementById('edit-comment').value = submission.comment || content.notes || '';
+
+        const gradeInput = document.getElementById('edit-grade');
+        const feedbackInput = document.getElementById('edit-feedback');
+        if (gradeInput) gradeInput.value = submission.grade != null ? String(submission.grade) : '';
+        if (feedbackInput) feedbackInput.value = submission.feedback || '';
+        document.getElementById('edit-admin-fields').hidden = !isAdmin;
+
+        if (fileInput) fileInput.value = '';
+        text('edit-current-file', content.filename ? `Current file: ${content.filename}` : 'No file attached yet.');
+
+        toggleEditSections(contentType);
+        setEditModalStatus('');
+        showDialog(document.getElementById('submission-edit-modal'));
+        setTimeout(() => (contentType === 'file' ? fileInput : urlInput)?.focus(), 0);
+    }
+
+    window.openEditModal = openEditModal;
+    window.closeEditModal = closeEditModal;
+
+    async function saveSubmissionEdit(event) {
+        event.preventDefault();
+        if (!activeEditSubmissionId) return;
+
+        const submission = getSubmissionById(activeEditSubmissionId);
+        if (!submission) {
+            setEditModalStatus('The submission could not be found.', 'error');
+            return;
+        }
+
+        const contentType = document.getElementById('edit-content-type').value;
+        const url = document.getElementById('edit-url').value.trim();
+        const notes = document.getElementById('edit-notes').value.trim();
+        const comment = document.getElementById('edit-comment').value.trim();
+        const fileInput = document.getElementById('edit-file');
+        const submitButton = document.getElementById('edit-submit-btn');
+
+        const formData = new FormData();
+        formData.append('contentType', contentType);
+        formData.append('notes', notes);
+        formData.append('comment', comment);
+        if (isAdmin) {
+            formData.append('isLate', document.getElementById('edit-is-late').checked ? 'true' : 'false');
+        }
+
+        if (contentType === 'link') {
+            if (!url) {
+                setEditModalStatus('A URL is required for link submissions.', 'error');
+                return;
+            }
+            formData.append('url', url);
+        } else if (fileInput?.files?.length) {
+            formData.append('file', fileInput.files[0]);
+        }
+
+        try {
+            submitButton.disabled = true;
+            setEditModalStatus('Saving changes...');
+
+            const response = await fetch(`${javaURI}/api/submissions/${encodeURIComponent(activeEditSubmissionId)}`, {
+                method: 'PUT',
+                mode: 'cors',
+                credentials: 'include',
+                headers: { 'X-Origin': 'client' },
+                body: formData
+            });
+
+            if (!response.ok) {
+                let message = `HTTP ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.error) message = errorData.error;
+                } catch (parseError) {
+                    console.warn('Could not parse edit error response');
+                }
+                throw new Error(message);
+            }
+
+            setEditModalStatus('Submission updated successfully.', 'success');
+
+            // A teacher editing a submission can set the grade in the same pass.
+            try {
+                const gradeInput = document.getElementById('edit-grade');
+                const feedbackInput = document.getElementById('edit-feedback');
+                const gradeValRaw = gradeInput ? gradeInput.value.trim() : '';
+                if (isAdmin && gradeValRaw !== '') {
+                    const gradeNum = parseFloat(gradeValRaw);
+                    if (!isNaN(gradeNum)) {
+                        setEditModalStatus('Saving grade...', 'info');
+                        const gradeUrl = `${javaURI}/api/submissions/grade/${encodeURIComponent(activeEditSubmissionId)}?grade=${encodeURIComponent(gradeNum)}&feedback=${encodeURIComponent(feedbackInput ? feedbackInput.value : '')}`;
+                        const gradeResp = await fetch(gradeUrl, {
+                            method: 'POST',
+                            mode: 'cors',
+                            credentials: 'include',
+                            headers: { 'X-Origin': 'client' }
+                        });
+                        if (!gradeResp.ok) console.warn('Grade save failed', gradeResp.status);
+                    }
+                }
+            } catch (gradeErr) {
+                console.warn('Error saving grade:', gradeErr);
+            }
+
+            await loadSubmissions();
+            closeEditModal();
+        } catch (error) {
+            console.error('Error updating submission:', error);
+            setEditModalStatus(error.message, 'error');
+        } finally {
+            submitButton.disabled = false;
+        }
+    }
+
+    function setupEditModal() {
+        const modal = document.getElementById('submission-edit-modal');
+        const form = document.getElementById('submission-edit-form');
+        if (form) form.addEventListener('submit', saveSubmissionEdit);
+        if (modal) {
+            modal.querySelectorAll('[data-close-edit-modal]').forEach(button => {
+                button.addEventListener('click', closeEditModal);
+            });
+            // Escape and the backdrop fire <dialog>'s own cancel/close, which
+            // bypasses closeEditModal, so the state reset is hooked here too.
+            modal.addEventListener('close', () => {
+                activeEditSubmissionId = null;
+                setEditModalStatus('');
+            });
+        }
+    }
+
+    // =========================================================================
+    // AI CHECK (batch) — unchanged contract with the Python service
+    // =========================================================================
+    function setSummarizeStatus(message, type = 'info') {
+        const status = document.getElementById('summarize-batch-status');
+        if (!status) return;
+        status.textContent = message || '';
+        status.style.color = type === 'error' ? 'var(--subm-danger)'
+            : type === 'success' ? 'var(--subm-success)' : 'var(--subm-text-muted)';
+    }
+
+    function getNextSummaryBatch() {
+        return allSubmissions.filter(submission => !submission.aiSummary).slice(0, MAX_SUMMARY_BATCH_ITEMS);
+    }
+
+    // Kept well under nginx's default 1MB request-body cap (which production is
+    // still running until the size-limit PR ships) so batches with file
+    // attachments don't get rejected outright. Tracks the running total across
+    // the whole batch, not just one file at a time, since it's the combined
+    // multipart request that gets measured -- one file under the limit plus
+    // another under the limit can still add up to a rejected request.
+    const MAX_BATCH_FILE_BYTES = 800 * 1024;
+
+    async function buildSummaryFormData(batch) {
+        const formData = new FormData();
+        let totalFileBytes = 0;
+        const skippedForSize = [];
+
+        for (let i = 0; i < batch.length; i++) {
+            const submission = batch[i];
+            const content = submission.content;
+            const contentIsString = typeof content === 'string';
+            const isFile = !contentIsString && content && (content.type === 'file' || content.filename);
+            const isLink = !contentIsString && content && (content.type === 'link' || content.url);
+
+            formData.append(`id_${i}`, String(submission.id));
+            formData.append(`assignmentName_${i}`, submission.assignmentName || 'Unknown');
+            formData.append(`submitterName_${i}`, submission.submitterName || 'Unknown');
+
+            if (isFile) {
+                formData.append(`type_${i}`, 'file');
+                const filename = content.filename || content.storedFilename || 'submission-file';
+                formData.append(`filename_${i}`, filename);
+                const downloadUrl = getSubmissionFileDownloadUrl(content);
+                if (downloadUrl) {
+                    try {
+                        const fileResponse = await fetch(downloadUrl, fetchOptions);
+                        if (fileResponse.ok) {
+                            const declaredSize = Number(fileResponse.headers.get('Content-Length')) || 0;
+                            if (declaredSize && totalFileBytes + declaredSize > MAX_BATCH_FILE_BYTES) {
+                                console.warn(`Skipping file for submission ${submission.id}: would push batch over the size budget (${declaredSize} bytes)`);
+                                skippedForSize.push(submission.id);
+                            } else {
+                                const blob = await fileResponse.blob();
+                                if (totalFileBytes + blob.size > MAX_BATCH_FILE_BYTES) {
+                                    console.warn(`Skipping file for submission ${submission.id}: would push batch over the size budget (${blob.size} bytes)`);
+                                    skippedForSize.push(submission.id);
+                                } else {
+                                    formData.append(`file_${i}`, blob, filename);
+                                    totalFileBytes += blob.size;
+                                }
+                            }
+                        }
+                    } catch (fileError) {
+                        console.warn(`Could not fetch file for submission ${submission.id}:`, fileError);
+                    }
+                }
+            } else if (isLink) {
+                formData.append(`type_${i}`, 'link');
+                formData.append(`text_${i}`, content.url || '');
+            } else {
+                formData.append(`type_${i}`, 'text');
+                const text = contentIsString ? content : (content && content.text) || submission.comment || '';
+                formData.append(`text_${i}`, text || '');
+            }
+        }
+
+        return { formData, skippedForSize };
+    }
+
+    async function summarizeOneBatch(batch) {
+        const { formData, skippedForSize } = await buildSummaryFormData(batch);
+
+        const response = await fetch(summarizeUrl, {
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
+            headers: { 'X-Origin': 'client' },
+            body: formData
+        });
+
+        if (!response.ok) {
+            let message = `HTTP ${response.status}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.message) message = errorData.message;
+            } catch (parseError) {
+                console.warn('Could not parse summarize error response');
+            }
+            throw new Error(message);
+        }
+
+        const data = await response.json();
+        const summaries = Array.isArray(data.summaries) ? data.summaries : [];
+
+        let savedCount = 0;
+        for (const item of summaries) {
+            const submission = getSubmissionById(item.id);
+            if (!submission || !item.summary) continue;
+
+            try {
+                const params = new URLSearchParams({ summary: item.summary });
+                if (item.quality_score) params.set('qualityScore', item.quality_score);
+                const saveResponse = await fetch(
+                    `${javaURI}/api/submissions/summary/${encodeURIComponent(submission.id)}?${params.toString()}`,
+                    { method: 'POST', mode: 'cors', credentials: 'include', headers: { 'X-Origin': 'client' } }
+                );
+
+                if (saveResponse.ok) {
+                    submission.aiSummary = item.summary;
+                    if (item.quality_score) submission.qualityScore = item.quality_score;
+                    savedCount++;
+                } else {
+                    console.warn(`Failed to persist summary for submission ${submission.id}:`, saveResponse.status);
+                }
+            } catch (saveError) {
+                console.warn(`Error persisting summary for submission ${submission.id}:`, saveError);
+            }
+        }
+
+        return { savedCount, skippedForSize };
+    }
+
+    async function runSummarizeBatch() {
+        const button = document.getElementById('summarize-batch-btn');
+        const totalToProcess = allSubmissions.filter(submission => !submission.aiSummary).length;
+
+        if (totalToProcess === 0) {
+            setSummarizeStatus('Every submission has been checked already.', 'success');
+            return;
+        }
+
+        button.disabled = true;
+        const totalBatches = Math.ceil(totalToProcess / MAX_SUMMARY_BATCH_ITEMS);
+        let batchNum = 0;
+        let totalSaved = 0;
+        let totalAttempted = 0;
+        let totalSkippedForSize = 0;
+
+        const rerender = () => {
+            applyFilters();
+            renderStats();
+            displayUserSubmissions();
+        };
+
+        try {
+            while (true) {
+                const batch = getNextSummaryBatch();
+                if (batch.length === 0) break;
+
+                batchNum++;
+                setSummarizeStatus(
+                    `Checking batch ${batchNum}/${totalBatches} ` +
+                    `(${totalAttempted + 1}-${totalAttempted + batch.length} of ${totalToProcess})...`
+                );
+
+                const result = await summarizeOneBatch(batch);
+                totalSaved += result.savedCount;
+                totalSkippedForSize += result.skippedForSize.length;
+                totalAttempted += batch.length;
+                rerender();
+            }
+
+            const failedCount = totalAttempted - totalSaved;
+            const skippedNote = totalSkippedForSize > 0
+                ? ` (${totalSkippedForSize} file${totalSkippedForSize === 1 ? '' : 's'} skipped for size — too large to include in a batch right now.)`
+                : '';
+            if (failedCount > 0) {
+                setSummarizeStatus(`Checked ${totalSaved}/${totalAttempted}. ${failedCount} could not be saved — try again.${skippedNote}`, 'error');
+            } else {
+                setSummarizeStatus(`Checked all ${totalSaved} submission${totalSaved === 1 ? '' : 's'}.${skippedNote}`, skippedNote ? 'info' : 'success');
+            }
+        } catch (error) {
+            console.error('Error summarizing submissions:', error);
+            rerender();
+            setSummarizeStatus(
+                `Stopped after ${totalSaved}/${totalAttempted}: ${error.message}. Click again to resume.`,
+                'error'
+            );
+        } finally {
+            button.disabled = false;
+        }
+    }
+
+    function setupSummarizeButton() {
+        const button = document.getElementById('summarize-batch-btn');
+        if (button) button.addEventListener('click', runSummarizeBatch);
+    }
+
+    // =========================================================================
+    // TEACHER ACTIONS
+    // =========================================================================
+    window.saveGrade = async function (idx, submissionId) {
+        if (!isAdmin) return;
+
+        const input = document.getElementById(`grade-input-${idx}`);
+        const status = document.getElementById(`grade-status-${idx}`);
+        const feedbackInput = document.getElementById(`feedback-input-${idx}`);
+        const gradeValue = parseFloat(input.value);
+
+        if (isNaN(gradeValue) || gradeValue < 0 || gradeValue > 100) {
+            status.textContent = 'Enter 0-100';
+            status.style.color = 'var(--subm-warning)';
+            return;
+        }
+
+        status.textContent = 'Saving...';
+        status.style.color = 'var(--subm-text-muted)';
+
+        try {
+            const url = `${javaURI}/api/submissions/grade/${encodeURIComponent(submissionId)}?grade=${encodeURIComponent(gradeValue)}&feedback=${encodeURIComponent(feedbackInput ? feedbackInput.value : '')}`;
+            const resp = await fetch(url, { ...fetchOptions, method: 'POST' });
+
+            if (resp.ok) {
+                status.textContent = 'Saved';
+                status.style.color = 'var(--subm-success)';
+                const updated = getSubmissionById(submissionId);
+                if (updated) {
+                    updated.grade = gradeValue;
+                    updated.feedback = feedbackInput ? feedbackInput.value : '';
+                }
+                await loadSubmissions();
+            } else {
+                const err = await resp.json().catch(() => ({}));
+                status.textContent = err.message || `HTTP ${resp.status}`;
+                status.style.color = 'var(--subm-danger)';
+            }
+        } catch (e) {
+            status.textContent = 'Network error';
+            status.style.color = 'var(--subm-danger)';
+        }
+    };
+
+    window.deleteSubmission = async function (submissionId, idx) {
+        if (!isAdmin) return;
+        if (!window.confirm('Delete this submission? This cannot be undone.')) return;
+
+        const status = document.getElementById(`delete-status-${idx}`);
+        if (status) {
+            status.textContent = 'Deleting...';
+            status.style.color = 'var(--subm-text-muted)';
+        }
+
+        try {
+            const resp = await fetch(`${javaURI}/api/submissions/${encodeURIComponent(submissionId)}`,
+                { ...fetchOptions, method: 'DELETE' });
+
+            if (resp.ok) {
+                if (status) {
+                    status.textContent = 'Deleted';
+                    status.style.color = 'var(--subm-success)';
+                }
+                await loadSubmissions();
+            } else {
+                const err = await resp.json().catch(() => ({}));
+                if (status) {
+                    status.textContent = err.error || err.message || `HTTP ${resp.status}`;
+                    status.style.color = 'var(--subm-danger)';
+                }
+            }
+        } catch (error) {
+            if (status) {
+                status.textContent = 'Network error';
+                status.style.color = 'var(--subm-danger)';
+            }
+        }
+    };
+
+    // =========================================================================
+    // HELPERS
+    // =========================================================================
+    function text(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    function cellTitle(value) {
+        return value ? ` title="${escapeHtml(value)}"` : '';
+    }
+
+    function escapeHtml(value) {
+        if (!value) return '';
+        const div = document.createElement('div');
+        div.textContent = value;
+        return div.innerHTML;
+    }
+
+    function showErrorMessage(message) {
+        const markup = `<div class="subm-alert subm-alert--danger" role="alert">
+            <div class="subm-alert__content"><p>${escapeHtml(message)}</p></div></div>`;
+        ['mine-body', 'all-body'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = markup;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+<!-- set active sidebar tab -->
+<script type="module">
+    // tmport handlelogout from external file and attach to window for onclick usage
+    import { handleLogout } from '/Pages-JJ/v2/assets/js/api/logout.js';
+    window.handleLogout = handleLogout;
+</script>
