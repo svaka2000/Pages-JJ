@@ -9,6 +9,8 @@ on:
 jobs:
   create-assignments:
     runs-on: ubuntu-latest
+    env:
+      HAS_BOT_PASSWORD: ${{ secrets.PAGES_BOT_PASSWORD != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,10 +23,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml requests
       - name: Skip when bot password is unavailable
-        if: ${{ secrets.PAGES_BOT_PASSWORD == '' }}
+        if: env.HAS_BOT_PASSWORD != 'true'
         run: echo "Skipping assignment creation because PAGES_BOT_PASSWORD is not configured."
       - name: Run create assignments script
-        if: ${{ secrets.PAGES_BOT_PASSWORD != '' }}
+        if: env.HAS_BOT_PASSWORD == 'true'
         env:
           BASE_URL: https://spring.opencodingsociety.com
           PAGES_BOT_UID: toby
