@@ -7,7 +7,7 @@
 #### 1. Project Management
 *   **Design Process & Documentation:** Initialize a professional engineering portfolio alongside a digital Kanban board (GitHub Projects or Jira) to log tasks, user stories, and acceptance criteria.
 *   **Collaboration & Experts:** Establish team norms, allocate individual technical ownership roles, and conduct an initial requirements-gathering interview with an industry mentor.
-*   **Ethics & Intellectual Property:** Conduct a patent and open-source license search (MIT, GPL, Apache) to ensure the proposed solution does not violate existing IP.
+*   **Ethics & Intellectual Property:** Conduct a patent and open-source license search (MIT, GPL, Apache) to ensure the proosed solution does not violate existing IP.
 
 #### 2. Research
 *   **Problem Identification:** Draft a formal problem statement backed by statistical data, market research, or direct observation from affected stakeholders.
