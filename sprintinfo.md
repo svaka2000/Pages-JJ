@@ -30,7 +30,7 @@
 #### 4. Prototyping and Testing
 *   **Prototype Creation:** Build a Minimum Viable Product (MVP) or functional Proof of Concept (PoC) demonstrating that the primary feature or core algorithm functions.
 *   **Testing Plan:** Write a formal testing protocol or software unit tests to isolate and evaluate the core functionality under nominal conditions.
-*   **Analysis:** Run the initial test suite and log the empirical output data directly against the target metrics established in the Sprint 1 PRD.
+*   **Analysis:** Run the initial test suite and log the empirical output data directly against the target metrics established in the Sprint 1 PR
 
 #### Sprint 2 Assessment Matrix
 *   **Core Deliverables:** Architecture/Data flow diagrams; Initial physical BOM or software tech stack; Working MVP/PoC code repository or prototype.
