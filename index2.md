@@ -24,7 +24,7 @@ Hi! My name is [Your Full Name]
     </a>
 </div>
 
-## Development Environment
+## Development Environmen
 
 > Coding starts with tools, explore these tools clicking SASS buttons with SVG.
 
