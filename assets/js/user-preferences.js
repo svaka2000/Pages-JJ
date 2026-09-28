@@ -259,7 +259,7 @@
           background-color: ${bg} !important;
         }
         html.user-theme-active .lesson-sidebar {
-          background-color: ${panel} !important;
+          background-color: transparent !important;
           border-color: ${uiBorder} !important;
         }
         html.user-theme-active .lesson-sidebar,
@@ -267,8 +267,16 @@
         html.user-theme-active .sprint-nav,
         html.user-theme-active .sprint-section,
         html.user-theme-active .lesson-item {
-          background-color: ${panel} !important;
+          background-color: transparent !important;
           color: ${text} !important;
+        }
+        html.user-theme-active .lesson-player .sprint-toggle,
+        html.user-theme-active .lesson-player .lesson-item {
+          background-color: transparent !important;
+          border: 0 !important;
+        }
+        html.user-theme-active .lesson-player .lesson-item.active {
+          border-left: 2px solid ${accent} !important;
         }
         html.user-theme-active .lesson-main,
         html.user-theme-active .main-content,

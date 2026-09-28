@@ -1,5 +1,7 @@
 @import "./mixins/buttons";
 
+$lesson-accent: var(--pref-accent-color, #{$accent});
+
 /* Apply minimal body styles when lesson player is active */
 body:has(.lesson-player) {
   margin: 0;
@@ -27,22 +29,42 @@ body:has(.lesson-player) {
 }
 
 /* LEFT SIDEBAR */
-.lesson-sidebar {
-  width: 500px;
-  border-right: 1px solid $bg-3;
+.lesson-player > .lesson-sidebar {
+  box-sizing: border-box;
+  flex: 0 0 33.333%;
+  width: 33.333%;
+  max-width: none;
+  background: transparent;
+  border-radius: 0;
+  border-right: 1px solid color-mix(in srgb, #{$lesson-accent} 28%, transparent);
   overflow-y: auto;
   flex-shrink: 0;
+  padding: 24px clamp(20px, 4vw, 64px) 40px;
 }
 
 .sidebar-header {
-  padding: 32px 24px;
+  padding: 20px 0 28px;
   border-bottom: 1px solid $bg-3;
+  position: relative;
+}
+
+.sidebar-header::before {
+  content: "COURSE NAVIGATION";
+  display: block;
+  margin-bottom: 14px;
+  color: $lesson-accent;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
 }
 
 .sidebar-header h2 {
   color: $text;
-  font-size: 1.25rem;
-  margin: 0 0 8px 0;
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+  max-width: 15ch;
+  margin: 0 0 24px;
 }
 
 .sidebar-header p {
@@ -52,61 +74,77 @@ body:has(.lesson-player) {
 }
 
 .course-progress-section {
-  margin-top: 16px;
+  margin-top: 0;
 }
 
 .progress-label {
   display: flex;
   justify-content: space-between;
   color: $text-muted;
-  font-size: 14px;
-  margin-bottom: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
 }
 
 .progress-bar-sidebar {
   width: 100%;
-  height: 8px;
-  border-radius: 4px;
+  height: 3px;
+  border-radius: 0;
   overflow: hidden;
+  background: $bg-3;
 }
 
 .progress-bar-sidebar-fill {
   height: 100%;
-  background: $accent;
-  transition: width 0.3s ease;
+  background: $lesson-accent;
+  transition: width 0.4s ease;
 }
 
 /* Sprint Navigation */
 .sprint-nav {
-  padding: 24px 16px;
+  position: relative;
+  padding: 14px 0 24px 18px;
+}
+
+.sprint-nav::before {
+  content: "";
+  position: absolute;
+  top: 28px;
+  bottom: 38px;
+  left: 3px;
+  width: 1px;
+  background: $bg-3;
 }
 
 .sprint-section {
-  margin-bottom: 8px;
+  margin: 0;
+  border-bottom: 1px solid rgba($bg-3, 0.7);
 }
 
 .sprint-toggle {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px;
-  background: none;
-  border: none;
-  border-radius: 8px;
+  gap: 14px;
+  padding: 18px 2px;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: color 0.2s ease, transform 0.2s ease;
   text-align: left;
 }
 
 .sprint-toggle:hover {
-  background: rgba($accent, 0.08);
+  color: $lesson-accent;
+  transform: translateX(3px);
 }
 
 .sprint-chevron {
-  width: 16px;
-  height: 16px;
-  color: $text-muted;
+  width: 13px;
+  height: 13px;
+  color: $lesson-accent;
   flex-shrink: 0;
 }
 
@@ -115,46 +153,55 @@ body:has(.lesson-player) {
 }
 
 .sprint-title {
-  color: var(--pref-accent-color);
-  font-size: 14px;
-  margin-bottom: 2px;
+  color: $text;
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1.35;
+  margin-bottom: 5px;
 }
 
 .sprint-weeks {
-  color: $accent;
-  font-size: 12px;
+  color: $text-muted;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .lesson-list {
-  margin-left: 24px;
-  margin-top: 4px;
+  margin: 0 0 14px 12px;
+  padding: 2px 0 2px 14px;
+  border-left: 1px solid color-mix(in srgb, #{$lesson-accent} 35%, transparent);
 }
 
 .lesson-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  background: none;
-  border: none;
-  border-radius: 8px;
+  gap: 9px;
+  padding: 8px 0;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: color 0.2s ease, transform 0.2s ease;
   text-align: left;
   text-decoration: none;
 }
 
 .lesson-item:hover {
-  background: rgba($accent, 0.06);
+  color: $lesson-accent;
+  transform: translateX(3px);
 }
 
 .lesson-item.active {
-  background: rgba($accent, 0.1);
+  color: $lesson-accent;
+  border-left: 2px solid $lesson-accent !important;
+  padding-left: 8px;
 }
 
 .lesson-item.active .lesson-title {
-  color: $text;
+  color: $lesson-accent;
+  font-weight: 700;
 }
 
 .lesson-status-icon {
@@ -177,13 +224,15 @@ body:has(.lesson-player) {
 
 .lesson-title {
   color: $text-muted;
-  font-size: 14px;
+  font-size: 0.82rem;
   flex: 1;
 }
 
 /* MAIN CONTENT AREA */
-.lesson-main {
-  flex: 1;
+.lesson-player > .lesson-main {
+  box-sizing: border-box;
+  flex: 0 0 66.667%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -192,7 +241,7 @@ body:has(.lesson-player) {
 /* Top Bar */
 .topbar-lesson {
   border-bottom: 1px solid $bg-3;
-  padding: 6px 24px;
+  padding: 14px clamp(20px, 4vw, 64px);
 }
 
 .topbar-actions {
@@ -237,7 +286,7 @@ body:has(.lesson-player) {
   width: 100%;
   margin: 0;
   text-align: left;
-  padding: 6px 24px;
+  padding: 14px clamp(20px, 4vw, 64px);
   box-sizing: border-box; // This is important!
 }
 
@@ -763,11 +812,17 @@ body:has(.lesson-player) {
     display: none;
   }
 
-  .lesson-main {
+  .lesson-player > .lesson-main {
     flex: none;
     width: 100%;
     height: auto; /* ADD THIS */
     min-height: 100vh; /* ADD THIS */
+  }
+
+  .lesson-content,
+  .lesson-content-inner,
+  .lesson-header {
+    padding: 14px 20px;
   }
 
   .floating-menu-btn {

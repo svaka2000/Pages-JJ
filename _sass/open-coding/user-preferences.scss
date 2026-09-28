@@ -194,9 +194,14 @@
   .sprint-nav,
   .sprint-section,
   .lesson-item {
-    background-color: var(--panel) !important;
+    background-color: transparent !important;
     color: var(--pref-text-color) !important;
     border-color: var(--ui-border) !important;
+  }
+
+  .lesson-player .sprint-toggle {
+    background-color: transparent !important;
+    border: 0 !important;
   }
   
   .sidebar-header h2,
