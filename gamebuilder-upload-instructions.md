@@ -9,7 +9,7 @@ permalink: /gamebuilder-upload-instructions
 - Spritesheets: put files in `images/gamebuilder/sprites`.
 - Then open GameBuilder and pres the "Refresh Assets" button in the Assets panel.
 
-The builder will discover your files via simple JSON manifests (recommended) or by directory listing (may not work on all hosts). Manifests ensure reliable detection on GitHub Pages.
+The builder will discover your files via simple JSON manifests (recommended) or by directory listing (may not work on all hosts). Manifests ensure reliable detection on GitHub Pages
 
 ### Recommended: Manifests
 - Backgrounds manifest: `images/gamebuilder/bg/index.json`
