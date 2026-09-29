@@ -248,7 +248,7 @@ export function createRichComposer(opts = {}) {
   root.className = 'rt-composer';
 
   const toolbar = document.createElement('div');
-  toolbar.className = 'rt-toolbar';
+  toolbar.className = 'ocs__links';
   toolbar.setAttribute('role', 'toolbar');
   toolbar.setAttribute('aria-label', 'Formatting');
 
@@ -505,10 +505,12 @@ export function createRichComposer(opts = {}) {
 
   /* toolbar buttons ------------------------------------------------- */
 
+  // Toolbar buttons are OCS buttons. syncToolbarState() fills one in
+  // (accent fill) while its format is on.
   function button(label, title, handler, extraClass) {
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'rt-btn' + (extraClass ? ' ' + extraClass : '');
+    b.className = 'ocs__btn small' + (extraClass ? ' ' + extraClass : '');
     b.title = title;
     b.setAttribute('aria-label', title);
     b.innerHTML = label;
@@ -519,13 +521,6 @@ export function createRichComposer(opts = {}) {
       handler(b);
     });
     return b;
-  }
-
-  function separator() {
-    const s = document.createElement('span');
-    s.className = 'rt-sep';
-    s.setAttribute('aria-hidden', 'true');
-    return s;
   }
 
   const boldBtn = button('<b>B</b>', 'Bold (Ctrl+B)', () => exec('bold'));
@@ -595,9 +590,9 @@ export function createRichComposer(opts = {}) {
   });
 
   toolbar.append(
-    boldBtn, italicBtn, underlineBtn, strikeBtn, separator(),
-    bulletBtn, numberBtn, separator(),
-    fontSelect, sizeSelect, separator(),
+    boldBtn, italicBtn, underlineBtn, strikeBtn,
+    bulletBtn, numberBtn,
+    fontSelect, sizeSelect,
     emojiBtn, clearBtn,
   );
 
@@ -652,14 +647,16 @@ export function createRichComposer(opts = {}) {
       ? `${r.top - panelH - 6}px`
       : `${Math.min(r.bottom + 6, viewH - panelH - 8)}px`;
     emojiOpen = true;
-    emojiBtn.classList.add('is-active');
+    emojiBtn.classList.add('accent', 'fill');
+    emojiBtn.setAttribute('aria-expanded', 'true');
   }
 
   function closeEmojiPanel() {
     if (!emojiOpen) return;
     emojiPanel.remove();
     emojiOpen = false;
-    emojiBtn.classList.remove('is-active');
+    emojiBtn.classList.remove('accent', 'fill');
+    emojiBtn.setAttribute('aria-expanded', 'false');
   }
 
   /* editor behaviour -------------------------------------------- */
@@ -687,7 +684,9 @@ export function createRichComposer(opts = {}) {
       ['insertUnorderedList', bulletBtn], ['insertOrderedList', numberBtn]].forEach(([cmd, btn]) => {
       let on = false;
       try { on = document.queryCommandState(cmd); } catch (_) { /* ignore */ }
-      btn.classList.toggle('is-active', on);
+      btn.classList.toggle('accent', on);
+      btn.classList.toggle('fill', on);
+      btn.setAttribute('aria-pressed', String(on));
     });
   }
 

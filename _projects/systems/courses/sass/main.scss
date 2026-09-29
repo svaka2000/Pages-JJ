@@ -3297,76 +3297,8 @@
   &:focus-within { border-color: $accent; }
 }
 
-.rt-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 2px;
-  padding: 4px 6px;
-  border-bottom: 1px solid $bg-3;
-}
-
-.rt-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 28px;
-  height: 28px;
-  padding: 0 6px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: transparent;
-  color: $text;
-  font-size: 13px;
-  line-height: 1;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
-
-  &:hover { background: rgba($text, 0.08); }
-
-  &:focus-visible {
-    outline: none;
-    border-color: $accent;
-  }
-
-  &.is-active {
-    background: rgba($accent, 0.18);
-    color: $accent;
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-}
-
-.rt-sep {
-  width: 1px;
-  align-self: stretch;
-  margin: 4px 3px;
-  background: $bg-3;
-}
-
 .rt-select {
-  height: 28px;
-  padding: 0 4px;
-  border: 1px solid $bg-3;
-  border-radius: 4px;
-  background: var(--pref-bg-color);
-  color: $text;
-  font-family: var(--pref-font-family);
-  font-size: 12px;
-  cursor: pointer;
-
-  &:focus-visible {
-    outline: none;
-    border-color: $accent;
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+  @include select-control(0);
 }
 
 .rt-editor {
@@ -3440,14 +3372,7 @@
   &:hover { background: rgba($text, 0.12); }
 }
 
-/* the eraser icon in the Clear-formatting button */
-.rt-btn svg { display: block; }
 
-@media (max-width: 768px) {
-  .rt-toolbar { gap: 1px; }
-  .rt-btn { min-width: 32px; height: 32px; }
-  .rt-select { height: 32px; }
-}
 
 /* ── Formatting inside a rendered message ─────────────────────────────
    These classes ride on <span>s the composer emits; keep them global so a
