@@ -6,12 +6,6 @@
 
 <div class="lesson-sidebar">
   <div class="sidebar-header">
-    <button class="lesson-sidebar-collapse" type="button"
-            onclick="toggleLessonSidebar()" aria-label="Expand course navigation"
-            aria-expanded="false" title="Expand course navigation">
-      <i class="fas fa-angles-right" aria-hidden="true"></i>
-    </button>
-
     {% if current_course == 'csp' %}
       <h2>Computer Science Principles</h2>
     {% elsif current_course == 'csa' %}
@@ -50,32 +44,13 @@
 
       {%- if sprint -%}
       <div class="sprint-section">
-        <div class="sprint-heading">
-          <button class="sprint-toggle" onclick="expandLessonSidebar(); toggleSprint('{{ i }}')" type="button"
-                  aria-label="Open {{ sprintKey }}: {{ sprint.title | default: sprint.shared }}" title="{{ sprintKey }}: {{ sprint.title | default: sprint.shared }}">
-            <i class="fas fa-chevron-right sprint-chevron" id="chevron-{{ i }}"></i>
-            <span class="sprint-compact-label" aria-hidden="true">S{{ i }}</span>
-            <div class="sprint-info">
-              <div class="sprint-title">{{ sprintKey }}: {{ sprint.title | default: sprint.shared }}</div>
-              <div class="sprint-weeks">Weeks {{ sprint.start }}-{{ sprint.end }}</div>
-            </div>
-          </button>
-          {% if sprint.description %}
-          <button class="sprint-description-toggle" type="button"
-                  onclick="toggleSprintDescription('{{ i }}')"
-                  aria-label="Show description for {{ sprintKey }}: {{ sprint.title | default: sprint.shared }}"
-                  aria-expanded="false" aria-controls="sprint-{{ i }}-description"
-                  title="Show sprint description">
-            <i class="fas fa-circle-info" aria-hidden="true"></i>
-          </button>
-          {% endif %}
-        </div>
-
-        {% if sprint.description %}
-        <div class="sprint-description" id="sprint-{{ i }}-description" hidden>
-          <p>{{ sprint.description | escape }}</p>
-        </div>
-        {% endif %}
+        <button class="sprint-toggle" onclick="toggleSprint('{{ i }}')" type="button">
+          <i class="fas fa-chevron-right sprint-chevron" id="chevron-{{ i }}"></i>
+          <div class="sprint-info">
+            <div class="sprint-title">{{ sprintKey }}: {{ sprint.title }}</div>
+            <div class="sprint-weeks">Weeks {{ sprint.start }}-{{ sprint.end }}</div>
+          </div>
+        </button>
 
         <div class="lesson-list" id="sprint-{{ i }}-lessons" style="display: none;">
           {%- for week in (sprint.start..sprint.end) -%}
@@ -97,46 +72,3 @@
     {%- endfor -%}
   </div>
 </div>
-
-<script>
-  (() => {
-    const player = document.querySelector('.lesson-player');
-    const collapseButton = document.querySelector('.lesson-sidebar-collapse');
-    if (!player || !collapseButton) return;
-
-    const storageKey = 'ocs-lesson-sidebar-collapsed';
-    window.setLessonSidebarCollapsed = (collapsed) => {
-      player.classList.toggle('is-sidebar-collapsed', collapsed);
-      collapseButton.setAttribute('aria-expanded', String(!collapsed));
-      collapseButton.setAttribute('aria-label', collapsed ? 'Expand course navigation' : 'Collapse course navigation');
-      collapseButton.setAttribute('title', collapsed ? 'Expand course navigation' : 'Collapse course navigation');
-      collapseButton.innerHTML = collapsed
-        ? '<i class="fas fa-angles-right" aria-hidden="true"></i>'
-        : '<i class="fas fa-angles-left" aria-hidden="true"></i>';
-      localStorage.setItem(storageKey, collapsed ? 'collapsed' : 'expanded');
-    };
-
-    window.toggleLessonSidebar = () => {
-      setLessonSidebarCollapsed(!player.classList.contains('is-sidebar-collapsed'));
-    };
-
-    window.expandLessonSidebar = () => {
-      if (player.classList.contains('is-sidebar-collapsed')) setLessonSidebarCollapsed(false);
-    };
-
-    window.toggleSprintDescription = (sprintId) => {
-      const description = document.getElementById(`sprint-${sprintId}-description`);
-      const button = document.querySelector(`[aria-controls="sprint-${sprintId}-description"]`);
-      if (!description || !button) return;
-
-      const isExpanded = button.getAttribute('aria-expanded') === 'true';
-      description.hidden = isExpanded;
-      button.setAttribute('aria-expanded', String(!isExpanded));
-      button.setAttribute('aria-label', `${isExpanded ? 'Show' : 'Hide'} description for Sprint${sprintId}`);
-      button.setAttribute('title', `${isExpanded ? 'Show' : 'Hide'} sprint description`);
-    };
-
-    const storedPreference = localStorage.getItem(storageKey);
-    setLessonSidebarCollapsed(storedPreference !== 'expanded');
-  })();
-</script>
