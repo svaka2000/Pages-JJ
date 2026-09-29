@@ -53,7 +53,7 @@
         <button class="sprint-toggle" onclick="expandLessonSidebar(); toggleSprint('{{ i }}')" type="button"
                 aria-label="Open {{ sprintKey }}: {{ sprint.title }}" title="{{ sprintKey }}: {{ sprint.title }}">
           <i class="fas fa-chevron-right sprint-chevron" id="chevron-{{ i }}"></i>
-          <span class="sprint-compact-label" aria-hidden="true">{{ i }}</span>
+          <span class="sprint-compact-label" aria-hidden="true">S{{ i }}</span>
           <div class="sprint-info">
             <div class="sprint-title">{{ sprintKey }}: {{ sprint.title }}</div>
             <div class="sprint-weeks">Weeks {{ sprint.start }}-{{ sprint.end }}</div>
