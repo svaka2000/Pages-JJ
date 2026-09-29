@@ -50,15 +50,32 @@
 
       {%- if sprint -%}
       <div class="sprint-section">
-        <button class="sprint-toggle" onclick="expandLessonSidebar(); toggleSprint('{{ i }}')" type="button"
-                aria-label="Open {{ sprintKey }}: {{ sprint.title }}" title="{{ sprintKey }}: {{ sprint.title }}">
-          <i class="fas fa-chevron-right sprint-chevron" id="chevron-{{ i }}"></i>
-          <span class="sprint-compact-label" aria-hidden="true">S{{ i }}</span>
-          <div class="sprint-info">
-            <div class="sprint-title">{{ sprintKey }}: {{ sprint.title }}</div>
-            <div class="sprint-weeks">Weeks {{ sprint.start }}-{{ sprint.end }}</div>
-          </div>
-        </button>
+        <div class="sprint-heading">
+          <button class="sprint-toggle" onclick="expandLessonSidebar(); toggleSprint('{{ i }}')" type="button"
+                  aria-label="Open {{ sprintKey }}: {{ sprint.title }}" title="{{ sprintKey }}: {{ sprint.title }}">
+            <i class="fas fa-chevron-right sprint-chevron" id="chevron-{{ i }}"></i>
+            <span class="sprint-compact-label" aria-hidden="true">S{{ i }}</span>
+            <div class="sprint-info">
+              <div class="sprint-title">{{ sprintKey }}: {{ sprint.title }}</div>
+              <div class="sprint-weeks">Weeks {{ sprint.start }}-{{ sprint.end }}</div>
+            </div>
+          </button>
+          {% if sprint.description %}
+          <button class="sprint-description-toggle" type="button"
+                  onclick="toggleSprintDescription('{{ i }}')"
+                  aria-label="Show description for {{ sprintKey }}: {{ sprint.title }}"
+                  aria-expanded="false" aria-controls="sprint-{{ i }}-description"
+                  title="Show sprint description">
+            <i class="fas fa-circle-info" aria-hidden="true"></i>
+          </button>
+          {% endif %}
+        </div>
+
+        {% if sprint.description %}
+        <div class="sprint-description" id="sprint-{{ i }}-description" hidden>
+          <p>{{ sprint.description | escape }}</p>
+        </div>
+        {% endif %}
 
         <div class="lesson-list" id="sprint-{{ i }}-lessons" style="display: none;">
           {%- for week in (sprint.start..sprint.end) -%}
@@ -105,6 +122,18 @@
 
     window.expandLessonSidebar = () => {
       if (player.classList.contains('is-sidebar-collapsed')) setLessonSidebarCollapsed(false);
+    };
+
+    window.toggleSprintDescription = (sprintId) => {
+      const description = document.getElementById(`sprint-${sprintId}-description`);
+      const button = document.querySelector(`[aria-controls="sprint-${sprintId}-description"]`);
+      if (!description || !button) return;
+
+      const isExpanded = button.getAttribute('aria-expanded') === 'true';
+      description.hidden = isExpanded;
+      button.setAttribute('aria-expanded', String(!isExpanded));
+      button.setAttribute('aria-label', `${isExpanded ? 'Show' : 'Hide'} description for Sprint${sprintId}`);
+      button.setAttribute('title', `${isExpanded ? 'Show' : 'Hide'} sprint description`);
     };
 
     const storedPreference = localStorage.getItem(storageKey);
