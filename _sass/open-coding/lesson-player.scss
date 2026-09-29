@@ -40,6 +40,29 @@ body:has(.lesson-player) {
   overflow-y: auto;
   flex-shrink: 0;
   padding: 24px clamp(20px, 4vw, 64px) 40px;
+  transition: width 0.24s ease, flex-basis 0.24s ease, padding 0.24s ease;
+}
+
+.lesson-sidebar-collapse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0 0 18px auto;
+  padding: 0;
+  color: $text-muted;
+  background: transparent !important;
+  border: 1px solid $bg-3 !important;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.lesson-sidebar-collapse:hover {
+  color: $lesson-accent;
+  border-color: $lesson-accent !important;
+  background: rgba($accent, 0.08) !important;
 }
 
 .sidebar-header {
@@ -236,6 +259,86 @@ body:has(.lesson-player) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: flex-basis 0.24s ease;
+}
+
+/* Compact course rail leaves nearly the full viewport for lesson content. */
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar {
+  flex-basis: 72px;
+  width: 72px;
+  padding: 16px 10px;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .lesson-sidebar-collapse {
+  margin: 0 auto 20px;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sidebar-header h2,
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .course-progress-section,
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sprint-info,
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .lesson-list {
+  display: none !important;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sidebar-header {
+  padding: 0 0 14px;
+  border: 0;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sidebar-header::before {
+  content: none;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sprint-nav {
+  padding: 4px 0;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sprint-nav::before {
+  content: none;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sprint-section {
+  border: 0;
+  margin: 0 0 8px;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sprint-toggle {
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  padding: 0;
+  border-radius: 12px;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sprint-chevron {
+  display: none;
+}
+
+.sprint-compact-label {
+  display: none;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sprint-compact-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: $text-muted;
+  border: 1px solid $bg-3;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-sidebar .sprint-toggle:hover .sprint-compact-label {
+  color: $lesson-accent;
+  border-color: $lesson-accent;
+}
+
+.lesson-player.is-sidebar-collapsed > .lesson-main {
+  flex: 1 1 auto;
 }
 
 /* Top Bar */

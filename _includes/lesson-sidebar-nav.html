@@ -6,6 +6,12 @@
 
 <div class="lesson-sidebar">
   <div class="sidebar-header">
+    <button class="lesson-sidebar-collapse" type="button"
+            onclick="toggleLessonSidebar()" aria-label="Expand course navigation"
+            aria-expanded="false" title="Expand course navigation">
+      <i class="fas fa-angles-right" aria-hidden="true"></i>
+    </button>
+
     {% if current_course == 'csp' %}
       <h2>Computer Science Principles</h2>
     {% elsif current_course == 'csa' %}
@@ -44,8 +50,10 @@
 
       {%- if sprint -%}
       <div class="sprint-section">
-        <button class="sprint-toggle" onclick="toggleSprint('{{ i }}')" type="button">
+        <button class="sprint-toggle" onclick="expandLessonSidebar(); toggleSprint('{{ i }}')" type="button"
+                aria-label="Open {{ sprintKey }}: {{ sprint.title }}" title="{{ sprintKey }}: {{ sprint.title }}">
           <i class="fas fa-chevron-right sprint-chevron" id="chevron-{{ i }}"></i>
+          <span class="sprint-compact-label" aria-hidden="true">{{ i }}</span>
           <div class="sprint-info">
             <div class="sprint-title">{{ sprintKey }}: {{ sprint.title }}</div>
             <div class="sprint-weeks">Weeks {{ sprint.start }}-{{ sprint.end }}</div>
@@ -72,3 +80,34 @@
     {%- endfor -%}
   </div>
 </div>
+
+<script>
+  (() => {
+    const player = document.querySelector('.lesson-player');
+    const collapseButton = document.querySelector('.lesson-sidebar-collapse');
+    if (!player || !collapseButton) return;
+
+    const storageKey = 'ocs-lesson-sidebar-collapsed';
+    window.setLessonSidebarCollapsed = (collapsed) => {
+      player.classList.toggle('is-sidebar-collapsed', collapsed);
+      collapseButton.setAttribute('aria-expanded', String(!collapsed));
+      collapseButton.setAttribute('aria-label', collapsed ? 'Expand course navigation' : 'Collapse course navigation');
+      collapseButton.setAttribute('title', collapsed ? 'Expand course navigation' : 'Collapse course navigation');
+      collapseButton.innerHTML = collapsed
+        ? '<i class="fas fa-angles-right" aria-hidden="true"></i>'
+        : '<i class="fas fa-angles-left" aria-hidden="true"></i>';
+      localStorage.setItem(storageKey, collapsed ? 'collapsed' : 'expanded');
+    };
+
+    window.toggleLessonSidebar = () => {
+      setLessonSidebarCollapsed(!player.classList.contains('is-sidebar-collapsed'));
+    };
+
+    window.expandLessonSidebar = () => {
+      if (player.classList.contains('is-sidebar-collapsed')) setLessonSidebarCollapsed(false);
+    };
+
+    const storedPreference = localStorage.getItem(storageKey);
+    setLessonSidebarCollapsed(storedPreference !== 'expanded');
+  })();
+</script>
