@@ -16,6 +16,11 @@ course:
 
 Sprint1:
   shared: "Onboarding"
+  description: >
+    Get oriented to the course and establish the tools and habits needed for
+    collaborative software development. Students set up their workspace and
+    portfolio, practice GitHub and Scrum workflows, build a small web project,
+    and finish with a coding challenge and reflection.
   help: "/navigation/sprint1-help"  # Add help for this sprint
   start: 0
   end: 4

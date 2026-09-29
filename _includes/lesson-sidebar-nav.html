@@ -52,18 +52,18 @@
       <div class="sprint-section">
         <div class="sprint-heading">
           <button class="sprint-toggle" onclick="expandLessonSidebar(); toggleSprint('{{ i }}')" type="button"
-                  aria-label="Open {{ sprintKey }}: {{ sprint.title }}" title="{{ sprintKey }}: {{ sprint.title }}">
+                  aria-label="Open {{ sprintKey }}: {{ sprint.title | default: sprint.shared }}" title="{{ sprintKey }}: {{ sprint.title | default: sprint.shared }}">
             <i class="fas fa-chevron-right sprint-chevron" id="chevron-{{ i }}"></i>
             <span class="sprint-compact-label" aria-hidden="true">S{{ i }}</span>
             <div class="sprint-info">
-              <div class="sprint-title">{{ sprintKey }}: {{ sprint.title }}</div>
+              <div class="sprint-title">{{ sprintKey }}: {{ sprint.title | default: sprint.shared }}</div>
               <div class="sprint-weeks">Weeks {{ sprint.start }}-{{ sprint.end }}</div>
             </div>
           </button>
           {% if sprint.description %}
           <button class="sprint-description-toggle" type="button"
                   onclick="toggleSprintDescription('{{ i }}')"
-                  aria-label="Show description for {{ sprintKey }}: {{ sprint.title }}"
+                  aria-label="Show description for {{ sprintKey }}: {{ sprint.title | default: sprint.shared }}"
                   aria-expanded="false" aria-controls="sprint-{{ i }}-description"
                   title="Show sprint description">
             <i class="fas fa-circle-info" aria-hidden="true"></i>

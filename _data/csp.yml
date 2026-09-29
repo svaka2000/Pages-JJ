@@ -47,6 +47,12 @@ course:
 
 Sprint1:
   shared: "Onboarding"
+  description: >
+    Get oriented to the course and establish the technical and collaboration
+    foundations for AP Computer Science Principles. Students set up their
+    operating-system tools, Python, Jupyter, VS Code, and portfolio, then
+    practice algorithms, creative development, team project workflows, and
+    reflection.
   start: 0
   end: 4
 
