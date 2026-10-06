@@ -6,7 +6,7 @@ NOTE: This file serves as the English documentation and explanation for `AGENTS.
 
 ## Core Principles
 
-### Single Responsibility Principle (SRP)
+### Single Responsibility Principle
 
 * Every function, class, and module should have one clear reason to change.
 * Avoid "god functions" that handle multiple concerns.
