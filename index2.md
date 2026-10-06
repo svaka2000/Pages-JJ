@@ -8,7 +8,7 @@ permaklink: /home2
 
 Hi! My name is [Your Full Name]
 
-## Learning Buttons
+## Learning Button
 
 > SASS Mixins examples and code, explore these topics by clicking standard OCS SASS buttons.
 
