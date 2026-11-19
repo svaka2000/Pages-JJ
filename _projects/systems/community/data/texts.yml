@@ -66,6 +66,7 @@ reply:
   title: Reply in your group
   hint: "Your reply goes to your series group with the update quoted, so it reaches the people in that series, not every member."
   group: Group
+  placeholder: Write your reply…
   send: Post reply
   cancel: Cancel
   sent: "Posted in {group}."

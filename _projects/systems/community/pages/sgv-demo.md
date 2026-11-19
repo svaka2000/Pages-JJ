@@ -89,7 +89,7 @@ them to CommunityApp, so Community's modules only import each other with ./ path
       <h3 class="ocs__modal-title" id="communityReplyTitle">{{ text.reply.title }}</h3>
       <button type="button" class="ocs__btn small" data-close aria-label="{{ text.reply.cancel }}">&times;</button>
     </div>
-    <div id="communityReplyQuote"></div>
+    <div class="dm dm--embed" id="communityReplyQuote"></div>
     <small>{{ text.reply.hint }}</small>
     <div class="ocs__field" id="communityReplyGroupField">
       <label class="ocs__label" for="communityReplyGroup">{{ text.reply.group }}</label>

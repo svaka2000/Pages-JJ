@@ -22,7 +22,7 @@ export class ReplyDialog {
     this.reply = null;
     this.sending = false;
     this.dialog = app.kit.createDialog(this.el.dialog, { onClose: () => { this.reply = null; } });
-    this.composer = app.kit.richText.createRichComposer({ maxLength: 2000, onSubmit: () => this.submit() });
+    this.composer = app.kit.richText.createRichComposer({ placeholder: app.texts.say('reply.placeholder'), maxLength: 2000, onSubmit: () => this.submit() });
     this.el.composerHost.replaceChildren(this.composer.element);
     this.el.form.addEventListener('submit', (event) => {
       event.preventDefault();
