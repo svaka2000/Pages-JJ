@@ -167,10 +167,11 @@ records:
   delete: deleted by sender
   hide: hidden by a moderator
   action: moderator action
-  update: update
+  dm: Direct message
 
 push:
-  update: "New update for {channel}"
+  update_series: "New update for {series}"
+  update_all: "New update from {org}"
 
 errors:
   staff-only: Only staff post here.
@@ -178,4 +179,11 @@ errors:
   muted: You're muted here for now.
   lp-to-lp: "Members message {org} staff, not each other."
   own-update: Another staff member has to approve your update.
+  needs-approval: Updates go out after a second staff member approves them.
+  self: You can't do that to your own message.
+  protected: Staff and moderators can't be muted or removed.
+  not-found: That's no longer here.
+  not-author: You can only change your own messages.
+  moderators-only: Only moderators and staff can do that.
+  bad-request: That didn't work. Check what you typed.
   generic: Something went wrong. Try again.

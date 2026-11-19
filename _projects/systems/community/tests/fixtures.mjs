@@ -35,6 +35,11 @@ export const loadMicroblog = () => loadWithStubs('assets/js/api/microblog.js', [
   'const withMicroblogRateLimit = fn => fn;',
 ].join('\n'));
 
+// Courses' calendar model and the chat reply helpers have no imports, but their folders
+// don't mark .js as ES modules, so they load the same way.
+export const loadCalendarModel = () => loadWithStubs('_projects/systems/courses/js/announcement-calendar/calendar-model.js', '');
+export const loadChatReply = () => loadWithStubs('assets/js/chat/chat-reply.js', '');
+
 // A fixed clock: Thursday 2026-11-19, 10:00 local time.
 export const NOW = new Date(2026, 10, 19, 10, 0, 0);
 export const fixedNow = () => new Date(NOW.getTime());
