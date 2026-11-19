@@ -72,12 +72,17 @@ test('the content refers only to people, channels and messages that exist', () =
 // Keys built at run time (a reason, a role, a tab) are checked by their own tests.
 const DYNAMIC = /^(report\.reasons|roles|tabs|errors|log|records)\./;
 
+// Any quoted 'section.key' in the code whose section is one of texts.yml's: keys are passed
+// to say() and refusal() directly, from ternaries and from tables of actions.
 function keysUsedInCode() {
   const used = new Set();
+  const sections = new Set(Object.keys(texts.table));
   const folder = new URL('js/', SYSTEM);
   for (const name of readdirSync(folder)) {
     const source = readFileSync(new URL(name, folder), 'utf8');
-    for (const [, key] of source.matchAll(/say\(\s*'([a-z_.-]+)'/g)) used.add(key);
+    for (const [, key, section] of source.matchAll(/'(([a-z]+)\.[a-z0-9_.-]+)'/g)) {
+      if (sections.has(section)) used.add(key);
+    }
   }
   const page = readFileSync(new URL('pages/sgv-demo.md', SYSTEM), 'utf8');
   for (const [, key] of page.matchAll(/\{\{\s*text\.([a-z_.]+)/g)) used.add(key);

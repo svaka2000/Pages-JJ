@@ -246,11 +246,24 @@ test('the calendar store lists events from update markers, and your own', async 
   backend.viewAs(11);
   const calendar = backend.calendarStore();
   const titles = async () => (await calendar.listRange('2026-11-01', '2026-12-31')).map(event => `${event.date} ${event.title}`);
-  assert.deepEqual(await titles(), ['2026-11-26 Demo LP call', '2026-12-03 Demo Series 2 closing date']);
+  assert.deepEqual(await titles(), ['2026-11-20 Demo Series 1 Q&A call', '2026-11-26 Demo LP call', '2026-12-03 Demo Series 2 closing date']);
   await backend.addCalendarEvent({ title: 'Read the one-pager', date: '2026-11-20', description: '', type: 'personal', period: 'Personal' });
-  assert.deepEqual((await titles())[0], '2026-11-20 Read the one-pager');
+  assert.ok((await titles()).includes('2026-11-20 Read the one-pager'));
   backend.viewAs(16);
   assert.deepEqual(await titles(), ['2026-11-26 Demo LP call'], 'Demo LP 6 is only in Demo Series 3');
+});
+
+test('a mute leaves a hidden-message row and an action row in the records', async () => {
+  const { backend } = make();
+  backend.viewAs(3);
+  const [report] = await backend.reports();
+  await backend.resolveReport(report.id, { action: 'mute', hours: 24, note: 'Selling to members' });
+  backend.viewAs(1);
+  const { csv } = await backend.exportCsv({ personId: 19 });
+  const lines = csv.trim().split('\r\n').slice(1);
+  assert.equal(lines.length, 3, 'the message, its hiding, and the mute');
+  assert.match(lines[1], /hidden by a moderator,"Anyone want in on a side deal.*",Demo Moderator: Selling to members$/);
+  assert.match(lines[2], /moderator action,"?Hid Demo LP 9's message and muted them in Demo Series 1 until .*"?,Demo Moderator: Selling to members$/);
 });
 
 test('records export holds edits and moderator actions, for staff only', async () => {

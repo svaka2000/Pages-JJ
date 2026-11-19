@@ -73,4 +73,5 @@ test('plain weeks start on Mondays and number like ISO weeks', () => {
   assert.equal(CalendarWeeks.isoWeek('2027-01-01'), 53, 'a Friday that belongs to the last week of 2026');
   assert.equal(CalendarWeeks.isoWeek('2026-01-01'), 1);
   assert.equal(CalendarWeeks.mondayOf('2026-11-22'), '2026-11-16', 'a Sunday belongs to the week before');
+  assert.deepEqual(['2026-11-20', '2026-11-21', '2026-11-22'].map(CalendarWeeks.weekdayOnOrAfter), ['2026-11-20', '2026-11-23', '2026-11-23']);
 });

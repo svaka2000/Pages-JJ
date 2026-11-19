@@ -28,6 +28,7 @@ tabs:
   inbox: Inbox
   calendar: Calendar
   review: Review
+  review_count: "Review ({count})"
 
 updates:
   channels: Update channels
@@ -41,16 +42,25 @@ updates:
   send_for_approval: Send for approval
   sent_for_approval: Sent. It goes out when another staff member approves it.
   send_failed: Could not send the update. Try again.
-  polls: Polls
   votes: "{count} votes"
   vote_one: 1 vote
   your_vote: Your vote
+  share: "{votes} · {percent}%"
   vote_failed: Could not save your vote. Try again.
   new_poll: Start a poll
   poll_question: Question
   poll_choices: Choices, one per line (2 to 6)
   poll_post: Post poll
   poll_posted: Poll posted.
+
+schedule:
+  title: Add to calendar
+  close: Close
+  name: Title
+  day: Day
+  time: Time (optional)
+  cancel: Cancel
+  save: Add event
 
 reply:
   title: Reply in your group
@@ -66,7 +76,6 @@ reply:
 groups:
   list: Your series groups
   none: "You aren't in any series groups yet."
-  open: "Open {group}"
   documents: Documents
   no_documents: No documents shared yet.
   download: Download
@@ -76,6 +85,8 @@ groups:
   shared: "Shared {name}."
   share_failed: Could not share that file. Try again.
   report: Report a message
+  send: Send
+  cancel_edit: Cancel
   muted: "A moderator muted you in {group} until {until}. You can still read, and you can post again after that."
   placeholder: "Message {group}…"
   deleted: Message removed.
@@ -129,9 +140,9 @@ review:
   versions: Every version
   note: Note for the log (optional)
   hide: Hide message
-  mute_24: Mute 24 hours
-  mute_168: Mute 7 days
-  remove: Remove from group
+  mute_24: Hide and mute 24 hours
+  mute_168: Hide and mute 7 days
+  remove: Hide and remove from group
   dismiss: Dismiss
   failed: Could not do that. Try again.
   approvals: Waiting for approval
@@ -156,8 +167,8 @@ review:
 
 log:
   hide: "Hid {author}'s message in {channel}"
-  mute: "Muted {name} in {channel} until {until}"
-  remove: "Removed {name} from {channel}"
+  mute: "Hid {author}'s message and muted them in {channel} until {until}"
+  remove: "Hid {author}'s message and removed them from {channel}"
   dismiss: "Dismissed a report about {author}'s message"
   approve: "Approved an update for {channel}"
 

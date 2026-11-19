@@ -76,12 +76,13 @@ messages:
   - channel: 100
     by: 2
     minutes_ago: 1500
-    text: Demo LP call next week, made up for this demo. Use Add to calendar to put it on yours, and vote on the time above.
+    text: Demo LP call next week, made up for this demo. Use Add to calendar to put it on yours, and pick a time in the poll.
     event: { days_from_today: 7, title: Demo LP call }
   - channel: 101
     by: 1
     minutes_ago: 2900
-    text: Demo Company A sent its quarterly update to Demo Series 1 (made up). The one-pager is in the series documents.
+    text: Demo Company A sent its quarterly update to Demo Series 1 (made up). The one-pager is in the series documents, and SGV staff take questions on a short call.
+    event: { days_from_today: 1, title: Demo Series 1 Q&A call }
   - channel: 102
     by: 2
     minutes_ago: 700

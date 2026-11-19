@@ -21,6 +21,16 @@ export class CalendarWeeks {
   }
 
   /**
+   * Today's local date (or another moment's) as YYYY-MM-DD.
+   * @param {Date} now
+   * @returns {string}
+   */
+  static today(now = new Date()) {
+    const pad = value => String(value).padStart(2, '0');
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  }
+
+  /**
    * @param {Date} date midnight UTC
    * @returns {string} YYYY-MM-DD
    */
@@ -45,6 +55,19 @@ export class CalendarWeeks {
   static mondayOf(iso) {
     const weekday = CalendarWeeks.parse(iso).getUTCDay() || 7;
     return CalendarWeeks.addDays(iso, 1 - weekday);
+  }
+
+  /**
+   * The day itself on a weekday, or the Monday after a Saturday or Sunday: the week view
+   * shows Monday to Friday.
+   * @param {string} iso
+   * @returns {string}
+   */
+  static weekdayOnOrAfter(iso) {
+    const weekday = CalendarWeeks.parse(iso).getUTCDay();
+    if (weekday === 6) return CalendarWeeks.addDays(iso, 2);
+    if (weekday === 0) return CalendarWeeks.addDays(iso, 1);
+    return iso;
   }
 
   /**

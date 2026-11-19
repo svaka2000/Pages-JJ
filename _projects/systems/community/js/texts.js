@@ -50,6 +50,19 @@ export class Texts {
   }
 
   /**
+   * The words for a refused request: errors.<reason> when the table has them (a server's
+   * RuleError carries the reason), or the fallback key's.
+   * @param {{reason?: string}} error
+   * @param {string} fallbackKey
+   * @param {object} values
+   * @returns {string}
+   */
+  refusal(error, fallbackKey, values = {}) {
+    const key = `errors.${error?.reason}`;
+    return this.has(key) ? this.say(key, values) : this.say(fallbackKey, values);
+  }
+
+  /**
    * Fills a template's {slot}s.
    * @param {string} template
    * @param {object} values

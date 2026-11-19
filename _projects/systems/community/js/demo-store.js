@@ -122,7 +122,8 @@ export class DemoStore {
       if (item.event) {
         if (typeof encodeEventMarker !== 'function') throw new TypeError('DemoStore: the setup has events, so pass encodeEventMarker');
         html = `${html} ${encodeEventMarker({
-          id: `e${this.newId()}`, date: CalendarWeeks.addDays(this.today(), item.event.days_from_today),
+          // A seeded event never lands on a weekend, which the Monday-Friday week leaves out.
+          id: `e${this.newId()}`, date: CalendarWeeks.weekdayOnOrAfter(CalendarWeeks.addDays(this.today(), item.event.days_from_today)),
           priority: 'P2', type: 'event', title: item.event.title, periods: [], description: '',
         })}`;
       }
@@ -601,13 +602,13 @@ export class DemoStore {
     for (const conversation of this.conversations.values()) {
       conversation.messages.forEach(message => addVersions({ channelId: null, conversationId: conversation.id }, message, message.senderId));
     }
+    // Hide, mute and remove all hide the message, so each leaves a row with the hidden text;
+    // the rest of an action (the mute, the removal, a dismissal, an approval) is its own row.
     for (const entry of this.log) {
       const message = entry.messageId ? this.messages.get(entry.channelId)?.find(item => item.id === entry.messageId) : null;
-      entries.push({
-        channelId: entry.channelId, conversationId: null, at: entry.at, personId: entry.personId, actorId: entry.actorId,
-        kind: entry.action === 'hide' ? 'hide' : 'action', html: entry.action === 'hide' ? (message?.versions.at(-1).html || '') : '',
-        note: entry.note, logEntry: entry,
-      });
+      const base = { channelId: entry.channelId, conversationId: null, at: entry.at, personId: entry.personId, actorId: entry.actorId, note: entry.note, logEntry: entry };
+      if (['hide', 'mute', 'remove'].includes(entry.action)) entries.push({ ...base, kind: 'hide', html: message?.versions.at(-1).html || '' });
+      if (entry.action !== 'hide') entries.push({ ...base, kind: 'action', html: '' });
     }
     return entries;
   }
