@@ -342,8 +342,12 @@ rows and the phone menu use both classes. The sidebar's week titles use
 - `ocs__tabs-btn`: an individual tab; add `active` for the selected one
 - `ocs__tabs-underline`: optional sliding indicator under the active tab
 - `ocs__tabs-panels`, `ocs__tabs-panel`: the swapped content area
+- `ocs__tabs--fit`: on `ocs__tabs`, for an app's main tabs. Below 768px each tab takes an
+  equal share of the row with its icon above its words, like a phone app's tab bar, so four
+  or five tabs fit on one line instead of wrapping. Put the icon straight inside the tab.
 
-See [`elements/tabs`](elements/tabs). The Dashboard uses this for its tab bar.
+See [`elements/tabs`](elements/tabs). The Dashboard uses this for its tab bar. The Community
+demo (`/community/sgv-demo/`) uses `ocs__tabs--fit`.
 
 ### Modals
 
